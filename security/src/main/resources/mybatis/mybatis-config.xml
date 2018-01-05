@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<!-- MyBatis Mapper의 parameterType에서 사용할 별명. parameterMap이 아님에 주의 -->
+		<typeAlias type="com.suph.security.MemberInfo" alias="MemberInfo"/>
+		<typeAlias type="com.suph.security.AuthVO" alias="AuthVO"/>
+		<typeAlias type="com.suph.security.RoleVO" alias="RoleVO"/>
+	</typeAliases>
+</configuration>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+			    http://www.springframework.org/schema/beans/spring-beans.xsd
+			    http://www.springframework.org/schema/security
+			    http://www.springframework.org/schema/security/spring-security.xsd">
+	
+	<!-- 확장자를 이용해 패턴을 걸때는 /**/*.해당 확장자 로 할 것(Ant Pattern 규칙) -->
+	<!-- 확장자가 .js인 것은 spring-security를 걸지 않는다는 설정 -->
+	<http pattern="/**/*.js" security="none" />
+	<http pattern="/**/*.css" security="none" />
+	<http pattern="/images/*" security="none" />
+	
+	
+	
+	<!--====================================== 로그인 관련 설정들 =====================================-->
+	<beans:bean id="CustomAuthenticationSuccessHandler" class="com.suph.security.CustomAuthenticationSuccessHandler">
+		<beans:property name="targetUrlParameter" value="loginRedirect"/>	<!-- 로그인 요청에 해당 파라미터가 있으면 읽어들여 이동 -->
+		<beans:property name="defaultUrl" value="/main"/>	<!-- REFERER도, 파라미터도 없을때 이동할 페이지 -->
+		<beans:property name="useReferer" value="false"/>	<!-- 기본값 false -->
+	</beans:bean>
+	
+	<beans:bean id="CustomAuthenticationFailureHandler" class="com.suph.security.CustomAuthenticationFailureHandler">
+		<beans:property name="loginidname" value="loginid"/>
+		<beans:property name="loginpasswdname" value="loginpw"/>
+		<beans:property name="loginredirectname" value="loginRedirect"/>
+		<beans:property name="exceptionmsgname" value="securityexceptionmsg"/>
+		<beans:property name="defaultFailureUrl" value="/login.do?fail=true"/>
+	</beans:bean>
+
+	<!-- use-expressions: true값을 줄 경우 intercept-url의 access속성에서 몇가지 표현식 사용이 가능해진다. -->
+	<http auto-config="true" use-expressions="true">
+	<!--
+		auto-config를 사용함으로써 아래의  http 내부 태그들이 기본값으로 설정되었다.
+		어디까지나 예제라서 기본값을 쓰는거지, 우리 현실에 맞는 방식은 아님을 명심하자.
+		<form-login />
+  		<http-basic />
+  		<logout>
+	-->
+		<!-- intercept-url에 스프링 시큐리티를 적용합니다. 언제나 순서에 주의하자. 구체적인 URL패턴을 상위에 두고, 포괄적인 URL패턴을 아래에 두어야 한다 -->
+		<!--	다만 저 아래쪽에서 FilterSecurityInterceptor이전에 커스텀한 권한 검사 필터를 사용하고 있으므로, 이 오리지날 FilterSecurityInterceptor는
+			그냥 통과 할 수 있도록 <intercept-url>부를 지워주도록 하자.
+		-->
+		<!-- <intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" /> -->
+		<!-- <intercept-url pattern="/login" access="isAnonymous()" /> -->
+		<!-- <intercept-url pattern="/main" access="permitAll" /> -->
+		<!-- <intercept-url pattern="/**" access="permitAll" /> -->
+		
+		<!-- username-parameter: 기본 name 속성 값인 j_username을 교체 -->
+		<!-- password-parameter: 기본 name 속성 값인 j_password를 교체-->
+		<!-- login-page: 로그인 화면 URL 지정. 인증을 받지 않은 상태에서 권한이 필요한 화면에 접근할 경우 보여줄 경로 -->
+		<!-- default-target-url: login-page외의 접근에서 로그인 인증을 성공하면 보여줄 페이지 지정 -->
+		<!-- always-use-default-target: 이 속성을 true로 주면 login-page로의 접근에서도 default-target-url을 보여주게 된다 -->
+		<!-- authentication-failure-url: 인증에 실패했을 경우 보여줄 URL 지정. 여기선 실패할 경우 다시 로그인 화면을 보여주게끔 설정 -->
+		<!-- authentication-success-handler-ref: 로그인 성공시 처리할 동작이 정의된 클래스 -->
+		<!-- authentication-failure-handler-ref: 로그인 실패시 처리할 동작이 정의된 클래스. 처리내용이 authentication-failure-url과 겹치지 않게 주의 -->
+		<!-- failure-handler미 정의시 기본적으로 org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler 사용 -->
+		<form-login
+			username-parameter="loginid"
+			password-parameter="loginpwd"
+			login-page="/login"
+			default-target-url="/main"
+			authentication-success-handler-ref="CustomAuthenticationSuccessHandler"
+			authentication-failure-handler-ref="CustomAuthenticationFailureHandler"
+		/>
+		
+		<!-- logout-success-url: 로그아웃 버튼 클릭시 이동할 페이지 지정. 기본 로그아웃 요청 경로는 ./j_spring_security_check -->
+		<!-- delete-cookies: 로그아웃을 진행하면서 지워야 할 쿠키 지정. 콤마를 구분자로 하여 여러개의 쿠키 이름을 지정 가능. JSESSIONID는 세션 구분할때 쓰는 그거 맞다 -->
+		<logout logout-success-url="/main" delete-cookies="JSESSIONID"/>
+		
+		<!-- 미로그인 유저를 지칭할 권한명 지정. 기본값은 ROLE_ANONYMOUS -->
+		<anonymous granted-authority="ANONYMOUS"/>
+		
+		
+		
+		<!--
+			SecurityContextPersistenceFilter, ExceptionTranslationFilter, FilterSecurityInterceptor는
+			<http>태그 사용시 자동으로 생성되기에, <custom-filter>의 position에서 동일한 alias를 사용할 수 없다.
+		-->
+		<!-- 	또한 <custom-filter position=""> 사용시엔 중복되는 객체가 생성되지 않도록 태그 사용에 주의해야한다.
+			예를 들어 UsernamePasswordAuthenticationFilter를 <custrom-filter>에 지정했을 경우
+			다른곳에 <form-login>태그를 사용해선 안된다.
+		-->
+		<custom-filter before="FILTER_SECURITY_INTERCEPTOR" ref="filterSecurityInterceptor"/>
+		
+		
+		<!-- 특정 URL에 권한이 없는 사람이 접근할 경우, 보여줄 페이지 지정 -->
+		<access-denied-handler ref="accessDenied"/>
+	</http>
+	
+	<beans:bean id="accessDenied" class="com.suph.security.CustomAccessDeniedHandler">
+		<beans:property name="errorPage" value="/access_denied"/>
+	</beans:bean>
+	
+	
+	
+	<!--====================================== 권한 필터(권한을 총괄하는 필터) - 인증 정보/ 권한 정보/ 판단 주체로 구성 ======================================-->
+	<!-- org.springframework.security.web.access.intercept.FilterSecurityInterceptor에서 관장 -->
+	<beans:bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+		<beans:property name="authenticationManager" ref="org.springframework.security.authenticationManager"/>
+		<beans:property name="securityMetadataSource" ref="reloadableFilterInvocationSecurityMetadataSource"/>
+		<beans:property name="accessDecisionManager" ref="accessDecisionManager"/>
+	</beans:bean>
+	
+	
+	
+	<!--====================================== 인증 정보(접근하려는 자가 가지고 있는 권한) ======================================-->
+	<!-- org.springframework.security.web.access.intercept.FilterSecurityInterceptor에서 인증 정보로 사용될 객체 -->
+	<!-- 	org.springsecurity.security.authentication.ProviderManager: <authentication-manager> 태그 사용시 생성 -->
+	<!-- 		ProviderManager는 생성자로 List<AuthenticationProvider> 를 받는다 -->
+	<!-- 			해당 리스트에 넣을 요소들은 <authentication-provider> 태그를 여러번 써서 생성 가능 -->
+	<!-- 			<authentication-provider> 대상 객체 미지정시 기본값은  org.springframework.security.authentication.dao.DaoAuthenticationProvider 사용 -->
+	<!-- 				DaoAuthenticationProvider에 사용자 정보를 조회하는 서비스 객체 등록 -->
+	<!-- 
+	<beans:bean id="customJdbcDaoImpl" class="com.suph.security.CustomJdbcDaoImpl">
+		<beans:property name="dataSource" ref="basicDataSource"/>
+		<beans:property name="rolePrefix" value=""/>
+		<beans:property name="usersByUsernameQuery" value="SELECT MEM_NO, MEM_ID, MEM_PASSWORD, MEM_NICKNAME FROM TB_MEMBER WHERE MEM_NO=?"/>
+		<beans:property name="authoritiesByUsernameQuery" value="SELECT AUTH_NM FROM TB_MEMBER_AUTH WHERE MEM_NO=?"/>
+		<beans:property name="enableGroups" value="false"/>
+	</beans:bean>
+	 -->
+	<beans:bean id="loginService" class="com.suph.security.LoginServiceImpl"/>
+	
+	<!-- <beans:bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/> -->
+	<beans:bean id="bcryptPasswordEncoder" class="com.suph.security.CustomBCryptPasswordEncoder"/>
+	
+	<authentication-manager>	<!-- 인증 관련 정보 -->
+		<!-- 
+		<authentication-provider>	정보 제공자 지정
+			<user-service>	사용자 정보 설정
+				name 속성은 pk값이다. getUsername() 호출
+				<user name="user1" password="user1password" authorities="ROLE_USER" />
+				<user name="admin1" password="admin1password" authorities="ROLE_ADMIN" />
+			</user-service>
+		</authentication-provider>
+		 -->
+		 
+		 <!-- base64: true로 세팅하면 암호화 후 base64로 인코딩 하는 것으로 추측 -->
+		 <!-- password-encoder hash:사용할 알고리즘 지정. {sha}, {ssha}, bcrypt, md4, md5, plaintext, sha-256, sha 중 택 1 -->
+		 <!-- hash="bcrypt" 라고 적을 경우, 스프링은 PasswordEncoder를 구현한 객체중 BCryptPasswordEncoder를 내부에 생성한다. -->
+		 <!-- 다만 이럴 경우, 외부에서 해당 클래스를 참조할 방법이 없으므로 따로 선언해서 주입해주도록 합니다. -->
+		 <authentication-provider user-service-ref="loginService">
+		 	<!-- <password-encoder hash="bcrypt"/> -->
+		 	<password-encoder ref="bcryptPasswordEncoder"/>
+		 </authentication-provider>
+	</authentication-manager>
+	
+	
+	
+	<!--====================================== 대상 정보(대상 접근에 필요한 권한) ======================================-->
+	<!-- org.springframework.security.web.access.intercept.FilterSecurityInterceptor에서 대상 정보로 사용될 객체 -->
+	<!-- 	org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource를 구현한 -->
+	<!-- 		org.springframework.security.web.access.expression.DefaultFilterInvocationSecurityMetadataSource를 상속하는 -->
+	<!-- 			org.springframework.security.web.access.expression.ExpressionBasedFilterInvocationSecurityMetadataSource 객체가 처리 -->
+	<!-- 				저 객체는 부모인 DefaultFilterInvocationSecurityMetadataSource의 멤버변수인 Map<RequestMatcher, Collection<ConfigAttrivute>> requestMap 변수에 -->
+	<!-- 				<intercept-url> 태그에서 정의한 대로, patter값을 key로, access값을 value로 매칭하여 LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> 저장함. -->
+	<!--	 				저 태그에서 pattern을 ANT 패턴으로 정의했기에 key값인 RequestMatcher엔 AntPathRequestMatcher 저장 -->
+	<!-- 					value값인 Collection<ConfigAttribute>엔 org.springframework.security.web.access.expression.WebExpressionConfigAttribute 가 담긴 ArrayList를 저장 -->
+	<!-- 						WebExpressionConfigAttribute들 각각에 access값이(ex:hasRole("ADMIN")) 들어감 -->
+	<!-- 결과적으로 <intercept-url>값이 DefaultFilterInvocationSecurityMetadataSource의 멤버변수인 requestMap에 LinkedHashMap<AntPathRequestMatcher, ArrayList<WebExpressionConfigAttribute>> 형식으로 저장됨 -->
+	
+	<!-- <bean class="">속성에 인터페이스를 지정해선 안된다. -->
+	<!-- <beans:bean id="securedObjectDAO" class="com.suph.security.SecuredObjectDAO"/> -->
+	
+	<beans:bean id="securedObjectService" class="com.suph.security.SecuredObjectServiceImpl">
+		<beans:property name="securedObjectDAO" ref="securedObjectDAO"/>
+	</beans:bean>
+	
+	<!-- URL별 권한 정보를 반환할 팩토리 빈 객체 --> 
+	<beans:bean id="requestMap" class="com.suph.security.UrlResourcesMapFactoryBean" init-method="init">
+		<beans:property name="securedObjectService" ref="securedObjectService"/>	<!-- 어노테이션 주입으로 대체했음 -->
+	</beans:bean>
+	
+	<!-- URL별 권한 정보를 메모리에 올려두고 관리하다가, 요청시 갱신 작업을 수행하는 객체 -->
+	<beans:bean id="reloadableFilterInvocationSecurityMetadataSource" class="com.suph.security.ReloadableFilterInvocationSecurityMetadataSource">
+		<beans:constructor-arg ref="requestMap"/>
+		<beans:property name="securedObjectService" ref="securedObjectService"/>	<!-- 어노테이션 주입으로 대체했음 -->
+	</beans:bean>
+	
+	
+	
+	<!--====================================== 판단 주체(허가하질 말지 판단) ======================================-->
+	<!-- org.springframework.security.web.access.intercept.FilterSecurityInterceptor에서 판단 주체로 사용할 객체 -->
+	<!-- 	기본적으로 org.springframework.security.access.vote.AbstractAccessDecisionManager를 상속하는 다음 세개의 클래스를 사용할 수 있음. -->
+	<!--		AffirmativeBased: voter중 하나라도 승인하면 접근 허가 -->
+	<!-- 		UnanimousBased: 모든 voter가 만장일치로 승인해야 접근 허가 -->
+	<!-- 		ConsensusBased: voter들의 의견을 다수결로 판단함 -->
+	<!-- 	이중에 원하는 방식이 없을 경우 AbstractAccessDecisionManager를 상속하여 직접 구현 가능 -->
+	<!-- 
+	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
+		<beans:constructor-arg>
+			<beans:list>
+				가진 권한과 필요한 권한에 따른 판단
+				<beans:bean class="org.springframework.security.access.vote.RoleVoter">
+					<beans:property name="rolePrefix" value=""/>
+				</beans:bean>
+				
+				로그인 방식/여부에 따른 판단
+				기본값은 로그인했던, 자동로그인 했던, 미로그인했던 몽땅 승인(통과)
+				<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter"/>
+				
+				이건 어떤 방식으로 판단하는 voter일까?
+				<beans:bean class="org.springframework.security.web.access.expression.WebExpressionVoter"/>
+			</beans:list>
+		</beans:constructor-arg>
+	</beans:bean>
+	 -->
+	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+		<beans:constructor-arg>
+			<beans:list>
+				<beans:bean class="org.springframework.security.access.vote.RoleVoter">
+					<beans:property name="rolePrefix" value=""/>
+				</beans:bean>
+			</beans:list>
+		</beans:constructor-arg>
+		
+		<!-- 모두가 기권(판단 보류) 결정을 내리면 접근을 허가하겠습니까? 아니요. -->
+		<beans:property name="allowIfAllAbstainDecisions" value="false"/>
+	</beans:bean>
+</beans:beans>
+

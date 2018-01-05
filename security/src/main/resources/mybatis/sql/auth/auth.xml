@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.suph.security.AuthDAO">
+	<resultMap type="com.suph.security.AuthVO" id="AuthVO">
+		<result column="AUTH_NO" property="no"/>
+		<result column="AUTH_NM" property="name"/>
+		<result column="AUTH_EXPLANATION" property="explanation"/>
+	</resultMap>
+
+	<select id="getAuthListById" parameterType="String" resultMap="AuthVO">
+		SELECT
+			A.AUTH_NO,
+			A.AUTH_NM,
+			A.AUTH_EXPLANATION
+		FROM
+				TB_AUTH AS A
+			INNER JOIN TB_MEMBER_AUTH AS MO ON (A.AUTH_NO = MO.AUTH_NO)
+			INNER JOIN TB_MEMBER AS MT ON (MO.MEM_NO = MT.MEM_NO)
+		WHERE
+				MT.MEM_ENABLE = 'Y'
+			AND
+				MT.MEM_ID = #{id};
+	</select>
+</mapper>

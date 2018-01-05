@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="	http://www.springframework.org/schema/beans
+				http://www.springframework.org/schema/beans/spring-beans.xsd
+				http://www.springframework.org/schema/context
+				http://www.springframework.org/schema/context/spring-context-3.1.xsd
+				http://www.springframework.org/schema/tx
+				http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+	
+	<!-- MySQL Properties -->			
+	<context:property-placeholder location="classpath:/properties/database.properties"/>
+	
+	<!-- MySQL DATA Source -->
+	<bean id="basicDataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+		<property name="driverClassName"		 value="${jdbc.driverClassName}"/>
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean>
+	
+	<!-- Transaction Manager -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="basicDataSource"/>
+	</bean>
+	
+	<!-- SqlSessionFactory -->
+	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="basicDataSource"/>
+		<property name="configLocation" value="classpath:/mybatis/mybatis-config.xml"/>
+		<property name="mapperLocations" value="classpath:/mybatis/sql/**/*.xml"/>
+	</bean>
+	
+	<!-- MyBatis Mapper Scanner -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.suph.security" />
+		<property name="annotationClass" value="org.springframework.stereotype.Repository" />
+	</bean>
+	
+	<!-- 어떤 역할인지 반드시 살펴볼 것 -->
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+	      	<property name="order" value="0"/>
+	</bean>
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>/WEB-INF/messages/spring_security_messages</value>
+			</list>
+		</property>
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="cacheSeconds" value="5" />
+	</bean>
+</beans>

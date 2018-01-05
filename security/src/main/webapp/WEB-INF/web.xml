@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			/WEB-INF/spring/root-context.xml
+			/WEB-INF/spring/spring-security.xml
+		</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<!-- 클라이언트로부터 오는 모든 쿼리에 대한 한글 인코딩 처리 '필터' -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	
+	<!-- url-pattern : 해당 애플리케이션 내에서 필터를 적용시키고자 하는 범위. -->
+	<!--	/* - 애플리케이션 내 모든 post 방식에서 적용(servlet, jsp 구분 없이). -->
+	<!--	/*.do - 애플리케이션 내 *.do로 이름을 지은 서블릿 post 메소드만 적용. -->
+	<!-- servlet-name : 애플리케이션 내 특정 서블릿에만 적용할 때 씀.-->
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<servlet>
+		<servlet-name>appServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring/appServlet/servlet-context.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>appServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+
+	<filter>
+		<!-- 스프링 시큐리티에서 filter-name으로 filter-class를 찾기 때문에, filter-name에 꼭 저 이름을 주어야 합니다. -->
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<!-- url-pattern을 *.do 등의 임의의 주소로 변경하지 마십시오. 스프링 시큐리티엔 *.do를 쓰지 않는 파일들이 다수 존재합니다. -->
+		<!-- 이미지, CSS파일 같이 스프링 시큐리티가 필요없는 접근에 대해선 따로 지정할 수 있습니다. 해당 설정은 spring-security.xml에서 볼 수 있습니다. -->
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+</web-app>
