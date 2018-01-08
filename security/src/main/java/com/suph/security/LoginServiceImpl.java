@@ -32,7 +32,6 @@ public class LoginServiceImpl implements LoginService{
 	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException{
 		// DB로부터 해당 ID의 계정 정보 조회
 		MemberInfo user = loginDAO.getMemberInfoById(id);
-		logger.debug("user 내용 {}", user);
 		
 		// DB로부터 해당 ID와 일치하는 계정을 찾지 못했다면 예외 발생
 		if(user == null){
@@ -68,6 +67,8 @@ public class LoginServiceImpl implements LoginService{
 			
 			throw ue;
 		}
+		
+		logger.debug("user {}", user);
 		
 		return user;
 	}

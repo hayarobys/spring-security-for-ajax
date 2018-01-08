@@ -171,13 +171,13 @@
 	
 	<!-- URL별 권한 정보를 반환할 팩토리 빈 객체 --> 
 	<beans:bean id="requestMap" class="com.suph.security.UrlResourcesMapFactoryBean" init-method="init">
-		<beans:property name="securedObjectService" ref="securedObjectService"/>	<!-- 어노테이션 주입으로 대체했음 -->
+		<beans:property name="securedObjectService" ref="securedObjectService"/>	<!-- 어노테이션 주입으로 대체방법은? -->
 	</beans:bean>
 	
 	<!-- URL별 권한 정보를 메모리에 올려두고 관리하다가, 요청시 갱신 작업을 수행하는 객체 -->
 	<beans:bean id="reloadableFilterInvocationSecurityMetadataSource" class="com.suph.security.ReloadableFilterInvocationSecurityMetadataSource">
 		<beans:constructor-arg ref="requestMap"/>
-		<beans:property name="securedObjectService" ref="securedObjectService"/>	<!-- 어노테이션 주입으로 대체했음 -->
+		<beans:property name="securedObjectService" ref="securedObjectService"/>	<!-- 어노테이션 주입으로 대체방법은? -->
 	</beans:bean>
 	
 	
@@ -208,10 +208,12 @@
 		</beans:constructor-arg>
 	</beans:bean>
 	 -->
-	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+	<!-- <beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased"> -->
+	<beans:bean id="accessDecisionManager" class="com.suph.security.CustomAffirmativeBased">
 		<beans:constructor-arg>
 			<beans:list>
-				<beans:bean class="org.springframework.security.access.vote.RoleVoter">
+				<!-- <beans:bean class="org.springframework.security.access.vote.RoleVoter"> -->
+				<beans:bean class="com.suph.security.CustomRoleVoter">
 					<beans:property name="rolePrefix" value=""/>
 				</beans:bean>
 			</beans:list>

@@ -14,7 +14,7 @@
 		name = ((MemberInfo)principal).getName();
 		// 미인증 상태에선 "anonymousUser" 가 반환된다.
 	}
-	System.out.println("권한명: " + name);
+	//System.out.println("권한명: " + name);
 	/* 
 	// 로그인 정보를 가져오기 위해 Servlet Spec에서 제공하는 방법
 	Authentication auth = (Authentication)request.getUserPrincipal();

@@ -42,7 +42,6 @@
 			<c:if test="${not empty username}">
 				${username}<br />
 			</c:if>
-			<a href="<c:url value='/main.do'/>">확인</a>
 			
 			
 			
