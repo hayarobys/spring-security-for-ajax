@@ -12,12 +12,16 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 public class MemberInfo implements UserDetails{
+	
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
 	private int no;				// MEM_NO 계정 일련 번호 PK
 	private String id;			// MEM_ID 계정 아이디
@@ -88,6 +92,7 @@ public class MemberInfo implements UserDetails{
 	 * @param id
 	 */
 	public void setId(String id){
+		logger.debug("setNoId() = {}", id);
 		this.id = id;
 	}
 

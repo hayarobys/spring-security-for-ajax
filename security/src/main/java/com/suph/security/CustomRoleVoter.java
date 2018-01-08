@@ -17,16 +17,16 @@ public class CustomRoleVoter extends RoleVoter{
 	 */
 	@Override
 	public boolean supports(ConfigAttribute attribute) {
-		logger.debug("attribute.getAttribute() = {}", attribute.getAttribute());
-		logger.debug("getRolePrefix() = {}", getRolePrefix());
-		logger.debug("attribute.getAttribute().startsWith( getRolePrefix() ) = {}", attribute.getAttribute().startsWith( getRolePrefix() ));
+		//logger.debug("attribute.getAttribute() = {}", attribute.getAttribute());
+		//logger.debug("getRolePrefix() = {}", getRolePrefix());
+		//logger.debug("attribute.getAttribute().startsWith( getRolePrefix() ) = {}", attribute.getAttribute().startsWith( getRolePrefix() ));
         if(		( attribute.getAttribute() != null )
         	&&	  attribute.getAttribute().startsWith( getRolePrefix() )	// 약속된 접두어로 시작하고, null이 아니라면 true 반환
         ){
-        	logger.debug("사용가능한 권한명입니다.");
+        	//logger.debug("사용가능한 권한명입니다.");
             return true;
         }else{
-        	logger.debug("사용 할 수 없는 권한명입니다.");
+        	//logger.debug("사용 할 수 없는 권한명입니다.");
             return false;
         }
     }
@@ -48,10 +48,10 @@ public class CustomRoleVoter extends RoleVoter{
                 // 접근을 요청한 사용자가 지닌 권한들과 일치하는게 있는지 찾아봅니다.
                 for(GrantedAuthority authority : authorities){
                 	
-                	logger.debug("authority.getAuthority() = {}", authority.getAuthority());
-                	logger.debug("attribute.getAttribute().equals( authority.getAuthority() ) = {}", attribute.getAttribute().equals( authority.getAuthority() ));
+                	//logger.debug("authority.getAuthority() = {}", authority.getAuthority());
+                	//logger.debug("attribute.getAttribute().equals( authority.getAuthority() ) = {}", attribute.getAttribute().equals( authority.getAuthority() ));
                     if( attribute.getAttribute().equals( authority.getAuthority() ) ){
-                    	logger.debug("(필요권한 {} - 가진권한 {}), ", attribute, authority);
+                    	//logger.debug("(필요권한 {} - 가진권한 {}), ", attribute, authority);
                         return ACCESS_GRANTED;	// 하나라도 일치한다면 그 즉시 접근을 승인합니다.
                     }
                 }
