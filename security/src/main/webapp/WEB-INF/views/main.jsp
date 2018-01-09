@@ -77,13 +77,16 @@
 			<sec:authorize access="hasRole('ROLE_ADMIN')">
 				<li>관리자 화면</li>
 			</sec:authorize>
+			<sec:authorize access="hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')">
+				<li>매니저 화면</li>
+			</sec:authorize>
 			<sec:authorize access="permitAll">
 				<li>비회원 게시판</li>
 			</sec:authorize>
 			<sec:authorize access="isAuthenticated()">
 				<li>준회원 게시판</li>
 			</sec:authorize>
-			<sec:authorize access="hasAnyRole('ROLE_MEMBER2', 'ROLE_ADMIN')">
+			<sec:authorize access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER')">
 				<li>정회원 게시판</li>
 			</sec:authorize>
 		</ul>

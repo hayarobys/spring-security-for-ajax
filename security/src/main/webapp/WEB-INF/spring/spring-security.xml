@@ -15,58 +15,6 @@
 	
 	
 	
-	<!--====================================== 권한 필터(권한을 총괄하는 필터) - 인증 정보/ 권한 정보/ 판단 주체로 구성 ======================================-->
-	<!-- org.springframework.security.web.access.intercept.FilterSecurityInterceptor에서 관장 -->
-	<beans:bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
-		<beans:property name="authenticationManager" ref="org.springframework.security.authenticationManager"/>
-		<beans:property name="securityMetadataSource" ref="reloadableFilterInvocationSecurityMetadataSource"/>
-		<beans:property name="accessDecisionManager" ref="accessDecisionManager"/>
-	</beans:bean>
-	
-	
-	
-	<!--====================================== 인증 정보(접근하려는 자가 가지고 있는 권한) ======================================-->
-	<!-- org.springframework.security.web.access.intercept.FilterSecurityInterceptor에서 인증 정보로 사용될 객체 -->
-	<!-- 	org.springsecurity.security.authentication.ProviderManager: <authentication-manager> 태그 사용시 생성 -->
-	<!-- 		ProviderManager는 생성자로 List<AuthenticationProvider> 를 받는다 -->
-	<!-- 			해당 리스트에 넣을 요소들은 <authentication-provider> 태그를 여러번 써서 생성 가능 -->
-	<!-- 			<authentication-provider> 대상 객체 미지정시 기본값은  org.springframework.security.authentication.dao.DaoAuthenticationProvider 사용 -->
-	<!-- 				DaoAuthenticationProvider에 사용자 정보를 조회하는 서비스 객체 등록 -->
-	<!-- 
-	<beans:bean id="customJdbcDaoImpl" class="com.suph.security.CustomJdbcDaoImpl">
-		<beans:property name="dataSource" ref="basicDataSource"/>
-		<beans:property name="rolePrefix" value=""/>
-		<beans:property name="usersByUsernameQuery" value="SELECT MEM_NO, MEM_ID, MEM_PASSWORD, MEM_NICKNAME FROM TB_MEMBER WHERE MEM_NO=?"/>
-		<beans:property name="authoritiesByUsernameQuery" value="SELECT AUTH_NM FROM TB_MEMBER_AUTH WHERE MEM_NO=?"/>
-		<beans:property name="enableGroups" value="false"/>
-	</beans:bean>
-	 -->
-	<beans:bean id="loginService" class="com.suph.security.LoginServiceImpl"/>
-	
-	<!-- <beans:bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/> -->
-	<beans:bean id="bcryptPasswordEncoder" class="com.suph.security.CustomBCryptPasswordEncoder"/>
-	
-	<authentication-manager>	<!-- 인증 관련 정보 -->
-		<!-- 
-		<authentication-provider>	정보 제공자 지정
-			<user-service>	사용자 정보 설정
-				name 속성은 pk값이다. getUsername() 호출
-				<user name="user1" password="user1password" authorities="ROLE_USER" />
-				<user name="admin1" password="admin1password" authorities="ROLE_ADMIN" />
-			</user-service>
-		</authentication-provider>
-		 -->
-		 
-		 <!-- base64: true로 세팅하면 암호화 후 base64로 인코딩 하는 것으로 추측 -->
-		 <!-- password-encoder hash:사용할 알고리즘 지정. {sha}, {ssha}, bcrypt, md4, md5, plaintext, sha-256, sha 중 택 1 -->
-		 <!-- hash="bcrypt" 라고 적을 경우, 스프링은 PasswordEncoder를 구현한 객체중 BCryptPasswordEncoder를 내부에 생성한다. -->
-		 <!-- 다만 이럴 경우, 외부에서 해당 클래스를 참조할 방법이 없으므로 따로 선언해서 주입해주도록 합니다. -->
-		 <authentication-provider user-service-ref="loginService">
-		 	<!-- <password-encoder hash="bcrypt"/> -->
-		 	<password-encoder ref="bcryptPasswordEncoder"/>
-		 </authentication-provider>
-	</authentication-manager>
-	
 	<!--====================================== 로그인 관련 설정들 =====================================-->
 	<beans:bean id="CustomAuthenticationSuccessHandler" class="com.suph.security.CustomAuthenticationSuccessHandler">
 		<beans:property name="targetUrlParameter" value="loginRedirect"/>	<!-- 로그인 요청에 해당 파라미터가 있으면 읽어들여 이동 -->
@@ -100,6 +48,28 @@
 		<!-- <intercept-url pattern="/main" access="permitAll" /> -->
 		<!-- <intercept-url pattern="/**" access="permitAll" /> -->
 		
+		<!-- https 사용시 다음의 코드로 모든 http 접근을 https로 리디렉트 하십시오.  -->
+		<intercept-url pattern="/**" requires-channel="https"/>
+		<port-mappings>
+			<port-mapping http="8090" https="8443"/>
+		</port-mappings>
+		
+		<!-- https 사용시 web.xml에 다음의 구문을 커넥터를 추가하십시오. -->
+		<!-- 사전에 keystore 파일을 생성하고 인증기관에 등록해 두셔야 합니다. localhost 사용시엔 찾아보고 하십시오. -->
+		<!-- 
+		<Connector
+			port="8443"
+			protocol="org.apache.coyote.http11.Http11NioProtocol"
+			SSLEnabled="true"
+			clientAuth="false"
+			maxThreads="150"
+			keystoreFile="C:\Users\NB-0267\testserver"
+			keystorePass="testpassword"
+			scheme="https"
+			secure="true"
+			sslProtocol="TLS"
+		/>
+		 -->
 		<!-- username-parameter: 기본 name 속성 값인 j_username을 교체 -->
 		<!-- password-parameter: 기본 name 속성 값인 j_password를 교체-->
 		<!-- login-page: 로그인 화면 URL 지정. 인증을 받지 않은 상태에서 권한이 필요한 화면에 접근할 경우 보여줄 경로 -->
@@ -145,6 +115,59 @@
 	<beans:bean id="accessDenied" class="com.suph.security.CustomAccessDeniedHandler">
 		<beans:property name="errorPage" value="/access_denied"/>
 	</beans:bean>
+	
+	
+	
+	<!--====================================== 권한 필터(권한을 총괄하는 필터) - 인증 정보/ 권한 정보/ 판단 주체로 구성 ======================================-->
+	<!-- org.springframework.security.web.access.intercept.FilterSecurityInterceptor에서 관장 -->
+	<beans:bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+		<beans:property name="authenticationManager" ref="org.springframework.security.authenticationManager"/>
+		<beans:property name="securityMetadataSource" ref="reloadableFilterInvocationSecurityMetadataSource"/>
+		<beans:property name="accessDecisionManager" ref="accessDecisionManager"/>
+	</beans:bean>
+	
+	
+	<!--====================================== 인증 정보(접근하려는 자가 가지고 있는 권한) ======================================-->
+	<!-- org.springframework.security.web.access.intercept.FilterSecurityInterceptor에서 인증 정보로 사용될 객체 -->
+	<!-- 	org.springsecurity.security.authentication.ProviderManager: <authentication-manager> 태그 사용시 생성 -->
+	<!-- 		ProviderManager는 생성자로 List<AuthenticationProvider> 를 받는다 -->
+	<!-- 			해당 리스트에 넣을 요소들은 <authentication-provider> 태그를 여러번 써서 생성 가능 -->
+	<!-- 			<authentication-provider> 대상 객체 미지정시 기본값은  org.springframework.security.authentication.dao.DaoAuthenticationProvider 사용 -->
+	<!-- 				DaoAuthenticationProvider에 사용자 정보를 조회하는 서비스 객체 등록 -->
+	<!-- 
+	<beans:bean id="customJdbcDaoImpl" class="com.suph.security.CustomJdbcDaoImpl">
+		<beans:property name="dataSource" ref="basicDataSource"/>
+		<beans:property name="rolePrefix" value=""/>
+		<beans:property name="usersByUsernameQuery" value="SELECT MEM_NO, MEM_ID, MEM_PASSWORD, MEM_NICKNAME FROM TB_MEMBER WHERE MEM_NO=?"/>
+		<beans:property name="authoritiesByUsernameQuery" value="SELECT AUTH_NM FROM TB_MEMBER_AUTH WHERE MEM_NO=?"/>
+		<beans:property name="enableGroups" value="false"/>
+	</beans:bean>
+	 -->
+	<beans:bean id="loginService" class="com.suph.security.LoginServiceImpl"/>
+	
+	<!-- <beans:bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/> -->
+	<beans:bean id="bcryptPasswordEncoder" class="com.suph.security.CustomBCryptPasswordEncoder"/>
+	
+	<authentication-manager>	<!-- 인증 관련 정보 -->
+		<!-- 
+		<authentication-provider>	정보 제공자 지정
+			<user-service>	사용자 정보 설정
+				name 속성은 pk값이다. getUsername() 호출
+				<user name="user1" password="user1password" authorities="ROLE_USER" />
+				<user name="admin1" password="admin1password" authorities="ROLE_ADMIN" />
+			</user-service>
+		</authentication-provider>
+		 -->
+		 
+		 <!-- base64: true로 세팅하면 암호화 후 base64로 인코딩 하는 것으로 추측 -->
+		 <!-- password-encoder hash:사용할 알고리즘 지정. {sha}, {ssha}, bcrypt, md4, md5, plaintext, sha-256, sha 중 택 1 -->
+		 <!-- hash="bcrypt" 라고 적을 경우, 스프링은 PasswordEncoder를 구현한 객체중 BCryptPasswordEncoder를 내부에 생성한다. -->
+		 <!-- 다만 이럴 경우, 외부에서 해당 클래스를 참조할 방법이 없으므로 따로 선언해서 주입해주도록 합니다. -->
+		 <authentication-provider user-service-ref="loginService">
+		 	<!-- <password-encoder hash="bcrypt"/> -->
+		 	<password-encoder ref="bcryptPasswordEncoder"/>
+		 </authentication-provider>
+	</authentication-manager>
 	
 	
 	
