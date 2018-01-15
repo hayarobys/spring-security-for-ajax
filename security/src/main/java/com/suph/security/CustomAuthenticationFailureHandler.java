@@ -6,10 +6,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler{
+	
+	protected final static Logger logger = LoggerFactory.getLogger(CustomAuthenticationFailureHandler.class);
 	
 	private String loginidname;			// 로그인 id값이 들어오는 input 태그 name
 	private String loginpasswdname;		// 로그인 password 값이 들어오는 input 태그 name
@@ -68,22 +72,24 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 	// 로그인 실패 시 호출되는 메소드
 	// 인자로 오는 AuthenticationException에 어떤 이유로 실패했는지에 대한 정보가 담겨있습니다.
 	@Override
-	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException exception) throws IOException, ServletException{
+	public void onAuthenticationFailure(
+			HttpServletRequest request, HttpServletResponse response, AuthenticationException exception
+	) throws IOException, ServletException{
 		
 		// Request 객체의 Attribute에 사용자가 실패시 입력했던 로그인 ID와 비밀번호를 저장해두어 로그인 페이지에서 이를 접근하도록 한다.
 		String loginid = request.getParameter(loginidname);
 		String loginpasswd = request.getParameter(loginpasswdname);
-		String loginRedirect = request.getParameter(loginredirectname);
+		//String loginRedirect = request.getParameter(loginredirectname);
 		
 		request.setAttribute(loginidname, loginid);
 		request.setAttribute(loginpasswdname, loginpasswd);
-		request.setAttribute(loginredirectname, loginRedirect);
+		//request.setAttribute(loginredirectname, loginRedirect);
 		
 		// Request 객체의 Attribute에 예외 메시지 저장
 		request.setAttribute(exceptionmsgname, exception.getMessage());
 		request.getRequestDispatcher(defaultFailureUrl).forward(request, response);	// redirect하면 request영역을 공유할 수 없다. forward해주자.
-		
+		// forward함으로써 클라이언트가 보낸 request에 담긴 객체를 defaultFailureUrl페이지에서 다시 불러쓸 수 있다.
+		// 다만 클라이언트의 주소창 값은 직전에 요청한 주소로 변경된다. 여기선 http://localhost:8443/security/login_check로 변경
 	}
 }
 

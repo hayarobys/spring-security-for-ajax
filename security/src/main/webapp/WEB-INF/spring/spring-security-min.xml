@@ -14,40 +14,52 @@
 	
 	
 	<!--====================================== 로그인 관련 설정들 =====================================-->
-	<beans:bean id="CustomAuthenticationSuccessHandler" class="com.suph.security.CustomAuthenticationSuccessHandler">
+	<beans:bean id="customAuthenticationEntryPoint" class="com.suph.security.CustomAuthenticationEntryPoint">
+		<beans:property name="loginredirectname" value="loginRedirect"/>
+		<beans:property name="loginFormPath" value="/login"/>
+	</beans:bean>
+	<beans:bean id="nullRequestCache" class="org.springframework.security.web.savedrequest.NullRequestCache"/>
+	<beans:bean id="customAuthenticationSuccessHandler" class="com.suph.security.CustomAuthenticationSuccessHandler">
 		<beans:property name="targetUrlParameter" value="loginRedirect"/>
 		<beans:property name="defaultUrl" value="/main"/>
 		<beans:property name="useReferer" value="false"/>
 	</beans:bean>
-	
-	<beans:bean id="CustomAuthenticationFailureHandler" class="com.suph.security.CustomAuthenticationFailureHandler">
+	<beans:bean id="customAuthenticationFailureHandler" class="com.suph.security.CustomAuthenticationFailureHandler">
 		<beans:property name="loginidname" value="loginid"/>
 		<beans:property name="loginpasswdname" value="loginpw"/>
-		<beans:property name="loginredirectname" value="loginRedirect"/>
 		<beans:property name="exceptionmsgname" value="securityexceptionmsg"/>
-		<beans:property name="defaultFailureUrl" value="/login.do?fail=true"/>
+		<beans:property name="defaultFailureUrl" value="/login"/>
 	</beans:bean>
-	
+	<beans:bean id="customSecurityContextRepository" class="com.suph.security.CustomSecurityContextRepository"/>
+	<beans:bean id="customLogoutHandler" class="com.suph.security.CustomLogoutSuccessHandler"/>
 	<beans:bean id="accessDenied" class="com.suph.security.CustomAccessDeniedHandler">
 		<beans:property name="errorPage" value="/access_denied"/>
 	</beans:bean>
 	
-	<http auto-config="true" use-expressions="true">
+	<http	auto-config="true"
+		use-expressions="true"
+		security-context-repository-ref="customSecurityContextRepository"
+		entry-point-ref="customAuthenticationEntryPoint"
+	>
+		<request-cache ref="nullRequestCache"/>
 		<intercept-url pattern="/**" requires-channel="https"/>
+		
 		<port-mappings>
 			<port-mapping http="8090" https="8443"/>
 		</port-mappings>
 		
+		<logout delete-cookies="JSESSIONID"
+			success-handler-ref="customLogoutHandler"/>
+			
 		<form-login
 			username-parameter="loginid"
 			password-parameter="loginpwd"
 			login-page="/login"
-			default-target-url="/main"
-			authentication-success-handler-ref="CustomAuthenticationSuccessHandler"
-			authentication-failure-handler-ref="CustomAuthenticationFailureHandler"
+			login-processing-url="/login_check"
+			authentication-success-handler-ref="customAuthenticationSuccessHandler"
+			authentication-failure-handler-ref="customAuthenticationFailureHandler"
 		/>
 		
-		<logout logout-success-url="/main" delete-cookies="JSESSIONID"/>
 		<anonymous granted-authority="ANONYMOUS"/>
 		<custom-filter before="FILTER_SECURITY_INTERCEPTOR" ref="filterSecurityInterceptor"/>
 		<access-denied-handler ref="accessDenied"/>

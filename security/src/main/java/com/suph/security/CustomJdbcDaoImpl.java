@@ -26,7 +26,7 @@ import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
 
 public class CustomJdbcDaoImpl extends JdbcDaoImpl{
 	// 로그 객체는 spring-jdbc > spring-tx > DaoSupport에 Log logger(getClass()) 형태로 존재
-	//Logger logger = Logger.getLogger(CustomJdbcDaoImpl.class);
+	// private static final Logger logger = Logger.getLogger(CustomJdbcDaoImpl.class);
 	
 	/**
 	 * spring-orm > JdbcDaoImpl 클래스에 있는 메소드

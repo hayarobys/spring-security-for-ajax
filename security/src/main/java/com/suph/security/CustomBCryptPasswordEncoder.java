@@ -5,17 +5,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class CustomBCryptPasswordEncoder extends BCryptPasswordEncoder{
-	Logger logger = LoggerFactory.getLogger(getClass());
+	private static final Logger logger = LoggerFactory.getLogger(CustomBCryptPasswordEncoder.class);
 	
 	public String encode(CharSequence rawPassword) {
         String result = super.encode(rawPassword);
-        //logger.debug("encode \"{}\" to \"{}\"", rawPassword, result);
         return result;
     }
 
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
         boolean result = super.matches(rawPassword, encodedPassword);
-        //logger.debug("matches rawPassword: {}, encodedPassword: {}, result: {}", new Object[]{rawPassword, encodedPassword, result});
         return result;
     }
 }

@@ -16,8 +16,7 @@ public class CustomAffirmativeBased extends AffirmativeBased{
 	
 	@Override
 	public void decide(Authentication authentication, Object object, Collection<ConfigAttribute> configAttributes)
-            throws AccessDeniedException {
-		logger.debug("접근 가능한 권한 목록: " + configAttributes);
+            throws AccessDeniedException{
 		
         int deny = 0;
 

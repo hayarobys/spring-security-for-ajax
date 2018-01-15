@@ -21,7 +21,7 @@ import org.springframework.security.web.access.intercept.FilterInvocationSecurit
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 public class ReloadableFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource{
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(ReloadableFilterInvocationSecurityMetadataSource.class);
 	
 	// UrlResourcesMapFactoryBean의 getObject()로 받아온다.
 	private final Map<RequestMatcher, Collection<ConfigAttribute>> requestMap;

@@ -20,8 +20,11 @@
 package com.suph.security;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -29,6 +32,8 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
@@ -39,7 +44,7 @@ import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.util.StringUtils;
 
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler{
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
 	private RequestCache requestCache = new HttpSessionRequestCache();
 	private String targetUrlParameter;
 	private String defaultUrl;
@@ -94,6 +99,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		// 이는 로그인 성공후에도 남아있기에, AuthenticationSuccessHandler를 구현한 클래스들에선 기본적으로 저 메시지를 지워주고 있습니다.
 		clearAuthenticationAttributes(request);
 		
+		addAuthCookie(response, auth);
+		
 		int intRedirectStrategy = decideRedirectStrategy(request, response);
 		switch(intRedirectStrategy){
 		case 1:
@@ -124,6 +131,34 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		}
 		
 		session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+	}
+	
+	/**
+	 * 로그인 성공시 JWT 토큰을 생성합니다.
+	 * 토큰에는 다음의 정보가 담깁니다. 권한, 닉네임, 아이디, 만료일자, 생성일자
+	 * 
+	 * @param response
+	 * @param authentication
+	 */
+	public void addAuthCookie(HttpServletResponse response, Authentication authentication){
+		// UsernamePasswordAuthenticationToken의 Object principal; 반환. userDetails를 구현한 MemberInfo 객체가 반환됨
+		MemberInfo user = (MemberInfo)authentication.getPrincipal();
+		String cookieValue = user.getId() + "," + user.getName();	// 로그인 성공한 유저의 아이디 반환
+
+		if(authentication.getAuthorities() != null){
+			for(GrantedAuthority auth : authentication.getAuthorities()){
+				cookieValue += "," + auth.getAuthority();	// {AUTH : 아이디,닉네임,ROLE_ADMIN,ROLE_MANAGER} 식으로 쿠키에 넣을값 생성
+			}
+		}
+		
+		try{
+			// 실제로는 쿠키값을 암호화해서 저장한다.(추후 JWT를 사용해 보자)
+			Cookie cookie = new Cookie("AUTH", URLEncoder.encode(cookieValue, "utf-8"));
+			cookie.setPath("/");
+			response.addCookie(cookie);
+		}catch(UnsupportedEncodingException e){
+			throw new RuntimeException(e);
+		}
 	}
 	
 	/**

@@ -7,7 +7,7 @@
 	<title>로그인 화면</title>
 </head>
 <body>
-	<form id="loginfrm" name="loginfrm" method="POST" action="./j_spring_security_check">
+	<form id="loginfrm" name="loginfrm" method="POST" action="./login_check">
 		<table>
 			<tr>
 				<td style="width:50px;">id</td>
@@ -58,7 +58,13 @@
 			</tr>
 		</table>
 		
-		<input type="hidden" name="loginRedirect" value="${loginRedirect}"/>
+		<%-- 인증 성공 후, 이동할 경로 저장 방식으로 세션을 썼을때의 코드 --%>
+		<%-- <input type="hidden" name="loginRedirect" value="${loginRedirect}"/> --%>
+		
+		<%-- 인증 성공 후, 이동할 경로 저장 방식으로 URL 파라미터를 썼을때의 코드. --%>
+		<%-- forward를 통해 이 페이지로 이동해 왔고, request에 loginRedirect값이 존재한다면, EL을 통해 그대로 불러쓸 수 있다. --%>
+		<%-- forward로 왔을 경우, 직전의 요청 URL인 form action값이 주소값으로 대체되어 있을 것이다. --%>
+		<input type="hidden" name="loginRedirect" value="${param.loginRedirect}"/>
 	</form>
 </body>
 </html>

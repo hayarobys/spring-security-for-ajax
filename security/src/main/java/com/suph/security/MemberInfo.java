@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -42,16 +43,20 @@ public class MemberInfo implements UserDetails{
 		return memberInfo;
 	}*/
 	
+	public MemberInfo(String id, String name, String password, Collection<? extends GrantedAuthority> authorities){
+		this.id = id;
+		this.name = name;
+		this.password = password;
+		this.authorities = Collections.unmodifiableSet(sortAuthorities(authorities));
+	}
+	
 	public MemberInfo(
 			int no, String id, String password, String name, char enable,
 			Collection<? extends GrantedAuthority> authorities
 	){
+		this(id, name, password, authorities);
 		this.no = no;
-		this.id = id;
-		this.password = password;
-		this.name = name;
 		this.enable = enable;
-		this.authorities = Collections.unmodifiableSet(sortAuthorities(authorities));
 	}
 		
 	/**
@@ -92,7 +97,6 @@ public class MemberInfo implements UserDetails{
 	 * @param id
 	 */
 	public void setId(String id){
-		logger.debug("setNoId() = {}", id);
 		this.id = id;
 	}
 

@@ -2,6 +2,8 @@
 <%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
 <%@ page import="org.springframework.security.core.Authentication" %>
 <%@ page import="com.suph.security.MemberInfo" %>
+<%@ page import="org.slf4j.Logger" %>
+<%@ page import="org.slf4j.LoggerFactory" %>
 
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
@@ -14,7 +16,12 @@
 		name = ((MemberInfo)principal).getName();
 		// 미인증 상태에선 "anonymousUser" 가 반환된다.
 	}
-	//System.out.println("권한명: " + name);
+	
+	Logger logger = LoggerFactory.getLogger(getClass());
+	logger.debug("getContext {}", SecurityContextHolder.getContext());
+	logger.debug("getAuthentication {}", SecurityContextHolder.getContext().getAuthentication());
+	System.out.println("getContext {} " + SecurityContextHolder.getContext());
+	System.out.println("getAuthentication {} " + SecurityContextHolder.getContext().getAuthentication());
 	/* 
 	// 로그인 정보를 가져오기 위해 Servlet Spec에서 제공하는 방법
 	Authentication auth = (Authentication)request.getUserPrincipal();
@@ -43,7 +50,7 @@
 	<div style="width:200px; float:left;">
 		<sec:authorize access="isAnonymous()">
 			<!-- 스프링 시큐리티 4.x 버전부터는 action 경로가 login으로, name들은 더 명확한걸로 변경되었음에 주의. -->
-			<form id="loginfrm" name="loginfrm" method="POST" action="./j_spring_security_check">
+			<form id="loginfrm" name="loginfrm" method="POST" action="./login_check">
 				<table>
 					<tr>
 						<td style="width:50px;">id</td>

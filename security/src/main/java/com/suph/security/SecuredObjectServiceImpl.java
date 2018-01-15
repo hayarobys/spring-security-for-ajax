@@ -15,7 +15,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 //@Service("securedObjectServiceImpl")
 public class SecuredObjectServiceImpl implements SecuredObjectService{
-	Logger logger = LoggerFactory.getLogger(getClass());
+	private static final Logger logger = LoggerFactory.getLogger(SecuredObjectServiceImpl.class);
 	
 	public static final String TYPE_URL = "url";
 	public static final String TYPE_METHOD = "method";
@@ -42,9 +42,6 @@ public class SecuredObjectServiceImpl implements SecuredObjectService{
 		for(Object key : keys){
 			convertData.put((AntPathRequestMatcher)key, originalData.get(key));
 		}
-		
-		//logger.debug("getRolesAndUrl original return {}", originalData);
-		//logger.debug("getRolesAndUrl convert return {}", convertData);
 		
 		return convertData;
 	}
@@ -97,15 +94,12 @@ public class SecuredObjectServiceImpl implements SecuredObjectService{
 		List<RoleVO> resultList = null;
 		if( SecuredObjectServiceImpl.TYPE_METHOD.equals(resourceType) ){
 			resultList = securedObjectDAO.getRolesAndResources(SecuredObjectServiceImpl.TYPE_METHOD);
-			//logger.debug("getRolesAndResources(SecuredObjectServiceImpl.TYPE_METHOD) {}", resultList);
 			
 		}else if( SecuredObjectServiceImpl.TYPE_POINTCUT.equals(resourceType) ){
 			resultList = securedObjectDAO.getRolesAndResources(SecuredObjectServiceImpl.TYPE_POINTCUT);
-			//logger.debug("getRolesAndResources(SecuredObjectServiceImpl.TYPE_POINTCUT) {}", resultList);
 			
 		}else{
 			resultList = securedObjectDAO.getRolesAndResources(SecuredObjectServiceImpl.TYPE_URL);
-			//logger.debug("getRolesAndResources(SecuredObjectServiceImpl.TYPE_URL) {}", resultList);
 			
 		}
 		
@@ -128,13 +122,8 @@ public class SecuredObjectServiceImpl implements SecuredObjectService{
 			// 현재 url패턴에 접근 가능한 권한 목록을 담을 List객체 생성
 			List<ConfigAttribute> configList = new LinkedList<ConfigAttribute>();	// 새로운 권한 목록
 			
-			//logger.debug("pastResource != null: {}", pastResource != null);
-			//logger.debug("pastResource = {}", pastResource);
-			//logger.debug("presentResourceStr.equals(pastResource) = {}", presentResourceStr.equals(pastResource));
-			
 			// 처리해야할 URL패턴이 이전 URL패턴과 동일한 곳 을 가르키고 있다면
 			if(pastResource != null && presentResourceStr.equals(pastResource)){
-				//logger.debug("이전 루프에서 처리한 URL패턴과 동일한 URL패턴으로 확인됨. 루프 진입");
 				
 				// 최종적으로 반환할 Map객체로부터 지금까지 저장된 현재 URL패턴의 권한 목록 받아오기
 				List<ConfigAttribute> pastAuthList = returnMap.get(presentResourceObj);	// 이전 권한 목록
@@ -143,7 +132,6 @@ public class SecuredObjectServiceImpl implements SecuredObjectService{
 				Iterator<ConfigAttribute> pastAuthItr = pastAuthList.iterator();
 				while(pastAuthItr.hasNext()){					
 					SecurityConfig tempConfig = (SecurityConfig)pastAuthItr.next();
-					//logger.debug("tempConfig {}", tempConfig);
 					configList.add(tempConfig);
 				}
 			}
@@ -156,7 +144,6 @@ public class SecuredObjectServiceImpl implements SecuredObjectService{
 			// 최종적으로 반환할 Map에 재할당. 같은 key(리소스 패턴이 같은게 있다면)가 있다면 이것으로 교체.
 			// 최종적으로 반환할 Map객체에 (url패턴 - 권한 목록) 으로 저장.
 			returnMap.put(presentResourceObj, configList);
-			//logger.debug("returnMap {}", returnMap);
 			
 			// 이전 리소스 정보 갱신. DB조회시 부터 리소스 패턴 순서에 따라 정확한 정렬이 되어있어야 올바르게 동작하는 코드. (세부적인 패턴 -> 포괄적인 패턴 순서로)
 			pastResource = presentResourceStr;

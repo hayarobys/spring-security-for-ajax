@@ -16,22 +16,52 @@
 	
 	
 	<!--====================================== 로그인 관련 설정들 =====================================-->
-	<beans:bean id="CustomAuthenticationSuccessHandler" class="com.suph.security.CustomAuthenticationSuccessHandler">
-		<beans:property name="targetUrlParameter" value="loginRedirect"/>	<!-- 로그인 요청에 해당 파라미터가 있으면 읽어들여 이동 -->
+	<!-- ExceptionTranslationFilter는 사용자가 인증이 필요한 경로에 접근할 경우, HttpSessionRequestCache에 요청된 경로를 저장하고, -->
+	<!-- AuthenticaitonEntryPoint를 통해 로그인 폼으로 리디렉트 시킵니다. -->
+	<beans:bean id="customAuthenticationEntryPoint" class="com.suph.security.CustomAuthenticationEntryPoint">
+		<!-- 인증 성공시 이동시킬 경로를 저장할 파라미터명 지정합니다. HttpSessionRequestCache를 이용하는대신 URL을 통해 값을 전달하는 방법입니다. -->
+		<beans:property name="loginredirectname" value="loginRedirect"/>
+		
+		<!-- 리디렉트 시킬 로그인 폼 요청 경로 지정 -->
+		<beans:property name="loginFormPath" value="/login"/>
+	</beans:bean>
+	
+	<!-- 따라서 RequestCache를 커스터마이징 하여 Session에 요청 경로를 저장하는 코드를 제거합니다. -->
+	<beans:bean id="nullRequestCache" class="org.springframework.security.web.savedrequest.NullRequestCache"/>
+	
+	<beans:bean id="customAuthenticationSuccessHandler" class="com.suph.security.CustomAuthenticationSuccessHandler">
+		<beans:property name="targetUrlParameter" value="loginRedirect"/>	<!-- 인증 성공했을때, 로그인 요청에 해당 파라미터가 있으면 읽어들여 이동 -->
 		<beans:property name="defaultUrl" value="/main"/>	<!-- REFERER도, 파라미터도 없을때 이동할 페이지 -->
 		<beans:property name="useReferer" value="false"/>	<!-- 기본값 false -->
 	</beans:bean>
 	
-	<beans:bean id="CustomAuthenticationFailureHandler" class="com.suph.security.CustomAuthenticationFailureHandler">
+	<beans:bean id="customAuthenticationFailureHandler" class="com.suph.security.CustomAuthenticationFailureHandler">
 		<beans:property name="loginidname" value="loginid"/>
 		<beans:property name="loginpasswdname" value="loginpw"/>
-		<beans:property name="loginredirectname" value="loginRedirect"/>
+		<!-- <beans:property name="loginredirectname" value="loginRedirect"/> -->
 		<beans:property name="exceptionmsgname" value="securityexceptionmsg"/>
-		<beans:property name="defaultFailureUrl" value="/login.do?fail=true"/>
+		<beans:property name="defaultFailureUrl" value="/login"/>	<!-- 로그인 실패시 보여줄 로그인 페이지 폼 -->
 	</beans:bean>
 
+	<beans:bean id="customSecurityContextRepository" class="com.suph.security.CustomSecurityContextRepository"/>
+	<beans:bean id="customLogoutHandler" class="com.suph.security.CustomLogoutSuccessHandler"/>
+	
+	<beans:bean id="accessDenied" class="com.suph.security.CustomAccessDeniedHandler">
+		<beans:property name="errorPage" value="/access_denied"/>
+	</beans:bean>
+	
 	<!-- use-expressions: true값을 줄 경우 intercept-url의 access속성에서 몇가지 표현식 사용이 가능해진다. -->
-	<http auto-config="true" use-expressions="true">
+	<!-- security-context-repository-ref: 로그인 성공 시(인증 성공 시) SecurityContext생성 전략을 구현한 클래스 지정. 여기선 쿠키에서 특정 값을 읽어와 메모리에 저장하도록 구현했다. -->
+	<!-- entry-point-ref: 인증이 필요한 페이지에 접근시 특정 필터에서 예외가 발생하고, 그 예외를 받은 ExceptionTranslationFilter는 -->
+	<!-- 			AuthenticationEntryPoint에게 보여줄 로그인 폼 위치를 묻습니다. -->
+	<!-- request-cache: ExceptionTranslationFilter가 요청이 온 경로를 어떻게 저장할지 HttpSessionRequestCache에 묻습니다. -->
+	<!-- 			따라서 RequestCache를 덮어씌워 Session 저장 코드를 제거하도록 합니다. -->
+	<http	auto-config="true"
+		use-expressions="true"
+		security-context-repository-ref="customSecurityContextRepository"
+		entry-point-ref="customAuthenticationEntryPoint"
+	>
+		<request-cache ref="nullRequestCache"/>
 	<!--
 		auto-config를 사용함으로써 아래의  http 내부 태그들이 기본값으로 설정되었다.
 		어디까지나 예제라서 기본값을 쓰는거지, 우리 현실에 맞는 방식은 아님을 명심하자.
@@ -69,28 +99,43 @@
 			secure="true"
 			sslProtocol="TLS"
 		/>
-		 -->
+		-->
+		
+		<!-- logout-success-url: 로그아웃 버튼 클릭시 이동할 페이지 지정. 기본 로그아웃 요청 경로는 ./j_spring_security_check -->
+		<!-- delete-cookies: 로그아웃을 진행하면서 지워야 할 쿠키 지정. 콤마를 구분자로 하여 여러개의 쿠키 이름을 지정 가능. JSESSIONID는 세션 구분할때 쓰는 그거 맞다 -->
+		<!-- success-handler-ref: 로그아웃 성공시 처리할 동작을 정의한 핸들러. 여기선 특정 쿠키를 제거하도록 구현했다. -->
+		<!-- logout-success-url과 success-handler-ref를 함께 쓸 수 없음에 주의 -->
+		<!-- <logout logout-success-url="/main" delete-cookies="JSESSIONID" -->
+		<logout delete-cookies="JSESSIONID"
+			success-handler-ref="customLogoutHandler"/>
+		
 		<!-- username-parameter: 기본 name 속성 값인 j_username을 교체 -->
 		<!-- password-parameter: 기본 name 속성 값인 j_password를 교체-->
 		<!-- login-page: 로그인 화면 URL 지정. 인증을 받지 않은 상태에서 권한이 필요한 화면에 접근할 경우 보여줄 경로 -->
-		<!-- default-target-url: login-page외의 접근에서 로그인 인증을 성공하면 보여줄 페이지 지정 -->
+		<!-- login-processing-url: 로그인 처리를 할 경로명 지정. 기본값은 /j_spring_security_check -->
+		<!-- default-target-url: login-page외의 접근에서 로그인 인증을 성공하면 보여줄 페이지 지정. authentication-success-handler-ref와 failure핸들러를 임의지정시 사용 불가한 속성 -->
 		<!-- always-use-default-target: 이 속성을 true로 주면 login-page로의 접근에서도 default-target-url을 보여주게 된다 -->
 		<!-- authentication-failure-url: 인증에 실패했을 경우 보여줄 URL 지정. 여기선 실패할 경우 다시 로그인 화면을 보여주게끔 설정 -->
 		<!-- authentication-success-handler-ref: 로그인 성공시 처리할 동작이 정의된 클래스 -->
 		<!-- authentication-failure-handler-ref: 로그인 실패시 처리할 동작이 정의된 클래스. 처리내용이 authentication-failure-url과 겹치지 않게 주의 -->
 		<!-- failure-handler미 정의시 기본적으로 org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler 사용 -->
+		<!-- 
 		<form-login
 			username-parameter="loginid"
 			password-parameter="loginpwd"
 			login-page="/login"
 			default-target-url="/main"
-			authentication-success-handler-ref="CustomAuthenticationSuccessHandler"
-			authentication-failure-handler-ref="CustomAuthenticationFailureHandler"
+		/>
+		-->
+		<form-login
+			username-parameter="loginid"
+			password-parameter="loginpwd"
+			login-page="/login"
+			login-processing-url="/login_check"
+			authentication-success-handler-ref="customAuthenticationSuccessHandler"
+			authentication-failure-handler-ref="customAuthenticationFailureHandler"
 		/>
 		
-		<!-- logout-success-url: 로그아웃 버튼 클릭시 이동할 페이지 지정. 기본 로그아웃 요청 경로는 ./j_spring_security_check -->
-		<!-- delete-cookies: 로그아웃을 진행하면서 지워야 할 쿠키 지정. 콤마를 구분자로 하여 여러개의 쿠키 이름을 지정 가능. JSESSIONID는 세션 구분할때 쓰는 그거 맞다 -->
-		<logout logout-success-url="/main" delete-cookies="JSESSIONID"/>
 		
 		<!-- 미로그인 유저를 지칭할 권한명 지정. 기본값은 ROLE_ANONYMOUS -->
 		<anonymous granted-authority="ANONYMOUS"/>
@@ -111,10 +156,6 @@
 		<!-- 특정 URL에 권한이 없는 사람이 접근할 경우, 보여줄 페이지 지정 -->
 		<access-denied-handler ref="accessDenied"/>
 	</http>
-	
-	<beans:bean id="accessDenied" class="com.suph.security.CustomAccessDeniedHandler">
-		<beans:property name="errorPage" value="/access_denied"/>
-	</beans:bean>
 	
 	
 	
@@ -149,6 +190,10 @@
 	<beans:bean id="bcryptPasswordEncoder" class="com.suph.security.CustomBCryptPasswordEncoder"/>
 	
 	<authentication-manager>	<!-- 인증 관련 정보 -->
+		<!-- <authentication-provider>: AuthenticationManager 인터페이스를 구현한 ProviderManager가 리스트로 가지는 -->
+		<!-- 				AuthenticationProvider 인터페이스의 구현객체인 DaoAuthenticationProvider 생성 태그. -->
+		<!-- 				참고로 DaoAuthenticationProvider는 내부적으로 UserDetailsService를 이용해 사용자 정보를 읽어온다. -->
+		<!-- 				여기선 LoginServiceImpl이 UserDetailsService를 구현하여 그 역할을 수행한다. -->
 		<!-- 
 		<authentication-provider>	정보 제공자 지정
 			<user-service>	사용자 정보 설정
@@ -196,6 +241,7 @@
 	</beans:bean>
 	
 	<!-- URL별 권한 정보를 메모리에 올려두고 관리하다가, 요청시 갱신 작업을 수행하는 객체 -->
+	<!-- FilterSecurityInterceptor에서 리소스에 대한 보안 설정(Configattribute) 정보를 확인하는데 사용된다. -->
 	<beans:bean id="reloadableFilterInvocationSecurityMetadataSource" class="com.suph.security.ReloadableFilterInvocationSecurityMetadataSource">
 		<beans:constructor-arg ref="requestMap"/>
 		<beans:property name="securedObjectService" ref="securedObjectService"/>	<!-- 어노테이션 주입으로 대체방법은? -->
@@ -210,6 +256,8 @@
 	<!-- 		UnanimousBased: 모든 voter가 만장일치로 승인해야 접근 허가 -->
 	<!-- 		ConsensusBased: voter들의 의견을 다수결로 판단함 -->
 	<!-- 	이중에 원하는 방식이 없을 경우 AbstractAccessDecisionManager를 상속하여 직접 구현 가능 -->
+	<!-- FilterSecurityInterceptor에서 이전 필터들에 의해 Securitycontext에 저장된 Authentication(현재 사용자의 정보)과 -->
+	<!-- FilterInvocationMetadataSource를 통해 알아낸 리소스의 보안 설정 정보를 이 AccessDecisionManager에게 보내면서 통과시킬지 말지 물어본다. -->
 	<!-- 
 	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
 		<beans:constructor-arg>
