@@ -8,5 +8,4 @@ import java.util.ArrayList;
 public class MemberAuthVO{
 	private String id;		// MEM_ID: 부여할 회원
 	private String auth;	// AUTH_NM; 부여할 권한
-	
 }

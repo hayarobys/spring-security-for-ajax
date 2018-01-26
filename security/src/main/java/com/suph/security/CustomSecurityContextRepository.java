@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,19 +35,31 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	private static final Logger logger = LoggerFactory.getLogger(CustomSecurityContextRepository.class);
 	
 	/** SecurityContext 생성을 위한 JWT가 저장될 쿠키의 key명 입니다. */
-	public static final String SPRING_SECURITY_CONTEXT_KEY = "SPRING_SECURITY_CONTEXT";
+	@Value("#{security['spring_security_context_key']}")
+	private String SPRING_SECURITY_CONTEXT_KEY;
+	
+	/** JWT 토큰의 유효 시간 입니다. */
+	@Value("#{security['jwt.exp_time_per_ms']}")
+	private int TOKEN_EXP_TIME;
 	
 	/** JWT 암/복호화를 위한 대칭키 입니다. */
-	private static final String SALT = "temporarysalt.7!";
+	@Value("#{security['jwt.secret']}")
+	private String SALT;
+	
+	@Value("#{security['jwt.claim.id']}")
+	private String JWTId;
+	
+	@Value("#{security['jwt.claim.name']}")
+	private String JWTName;
+	
+	@Value("#{security['jwt.claim.authorities']}")
+	private String JWTAuthorities;
 	
 	/**	(미인증된)기본 내용과 동일한지를 확인하는 데 사용되는 SecurityContext 객체 */
 	private final Object contextObject = SecurityContextHolder.createEmptyContext();
 	
 	/** SecurityContext 생성을 위한 JWT가 저장될 쿠키의 key명 입니다. */
 	private String springSecurityContextKey = SPRING_SECURITY_CONTEXT_KEY;
-	
-	/** JWT 토큰의 유효 시간 입니다.(ms 단위) */
-	public static final int TOKEN_EXP_TIME = 10 * 60 * 1000;
 	
 	private boolean disableUrlRewriting = false;
 	
@@ -67,7 +80,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
         Cookie jwtCookie = getCookieFromRequest(request, SPRING_SECURITY_CONTEXT_KEY);
         if(jwtCookie == null){
         	logger.debug("요청으로부터 " + SPRING_SECURITY_CONTEXT_KEY + "에 해당하는 jwtCookie를 발견하지 못했습니다. 새로운 Cookie를 생성합니다.");
-        	jwtCookie = generateContextClearCookie(CustomSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+        	jwtCookie = generateContextClearCookie(SPRING_SECURITY_CONTEXT_KEY);
         }
         
         SecurityContext context = readSecurityContextFromJWT(jwtCookie.getValue());
@@ -173,8 +186,8 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			return null;
 		}
 		
-		String id = (String)JWTUtility.getClaim(claims, "id");
-		String name = (String)JWTUtility.getClaim(claims, "name");
+		String id = (String)JWTUtility.getClaim(claims, JWTId);
+		String name = (String)JWTUtility.getClaim(claims, JWTName);
 		
 		if(!StringUtils.hasText(id) || !StringUtils.hasText(name)){
 			logger.debug("JWT에 유효한 id 혹은 name 이 없습니다.");
@@ -249,6 +262,8 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 		Cookie cookie = new Cookie(key, null);
 		cookie.setPath("/");
 		cookie.setMaxAge(0);
+		cookie.setSecure(true);
+		cookie.setHttpOnly(true);
 		
 		return cookie;
 	}
@@ -279,22 +294,24 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			}
 			String authorities = authBuilder.toString();
 			
-			contextClaims.put("id", id);
-			contextClaims.put("name", name);
-			contextClaims.put("authorities", authorities);
+			contextClaims.put(JWTId, id);
+			contextClaims.put(JWTName, name);
+			contextClaims.put(JWTAuthorities, authorities);
 			
 		}else if(principal instanceof String){
-			contextClaims.put("name", (String)principal);
+			contextClaims.put(JWTName, (String)principal);
 		}
 		
 		String jwtContext = JWTUtility.createJWT(
 				new Date(),
-				new Date(System.currentTimeMillis() + CustomSecurityContextRepository.TOKEN_EXP_TIME),
+				new Date(System.currentTimeMillis() + TOKEN_EXP_TIME),
 				"www.security.org",
 				contextClaims,
-				CustomSecurityContextRepository.SALT
+				SALT
 		);
-		Cookie jwtContextCookie = new Cookie(CustomSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, jwtContext);
+		Cookie jwtContextCookie = new Cookie(SPRING_SECURITY_CONTEXT_KEY, jwtContext);
+		jwtContextCookie.setSecure(true);
+		jwtContextCookie.setHttpOnly(true);
 		
 		return jwtContextCookie;
 	}
@@ -340,7 +357,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 				
 				if(!contextObject.equals(contextBeforeExecution)){
 				// 다만 보안필터체인을 돌기전에 생성한 SecurityContext가 인증 상태었다면 기존 SecurityContext 쿠키를 제거하라고 응답합니다.
-					Cookie clearCookie = generateContextClearCookie(CustomSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+					Cookie clearCookie = generateContextClearCookie(SPRING_SECURITY_CONTEXT_KEY);
 					response.addCookie(clearCookie);
 				}
 				
@@ -350,6 +367,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			if(contextChanged(context)){
 			// 보안필터체인을 돌고난 후의 SecurityContext가 이전과 다르다면 쿠키에 저장합니다.
 				Cookie jwtContextCookie = generateJWTContextCookie(context);
+				jwtContextCookie.setSecure(true);
 				response.addCookie(jwtContextCookie);
 				
 				logger.debug("다음의 SecurityContext를 쿠키에 저장합니다: {}", context);

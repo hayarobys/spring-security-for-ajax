@@ -9,20 +9,24 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.util.StringUtils;
 
 public class CustomLogoutSuccessHandler implements LogoutSuccessHandler{
-
+	/** 기존 SecurityContext 정보가 저장된 JWT 쿠키의 key명 입니다. */
+	@Value("#{security['spring_security_context_key']}")
+	private String SPRING_SECURITY_CONTEXT_KEY;
+	
 	/**
-	 * 로그아웃 성공시 "AUTH"라는 이름의 쿠키를 제거합니다.
+	 * 로그아웃 성공시 관련 쿠키를 제거합니다.
 	 * 그 후, 컨텍스트 루트 경로로 리디렉트 합니다.
 	 */
 	@Override
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException, ServletException{
-		logout(request, response, authentication, CustomSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+		logout(request, response, authentication, SPRING_SECURITY_CONTEXT_KEY);
 		response.sendRedirect(request.getContextPath() + "/main");
 	}
 	
@@ -37,14 +41,19 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler{
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication, String... cookiesToClear){
 		List<String> cookiesToClearList = Arrays.asList(cookiesToClear);
 		
-		for (String cookieName : cookiesToClearList) {
+		for (String cookieName : cookiesToClearList){
 	        Cookie cookie = new Cookie(cookieName, null);
 	        String cookiePath = request.getContextPath();
+	        
 	        if(!StringUtils.hasLength(cookiePath)) {
 	            cookiePath = "/";
 	        }
+	        
 	        cookie.setPath(cookiePath);
 	        cookie.setMaxAge(0);
+	        cookie.setSecure(true);
+	        cookie.setHttpOnly(true);
+	        
 	        response.addCookie(cookie);
 		}
     }
