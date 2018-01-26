@@ -17,11 +17,6 @@
 		// 미인증 상태에선 "anonymousUser" 가 반환된다.
 	}
 	
-	Logger logger = LoggerFactory.getLogger(getClass());
-	logger.debug("getContext {}", SecurityContextHolder.getContext());
-	logger.debug("getAuthentication {}", SecurityContextHolder.getContext().getAuthentication());
-	System.out.println("getContext {} " + SecurityContextHolder.getContext());
-	System.out.println("getAuthentication {} " + SecurityContextHolder.getContext().getAuthentication());
 	/* 
 	// 로그인 정보를 가져오기 위해 Servlet Spec에서 제공하는 방법
 	Authentication auth = (Authentication)request.getUserPrincipal();

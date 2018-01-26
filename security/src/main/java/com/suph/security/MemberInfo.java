@@ -26,7 +26,7 @@ public class MemberInfo implements UserDetails{
 	
 	private int no;				// MEM_NO 계정 일련 번호 PK
 	private String id;			// MEM_ID 계정 아이디
-	private String password;	// MEM_PASSWORD 계정 비밀번호
+	private transient String password;	// MEM_PASSWORD 계정 비밀번호
 	private String name;		// MEM_NICKNM 계정 사용자의 이름 또는 별명
 	private char enable;		// MEM_ENABLE 계정 사용 여부(탈퇴 여부). Y는 사용 중, N은 탈퇴 혹은 휴면 계정. 
 	
@@ -43,20 +43,24 @@ public class MemberInfo implements UserDetails{
 		return memberInfo;
 	}*/
 	
+	public MemberInfo(String id, String name, Collection<? extends GrantedAuthority> authorities){
+		this(id, name, "[PROTECTED]", authorities);
+	}
+	
 	public MemberInfo(String id, String name, String password, Collection<? extends GrantedAuthority> authorities){
-		this.id = id;
-		this.name = name;
-		this.password = password;
-		this.authorities = Collections.unmodifiableSet(sortAuthorities(authorities));
+		this(0, id, password, name, 'Y', authorities);
 	}
 	
 	public MemberInfo(
 			int no, String id, String password, String name, char enable,
 			Collection<? extends GrantedAuthority> authorities
 	){
-		this(id, name, password, authorities);
 		this.no = no;
+		this.id = id;
+		this.password = password;
+		this.name = name;
 		this.enable = enable;
+		this.authorities = Collections.unmodifiableSet(sortAuthorities(authorities));
 	}
 		
 	/**

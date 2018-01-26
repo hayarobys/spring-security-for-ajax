@@ -99,7 +99,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		// 이는 로그인 성공후에도 남아있기에, AuthenticationSuccessHandler를 구현한 클래스들에선 기본적으로 저 메시지를 지워주고 있습니다.
 		clearAuthenticationAttributes(request);
 		
-		addAuthCookie(response, auth);
+		//addAuthCookie(response, auth);
 		
 		int intRedirectStrategy = decideRedirectStrategy(request, response);
 		switch(intRedirectStrategy){
@@ -140,6 +140,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	 * @param response
 	 * @param authentication
 	 */
+	@Deprecated
 	public void addAuthCookie(HttpServletResponse response, Authentication authentication){
 		// UsernamePasswordAuthenticationToken의 Object principal; 반환. userDetails를 구현한 MemberInfo 객체가 반환됨
 		MemberInfo user = (MemberInfo)authentication.getPrincipal();

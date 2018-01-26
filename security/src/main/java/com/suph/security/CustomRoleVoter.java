@@ -45,7 +45,7 @@ public class CustomRoleVoter extends RoleVoter{
                 for(GrantedAuthority authority : authorities){
                 	
                 	if( attribute.getAttribute().equals( authority.getAuthority() ) ){
-                    	logger.debug("(필요권한 {} - 가진권한 {}), ", attribute, authority);
+                    	//logger.debug("(필요권한 {} - 가진권한 {}), ", attribute, authority);
                         return ACCESS_GRANTED;	// 하나라도 일치한다면 그 즉시 접근을 승인합니다.
                     }
                 }
