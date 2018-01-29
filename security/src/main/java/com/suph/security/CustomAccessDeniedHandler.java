@@ -59,7 +59,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler{
 				request.setAttribute("name", name);
 				request.setAttribute("authorities", authorities);
 			}
-			
+						
 			request.setAttribute("errormsg", accessDeniedException);
 			request.getRequestDispatcher(errorPage).forward(request, response);	// xml등에서 미리 설정한 에러페이지로 이동
 			

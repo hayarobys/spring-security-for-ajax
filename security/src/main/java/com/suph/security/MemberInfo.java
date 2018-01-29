@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -35,20 +36,44 @@ public class MemberInfo implements UserDetails{
 	private boolean enable; 
 	/** 계정이 가지고 있는 권한 목록 */
 	private Set<GrantedAuthority> authorities;
-	
+	/** 로그인 토큰(JWT) 생성일 */
+	private Date issuedAt;
 	
 	// 디폴트 생성자 미정의시 mybatis가 이용하는 자바의 reflection > ObjectFactory > create에서 디폴트 생성자를 찾지 못했다고 익셉션을 낸다.
 	private MemberInfo(){}	// 디폴트 생성자
 	// private이더라도 mybatis는 Reflection클래스에서 constructor.setAccessible(true); 로 타깃 클래스들의 생성자 접근 옵션을 접근 가능으로 바꾸기에
 	// 어떠한 접근제한자 이더라도 mybatis는 접근할 수 있다.
 	
-	public MemberInfo(int no, String id, String password, String name, Collection<? extends GrantedAuthority> authorities){
-		this(no, id, password, name, true, authorities);
+	public MemberInfo(
+			int no,
+			String id,
+			String password,
+			String name,
+			Collection<? extends GrantedAuthority> authorities,
+			Date issuedAt
+	){
+		this(no, id, password, name, true, authorities, issuedAt);
 	}
 	
 	public MemberInfo(
-			int no, String id, String password, String name, boolean enable,
+			int no,
+			String id,
+			String password,
+			String name,
+			boolean enable,
 			Collection<? extends GrantedAuthority> authorities
+	){
+		this(no, id, password, name, true, authorities, null);
+	}
+	
+	public MemberInfo(
+			int no,
+			String id,
+			String password,
+			String name,
+			boolean enable,
+			Collection<? extends GrantedAuthority> authorities,
+			Date issuedAt
 	){
 		this.no = no;
 		this.id = id;
@@ -56,6 +81,7 @@ public class MemberInfo implements UserDetails{
 		this.name = name;
 		this.enable = enable;
 		this.authorities = Collections.unmodifiableSet(sortAuthorities(authorities));
+		this.issuedAt = issuedAt;
 	}
 	
 	/**
@@ -108,6 +134,14 @@ public class MemberInfo implements UserDetails{
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities(){
 		return authorities;
+	}
+	
+	/**
+	 * 로그인 토큰(JWT) 생성 일 을 반환 합니다.
+	 * @return
+	 */
+	public Date getIssuedAt(){
+		return this.issuedAt;
 	}
 	
 	/**

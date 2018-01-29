@@ -43,11 +43,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler{
 		
 		for (String cookieName : cookiesToClearList) {
 	        Cookie cookie = new Cookie(cookieName, null);
-	        String cookiePath = request.getContextPath();
-	        if(!StringUtils.hasLength(cookiePath)) {
-	            cookiePath = "/";
-	        }
-	        cookie.setPath(cookiePath);
+	        cookie.setPath("/");
 	        cookie.setMaxAge(0);
 	        response.addCookie(cookie);
 		}

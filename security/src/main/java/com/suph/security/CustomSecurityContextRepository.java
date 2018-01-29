@@ -30,6 +30,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
 
 public class CustomSecurityContextRepository implements SecurityContextRepository{
 	private static final Logger logger = LoggerFactory.getLogger(CustomSecurityContextRepository.class);
@@ -38,9 +40,17 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	@Value("#{security['spring_security_context_key']}")
 	private String SPRING_SECURITY_CONTEXT_KEY;
 	
+	/** 시큐리티 쿠키의 유효 시간 입니다.(단위: ms) */
+	@Value("#{security['security_cookie.exp_time_per_sec']}")
+	private int SECURITY_COOKIE_EXP_TIME;
+	
 	/** JWT 토큰의 유효 시간 입니다.(단위: ms) */
 	@Value("#{security['jwt.exp_time_per_ms']}")
 	private int TOKEN_EXP_TIME;
+	
+	/** 로그인 유효 시간 입니다.(단위: ms) */
+	@Value("#{security['login.exp_time_per_ms']}")
+	private int LOGIN_EXP_TIME;
 	
 	/** JWT 암/복호화에 사용되는 대칭키 입니다. */
 	@Value("#{security['jwt.secret']}")
@@ -217,6 +227,14 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			return null;
 		}
 		
+		Date issuedAt = claims.getIssuedAt();	// JWT 생성일 
+		long currentTime = System.currentTimeMillis();	// 현재 시간
+		long diff = getDiffFromCurrTimeInMs(issuedAt); // 시간차
+		if(diff >= LOGIN_EXP_TIME){
+			logger.debug("로그인 상태를 오랜시간 유지했습니다. 재로그인 해주세요. 마지막 로그인 시점: {}, 시간차: {}분", issuedAt.toString(), diff/1000/60);
+			return null;
+		}
+		
 		String[] authorityArray = authorities.split(",");
 		List<GrantedAuthority> roleList = new ArrayList<GrantedAuthority>();
 		for(String role : authorityArray){
@@ -224,7 +242,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			roleList.add(grantedAuthority);
 		}
 		
-		MemberInfo memberInfo = new MemberInfo(Integer.parseInt(no), id, "[PROTECTED]", name, roleList);
+		MemberInfo memberInfo = new MemberInfo(Integer.parseInt(no), id, "[PROTECTED]", name, roleList, issuedAt);
 		
 		// MemberInfo -> (Authentication)UsernamePasswordAuthenticationToken
 		Authentication authentication = new UsernamePasswordAuthenticationToken(memberInfo, "[PROTECTED]", roleList);
@@ -234,6 +252,18 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 		securityContext.setAuthentication(authentication);
 		
 		return securityContext;
+	}
+	
+	/**
+	 * 주어진 날짜로부터 현재 시간과의 차를 구합니다. (단위: ms)
+	 * @param pastDate
+	 * @return
+	 */
+	public static long getDiffFromCurrTimeInMs(Date pastDate){
+		long currentTime = System.currentTimeMillis();	// 현재 시간
+		long diff = Math.subtractExact(currentTime, pastDate.getTime()); // 시간차
+		logger.debug("시간차는 {} 입니다.", diff);
+		return diff;
 	}
 	
 	/**
@@ -276,8 +306,8 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	 */
 	public static Cookie generateContextClearCookie(String key){
 		Cookie cookie = new Cookie(key, null);
-		cookie.setPath("/");
 		cookie.setMaxAge(0);
+		cookie.setPath("/");
 		cookie.setSecure(true);
 		cookie.setHttpOnly(true);
 		
@@ -286,6 +316,8 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	
 	/**
 	 * 스프링 시큐리티에서 최종적으로 생성한 SecurityContext를 JWT Cookie로 변환하는데 사용됩니다.
+	 * 단 JWT생성일은 요청당시 JWT의 내용을 그대로 유지합니다. 요청당시 토큰이나 생성일이 없었다면 현재시간으로 생성 합니다.
+	 * 이는 로그인 유효 시간을 검사하는데 사용됩니다.
 	 * @param context
 	 * @return
 	 */
@@ -294,12 +326,13 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 		
 		Authentication authentication = context.getAuthentication();
 		Object principal = authentication.getPrincipal();
-		
+		Date issuedAt = null;
 		if(principal instanceof MemberInfo){
 			MemberInfo memberInfo = (MemberInfo)principal;
 			String no = memberInfo.getUsername();	// PK값 반환(이 경우 계정 일련 번호)
 			String id = memberInfo.getId();
 			String name = memberInfo.getName();
+			issuedAt = memberInfo.getIssuedAt();
 			
 			Collection<? extends GrantedAuthority> authorityList = memberInfo.getAuthorities();
 			StringBuilder authBuilder = new StringBuilder();
@@ -320,14 +353,21 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			contextClaims.put(JWTName, (String)principal);
 		}
 		
+		// 토큰 최초 생성일이 존재하지 않다면 현재 시간으로 재생성
+		if(issuedAt == null){
+			issuedAt = new Date();
+		}
+		
 		String jwtContext = JWTUtility.createJWT(
-				new Date(),
+				issuedAt,
 				new Date(System.currentTimeMillis() + TOKEN_EXP_TIME),
 				"www.security.org",
 				contextClaims,
 				SECRET
 		);
 		Cookie jwtContextCookie = new Cookie(SPRING_SECURITY_CONTEXT_KEY, jwtContext);
+		jwtContextCookie.setMaxAge(SECURITY_COOKIE_EXP_TIME);
+		jwtContextCookie.setPath("/");
 		jwtContextCookie.setSecure(true);
 		jwtContextCookie.setHttpOnly(true);
 		
@@ -382,7 +422,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 				return;
 			}
 			
-			
+			/*
 			if(contextChanged(context)){
 			// 보안필터체인을 돌고난 후의 SecurityContext가 이전과 다르다면 쿠키에 저장합니다.
 				// 인증 정보에 변동이 발생한 경우에만 토큰 유효시간을 연장합니다.
@@ -392,8 +432,8 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 				
 				logger.debug("다음의 SecurityContext를 쿠키에 저장합니다: {}", context);
 			}
+			*/
 			
-			/*
 			// 보안필터체인을 돌고난 후 SecurityContext가 변했든 말든 여전히 인증상태라면 JWT를 재발급 합니다.
 			// 이렇게 하면 토큰의 유효시간이 연장되는 효과가 있습니다. 활동 중인 유저의 로그인 상태를 유지하는 것입니다.
 			Cookie jwtContextCookie = generateJWTContextCookie(context);
@@ -401,7 +441,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			response.addCookie(jwtContextCookie);
 			
 			logger.debug("다음의 SecurityContext를 쿠키에 저장합니다: {}", context);
-			*/
+			
 		}
 		
 		/**
