@@ -5,7 +5,14 @@ package com.suph.security;
 
 import java.util.ArrayList;
 
+/**
+ * 계정-권한 정보를 담는데 사용합니다.
+ * @author NB-0267
+ *
+ */
 public class MemberAuthVO{
-	private String id;		// MEM_ID: 부여할 회원
-	private String auth;	// AUTH_NM; 부여할 권한
+	/** MEM_NO: 계정 일련 번호 */
+	private String no;
+	/** AUTH_NM: 부여할 권한 */
+	private String auth;
 }

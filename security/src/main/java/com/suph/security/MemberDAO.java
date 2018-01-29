@@ -4,5 +4,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MemberDAO{
-	public abstract int insertMemverVO(MemberInfo vo);
+	/**
+	 * 계정을 등록합니다.
+	 * @param vo
+	 * @return
+	 */
+	public abstract int insertMemberVO(MemberVO vo);
 }

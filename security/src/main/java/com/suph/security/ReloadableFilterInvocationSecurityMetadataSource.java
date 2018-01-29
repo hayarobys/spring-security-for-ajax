@@ -20,14 +20,23 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
+/**
+ * 경로 접근에 필요한 권한 목록을 불러오는 동작을 수행합니다.
+ * @author NB-0267
+ *
+ */
 public class ReloadableFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource{
 	private static final Logger logger = LoggerFactory.getLogger(ReloadableFilterInvocationSecurityMetadataSource.class);
 	
 	// UrlResourcesMapFactoryBean의 getObject()로 받아온다.
+	/** 리소스 별 필요한 권한 목록을 담고있는 변수 */
 	private final Map<RequestMatcher, Collection<ConfigAttribute>> requestMap;
 	
 	//@Autowired
 	//@Qualifier("securedObjectServiceImpl")
+	/**
+	 * DB로부터 URL별 권한 목록을 불러오는데 사용할 멤버변수 
+	 */
 	private SecuredObjectService securedObjectService;
 	
 	public void setSecuredObjectService(SecuredObjectService securedObjectService){
@@ -40,6 +49,9 @@ public class ReloadableFilterInvocationSecurityMetadataSource implements FilterI
 		this.requestMap = requestMap;
 	}
 	
+	/**
+	 * 해당 경로(object) 접근에 필요한 권한 목록(Collection\<ConfigAttribute\>)을 반환합니다.
+	 */
 	@Override
 	public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException{
 		HttpServletRequest request = ((FilterInvocation)object).getRequest();	// /notmember/board.do
@@ -74,8 +86,8 @@ public class ReloadableFilterInvocationSecurityMetadataSource implements FilterI
 	}
 	
 	/**
-	 * 권한 정보를 갱신 합니다.
-	 * 
+	 * 리소스 별 권한 정보를 갱신 합니다.
+	 * DB 갱신이 일어난 경우 메모리 갱신을 위해 호출됩니다.
 	 * @throws Exception
 	 */
 	public void reload() throws Exception{

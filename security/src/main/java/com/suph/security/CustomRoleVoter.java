@@ -12,8 +12,8 @@ import org.springframework.security.core.GrantedAuthority;
 public class CustomRoleVoter extends RoleVoter{
 	Logger logger = LoggerFactory.getLogger(getClass());
 	
-	/*
-	 * 입력된 문자열이 권한명으로 활용 가능한 정보인지 검증합니다.
+	/**
+	 * 입력된 문자열이 권한명으로 활용 가능한 형식인지 검증합니다.
 	 */
 	@Override
 	public boolean supports(ConfigAttribute attribute) {
@@ -26,13 +26,22 @@ public class CustomRoleVoter extends RoleVoter{
         }
     }
 	
+	/**
+	 * 요청자의 리소스 접근을 허용할지 판단한 결과를 메소드 호출자에게 반환합니다.
+	 * 최종적인 판단은 AccessDecisionVoter들의 의견을 종합하여 AccessDecisionManager에서 내립니다.
+	 * 
+	 * @param authentication 접근 요청자의 정보를 지정합니다. 
+	 * @param object 접근 요청된 경로를 지정합니다. 
+	 * @param attributes 요청받은 경로 접근에 필요한 권한들을 지정합니다.
+	 * @return result 1: 접근허가, 0: 판단보류, -1: 접근거부
+	 */
 	@Override
 	public int vote(Authentication authentication, Object object, Collection<ConfigAttribute> attributes){
-		logger.debug("접근 가능한 권한 목록 {}", attributes);
+		logger.debug("리소스명 '{}'에 접근 가능한 권한 목록 '{}'", object, attributes);
 		
 		int result = ACCESS_ABSTAIN;
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        logger.debug("요청자가 가지고 있는 권한 목록 {}", authorities);
+        logger.debug("접근 요청자가 가지고 있는 권한 목록 {}", authorities);
         
         // 해당 URL패턴에 접근 가능한 권한 목록들
         for(ConfigAttribute attribute : attributes){

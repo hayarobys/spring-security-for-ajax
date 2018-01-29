@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -24,13 +23,18 @@ public class MemberInfo implements UserDetails{
 	
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
-	private int no;				// MEM_NO 계정 일련 번호 PK
-	private String id;			// MEM_ID 계정 아이디
-	private transient String password;	// MEM_PASSWORD 계정 비밀번호
-	private String name;		// MEM_NICKNM 계정 사용자의 이름 또는 별명
-	private char enable;		// MEM_ENABLE 계정 사용 여부(탈퇴 여부). Y는 사용 중, N은 탈퇴 혹은 휴면 계정. 
-	
-	private Set<GrantedAuthority> authorities;	// 계정이 가지고 있는 권한 목록
+	/** MEM_NO 계정 일련 번호 PK */
+	private int no;
+	/** MEM_ID 계정 아이디 */
+	private String id;
+	/** MEM_PASSWORD 계정 비밀번호 */
+	private transient String password;
+	/** MEM_NM 계정 닉네임 */
+	private String name;
+	/** MEM_ENABLE 계정 사용 여부(탈퇴 여부). Y는 사용 중, N은 탈퇴 혹은 휴면 계정. */
+	private boolean enable; 
+	/** 계정이 가지고 있는 권한 목록 */
+	private Set<GrantedAuthority> authorities;
 	
 	
 	// 디폴트 생성자 미정의시 mybatis가 이용하는 자바의 reflection > ObjectFactory > create에서 디폴트 생성자를 찾지 못했다고 익셉션을 낸다.
@@ -38,21 +42,12 @@ public class MemberInfo implements UserDetails{
 	// private이더라도 mybatis는 Reflection클래스에서 constructor.setAccessible(true); 로 타깃 클래스들의 생성자 접근 옵션을 접근 가능으로 바꾸기에
 	// 어떠한 접근제한자 이더라도 mybatis는 접근할 수 있다.
 	
-	/*public static MemberInfo createInstance(){
-		MemberInfo memberInfo = new MemberInfo();
-		return memberInfo;
-	}*/
-	
-	public MemberInfo(String id, String name, Collection<? extends GrantedAuthority> authorities){
-		this(id, name, "[PROTECTED]", authorities);
-	}
-	
-	public MemberInfo(String id, String name, String password, Collection<? extends GrantedAuthority> authorities){
-		this(0, id, password, name, 'Y', authorities);
+	public MemberInfo(int no, String id, String password, String name, Collection<? extends GrantedAuthority> authorities){
+		this(no, id, password, name, true, authorities);
 	}
 	
 	public MemberInfo(
-			int no, String id, String password, String name, char enable,
+			int no, String id, String password, String name, boolean enable,
 			Collection<? extends GrantedAuthority> authorities
 	){
 		this.no = no;
@@ -62,46 +57,31 @@ public class MemberInfo implements UserDetails{
 		this.enable = enable;
 		this.authorities = Collections.unmodifiableSet(sortAuthorities(authorities));
 	}
-		
-	/**
-	 * 계정 일련 번호를 반환합니다.
-	 * @return no 반환
-	 */
-	public int getNo(){
-		return no;
-	}
-
-	/**
-	 * 계정 일련 번호를 변경/저장 합니다.
-	 * @param no
-	 */
-	public void setNo(int no){
-		this.no = no;
-	}
-
-	/**
-	 * 계정 ID를 반환합니다.
-	 * @return id 반환
-	 */
-	public String getId(){
-		return id;
-	}
 	
 	/**
-	 * 계정의 ID를 반환합니다.
-	 * @return id 반환. 내부적으로 getId()를 호출하여 반환합니다.
+	 * 계정의 일련 번호를 문자열로 반환합니다.
+	 * @return mem_no 반환. 내부적으로 계정 일련번호 no를 문자열로 변환하여 반환합니다.
 	 */
 	@Override
 	public String getUsername(){
-		return getId();
+		return Integer.toString(no);
 	}
-
+	
 	/**
-	 * 계정 ID를 변경/저장 합니다.
-	 * @param id
+	 * 계정의 일련 번호를 int형으로 반환합니다.
+	 * 내부적으로 getUsername()을 호출합니다.
+	 * @return
 	 */
-	public void setId(String id){
-		this.id = id;
+	public int getNo(){
+		return Integer.parseInt(getUsername());
+	}
+	
+	/**
+	 * 계정의 아이디를 반환합니다.
+	 * @return
+	 */
+	public String getId(){
+		return id;
 	}
 
 	/**
@@ -112,45 +92,13 @@ public class MemberInfo implements UserDetails{
 	public String getPassword(){
 		return password;
 	}
-
-	/**
-	 * 계정 비밀번호를 변경/저장 합니다.
-	 * @param password
-	 */
-	public void setPassword(String password){
-		this.password = password;
-	}
 	
 	/**
-	 * 계정 사용자의 이름을 반환합니다.
-	 * @return name 반환
+	 * 계정의 닉네임을 반환합니다.
+	 * @return
 	 */
 	public String getName(){
 		return name;
-	}
-	
-	/**
-	 * 계정 사용자의 이름을 변경/저장 합니다.
-	 * @param name
-	 */
-	public void setName(String name){
-		this.name = name;
-	}
-	
-	/**
-	 * 계정 사용 여부를 반환 합니다.
-	 * @return enable 반환
-	 */
-	public char getEnable(){
-		return enable;
-	}
-
-	/**
-	 * 계정 사용 여부를 변경/저장 합니다.
-	 * @param enable 사용시 Y, 탈퇴 혹은 휴면 계정일 경우 N
-	 */
-	public void setEnable(char enable){
-		this.enable = enable;
 	}
 	
 	/**
@@ -160,14 +108,6 @@ public class MemberInfo implements UserDetails{
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities(){
 		return authorities;
-	}
-	
-	/**
-	 * 계정의 권한 목록을 변경/저장 합니다.
-	 * @param authorities
-	 */
-	public void setAuthorities(Collection<? extends GrantedAuthority> authorities){
-		this.authorities = Collections.unmodifiableSet(sortAuthorities(authorities));
 	}
 	
 	/**
@@ -203,7 +143,7 @@ public class MemberInfo implements UserDetails{
 	 */
 	@Override
 	public boolean isEnabled(){
-		return true;
+		return this.enable;
 	}
 	
 	/**
@@ -243,12 +183,6 @@ public class MemberInfo implements UserDetails{
 			
 			return g1.getAuthority().compareTo(g2.getAuthority());
 		}
-	}
-
-	@Override
-	public String toString(){
-		return "MemberInfo [no=" + no + ", id=" + id + ", password=" + password + ", name=" + name + ", enable="
-				+ enable + ", authorities=" + authorities + "]";
 	}
 }
 

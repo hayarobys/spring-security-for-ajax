@@ -1,6 +1,7 @@
 package com.suph.security;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -8,13 +9,26 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 public class CustomAccessDeniedHandler implements AccessDeniedHandler{
+	/** 권한 부족으로 접근 거부시 보여줄 페이지 URL */
 	private String errorPage;
 	
+	/**
+	 * 요청자가 요청한 리소스 접근에 권한부족으로 거부당했을때 처리할 기능을 정의합니다.
+	 * Ajax 요청이라면 {"result":"fail","message":"{원인}"} 이라는 json 데이터를 응답합니다.
+	 * 일반적인 get/post http 요청이라면 응답 헤더에 "errormsg" 라는 키값으로 에러 원인을 저장하고, xml등에서 미리 설정해둔 접근 거부 페이지로 이동시킵니다.
+	 * 
+	 * 이 메소드는 ajax요청인지 일반 요청인지 구분하기 위해 요청 헤더에서 "X-Ajax-call" 이라는 키값을 검사합니다.
+	 * 해당 키값이 없다면 일반 요청으로 인식하고, 해당 키값이 존재하면서 그 내용이 "true"라면 ajax로 인식합니다.
+	 * 반면 "X-Ajax-call"이라는 키가 존재하지만 그 내용이 "true" 이외의 문자열을 포함하고 있다면 비정상적인 Ajax 요청으로 인식하고
+	 * {"result":"fail","message":"Access Denied(Header Value Mismatch)"}라는 json 데이터를 전송합니다.
+	 * 
+	 * 그러니 이 메소드의 정상적인 동작을 바란다면 모든 Ajax 요청시 ("X-Ajax-call", "true") 를 헤더에 포함하십시오.
+	 */
 	@Override
 	public void handle( HttpServletRequest request, HttpServletResponse response,
 			AccessDeniedException accessDeniedException ) throws IOException, ServletException{
@@ -32,10 +46,18 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler{
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			Object principal = auth.getPrincipal();
 			
-			if(principal instanceof UserDetails){
-				String username = ((UserDetails)principal).getUsername();
+			if(principal instanceof MemberInfo){
+				MemberInfo memberInfo = (MemberInfo)principal;
+				
+				String username = memberInfo.getUsername();
+				String id = memberInfo.getId();
+				String name = memberInfo.getName();
+				Collection<? extends GrantedAuthority> authorities = memberInfo.getAuthorities();
 				
 				request.setAttribute("username", username);
+				request.setAttribute("id", id);
+				request.setAttribute("name", name);
+				request.setAttribute("authorities", authorities);
 			}
 			
 			request.setAttribute("errormsg", accessDeniedException);
@@ -55,6 +77,10 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler{
 		}
 	}
 	
+	/**
+	 * 권한 불충분등의 이유로 접근을 거부당했을때 보여줄 페이지 경로를 지정합니다.
+	 * @param errorPage	페이지 경로
+	 */
 	public void setErrorPage(String errorPage){
 		if((errorPage != null) && !errorPage.startsWith("/")){
 			throw new IllegalArgumentException("errorPage must begin with '\'");

@@ -3,22 +3,45 @@
  */
 package com.suph.security;
 
+/**
+ * 리소스-권한 정보를 담는데 사용됩니다.
+ * @author NB-0267
+ *
+ */
 public class RoleVO{
-	private String pattern;		// URL 패턴
-	private String authority;	// 접근 가능한 권한(필요권한)
+	/** URL 패턴 */
+	private String pattern;
+	/** 접근 가능한 권한(필요권한) */
+	private String authority;
 	
+	/**
+	 * URL패턴을 반환 합니다.
+	 * @return
+	 */
 	public String getPattern(){
 		return pattern;
 	}
 
+	/**
+	 * URL패턴을 저장/변경 합니다.
+	 * @param pattern
+	 */
 	public void setPattern(String pattern){
 		this.pattern = pattern;
 	}
 
+	/**
+	 * 필요권한을 반환 합니다.
+	 * @return
+	 */
 	public String getAuthority(){
 		return authority;
 	}
 	
+	/**
+	 * 필요 권한을 저장/변경 합니다.
+	 * @param authority
+	 */
 	public void setAuthority(String authority){
 		this.authority = authority;
 	}

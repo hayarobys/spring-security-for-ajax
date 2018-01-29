@@ -5,7 +5,7 @@
 <configuration>
 	<typeAliases>
 		<!-- MyBatis Mapper의 parameterType에서 사용할 별명. parameterMap이 아님에 주의 -->
-		<typeAlias type="com.suph.security.MemberInfo" alias="MemberInfo"/>
+		<typeAlias type="com.suph.security.MemberVO" alias="MemberVO"/>
 		<typeAlias type="com.suph.security.AuthVO" alias="AuthVO"/>
 		<typeAlias type="com.suph.security.RoleVO" alias="RoleVO"/>
 	</typeAliases>

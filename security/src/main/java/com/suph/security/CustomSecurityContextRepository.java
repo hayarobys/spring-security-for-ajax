@@ -38,20 +38,27 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	@Value("#{security['spring_security_context_key']}")
 	private String SPRING_SECURITY_CONTEXT_KEY;
 	
-	/** JWT 토큰의 유효 시간 입니다. */
+	/** JWT 토큰의 유효 시간 입니다.(단위: ms) */
 	@Value("#{security['jwt.exp_time_per_ms']}")
 	private int TOKEN_EXP_TIME;
 	
-	/** JWT 암/복호화를 위한 대칭키 입니다. */
+	/** JWT 암/복호화에 사용되는 대칭키 입니다. */
 	@Value("#{security['jwt.secret']}")
-	private String SALT;
+	private String SECRET;
 	
+	/** JWT payload에 저장할 계정 일련 번호 Claim명 입니다. */
+	@Value("#{security['jwt.claim.no']}")
+	private String JWTNo;
+	
+	/** JWT payload에 저장할 아이디 Claim명 입니다. */
 	@Value("#{security['jwt.claim.id']}")
 	private String JWTId;
 	
+	/** JWT payload에 저장할 닉네임 Claim명 입니다. */
 	@Value("#{security['jwt.claim.name']}")
 	private String JWTName;
 	
+	/** JWT payload에 저장할 권한 Claim명 입니다. */
 	@Value("#{security['jwt.claim.authorities']}")
 	private String JWTAuthorities;
 	
@@ -179,24 +186,33 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 		Claims claims = null;
 		
 		try{
-			claims = JWTUtility.getClaims(jwt, SALT);
+			claims = JWTUtility.getClaims(jwt, SECRET);
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.debug("JWT파싱에 실패했습니다. {}", e.getMessage());
 			return null;
 		}
 		
-		String id = (String)JWTUtility.getClaim(claims, JWTId);
-		String name = (String)JWTUtility.getClaim(claims, JWTName);
-		
-		if(!StringUtils.hasText(id) || !StringUtils.hasText(name)){
-			logger.debug("JWT에 유효한 id 혹은 name 이 없습니다.");
+		String no = (String)JWTUtility.getClaim(claims, JWTNo);
+		if( !StringUtils.hasText(no) ){
+			logger.debug("JWT에 유효한 no이 없습니다.");
 			return null;
 		}
 		
-		String authorities = (String)JWTUtility.getClaim(claims, "authorities");
+		String id = (String)JWTUtility.getClaim(claims, JWTId);
+		if( !StringUtils.hasText(id) ){
+			logger.debug("JWT에 유효한  id가 없습니다.");
+			return null;
+		}
 		
-		if(!StringUtils.hasText(authorities)){
+		String name = (String)JWTUtility.getClaim(claims, JWTName);
+		if( !StringUtils.hasText(name) ){
+			logger.debug("JWT에 유효한 name이 없습니다.");
+			return null;
+		}
+		
+		String authorities = (String)JWTUtility.getClaim(claims, JWTAuthorities);
+		if( !StringUtils.hasText(authorities) ){
 			logger.debug("JWT에 유효한 권한이 없습니다.");
 			return null;
 		}
@@ -208,7 +224,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			roleList.add(grantedAuthority);
 		}
 		
-		MemberInfo memberInfo = new MemberInfo(id, name, roleList);
+		MemberInfo memberInfo = new MemberInfo(Integer.parseInt(no), id, "[PROTECTED]", name, roleList);
 		
 		// MemberInfo -> (Authentication)UsernamePasswordAuthenticationToken
 		Authentication authentication = new UsernamePasswordAuthenticationToken(memberInfo, "[PROTECTED]", roleList);
@@ -281,7 +297,8 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 		
 		if(principal instanceof MemberInfo){
 			MemberInfo memberInfo = (MemberInfo)principal;
-			String id = memberInfo.getUsername();
+			String no = memberInfo.getUsername();	// PK값 반환(이 경우 계정 일련 번호)
+			String id = memberInfo.getId();
 			String name = memberInfo.getName();
 			
 			Collection<? extends GrantedAuthority> authorityList = memberInfo.getAuthorities();
@@ -294,6 +311,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			}
 			String authorities = authBuilder.toString();
 			
+			contextClaims.put(JWTNo, no);
 			contextClaims.put(JWTId, id);
 			contextClaims.put(JWTName, name);
 			contextClaims.put(JWTAuthorities, authorities);
@@ -307,7 +325,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 				new Date(System.currentTimeMillis() + TOKEN_EXP_TIME),
 				"www.security.org",
 				contextClaims,
-				SALT
+				SECRET
 		);
 		Cookie jwtContextCookie = new Cookie(SPRING_SECURITY_CONTEXT_KEY, jwtContext);
 		jwtContextCookie.setSecure(true);
@@ -364,14 +382,26 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 				return;
 			}
 			
+			
 			if(contextChanged(context)){
 			// 보안필터체인을 돌고난 후의 SecurityContext가 이전과 다르다면 쿠키에 저장합니다.
+				// 인증 정보에 변동이 발생한 경우에만 토큰 유효시간을 연장합니다.
 				Cookie jwtContextCookie = generateJWTContextCookie(context);
 				jwtContextCookie.setSecure(true);
 				response.addCookie(jwtContextCookie);
 				
 				logger.debug("다음의 SecurityContext를 쿠키에 저장합니다: {}", context);
 			}
+			
+			/*
+			// 보안필터체인을 돌고난 후 SecurityContext가 변했든 말든 여전히 인증상태라면 JWT를 재발급 합니다.
+			// 이렇게 하면 토큰의 유효시간이 연장되는 효과가 있습니다. 활동 중인 유저의 로그인 상태를 유지하는 것입니다.
+			Cookie jwtContextCookie = generateJWTContextCookie(context);
+			jwtContextCookie.setSecure(true);
+			response.addCookie(jwtContextCookie);
+			
+			logger.debug("다음의 SecurityContext를 쿠키에 저장합니다: {}", context);
+			*/
 		}
 		
 		/**

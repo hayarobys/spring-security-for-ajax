@@ -12,38 +12,62 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * Handles requests for the application home page.
+ * 스프링 시큐리티에 관련된 동작을 처리하는 컨트롤러 입니다.
+ * @author NB-0267
+ *
  */
 @Controller
-public class HomeController {
+public class SecurityController {
+	private static final Logger logger = LoggerFactory.getLogger(SecurityController.class);
+	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	
 	@Autowired
 	private MemberDAO memberDAO;
 	
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
-	
+	/**
+	 * 관리자 전용 화면으로 이동합니다.
+	 * @return
+	 */
 	@RequestMapping("/admin/hello")
 	public String hello(){
 		return "hello";
 	}
 	
+	/**
+	 * 관리자 전용 화면으로 이동합니다.
+	 * @return
+	 */
 	@RequestMapping("/admin")
 	public String admin(){
 		return "admin";
 	}
 	
+	/**
+	 * 메인 페이지로 이동합니다.
+	 * @return
+	 */
 	@RequestMapping("/main")
 	public String main() {
 		return "main";
 	}
 	
+	/**
+	 * 로그인 페이지로 이동합니다.
+	 * @return
+	 */
 	@RequestMapping("/login")
 	public String login() {
 		return "login";
 	}
 	
+	/**
+	 * 평문 비밀번호를 BCrypt로 암호화하여 보여주는 페이지로 이동합니다.
+	 * @param targetStr
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value="/passwordEncoder", method=RequestMethod.GET)
 	public String passwordEncoder(@RequestParam(value="targetStr", required=false, defaultValue="") String targetStr, Model model){
 		if(StringUtils.hasText(targetStr)){
@@ -56,24 +80,37 @@ public class HomeController {
 		return "/showBCryptString";
 	}
 	
+	/**
+	 * 회원가입 폼으로 이동합니다.
+	 * @return
+	 */
 	@RequestMapping(value="/register", method=RequestMethod.GET)
 	public String register(){
 		return "register";
 	}
 	
+	/**
+	 * 회원가입 동작을 수행하고 메인페이지로 이동합니다.
+	 * @param vo
+	 * @return
+	 */
 	@RequestMapping(value="/register", method=RequestMethod.POST)
-	public String register(MemberInfo vo){
+	public String register(MemberVO vo){
 		
 		vo.setPassword(
 				passwordEncoder.encode( vo.getPassword() )
 		);
 		
-		int result = memberDAO.insertMemverVO(vo);
+		int result = memberDAO.insertMemberVO(vo);
 		System.out.println(result > 0 ? "등록 성공" : "등록 실패");
 		
 		return "redirect:/main";
 	}
 	
+	/**
+	 * 접근 거부 화면으로 이동합니다.
+	 * @return
+	 */
 	@RequestMapping("/access_denied")
 	public String accessDenied(){
 		return "access_denied";

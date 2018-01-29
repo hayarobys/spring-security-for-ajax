@@ -29,7 +29,7 @@ public class SecuredObjectServiceImpl implements SecuredObjectService{
 	}
 
 	/**
-	 * URL 형식의 자원과 권한 매핑 정보를 조회합니다.
+	 * URL 형식의 리소스(자원)별 필요한 권한 정보를 조회합니다.
 	 * @return
 	 * @throws Exception
 	 */
@@ -47,7 +47,7 @@ public class SecuredObjectServiceImpl implements SecuredObjectService{
 	}
 	
 	/**
-	 * METHOD 형식의 자원과 권한 매핑 정보를 조회합니다.
+	 * METHOD 형식의 자원별 필요한 권한 정보를 조회합니다.
 	 * @return
 	 * @throws Exception
 	 */
@@ -65,7 +65,7 @@ public class SecuredObjectServiceImpl implements SecuredObjectService{
 	}
 	
 	/**
-	 * POINTCUT 형식의 자원과 권한 매핑 정보를 조회합니다.
+	 * POINTCUT 형식의 자원별 필요한 권한 정보를 조회합니다.
 	 * @return
 	 * @throws Exception
 	 */

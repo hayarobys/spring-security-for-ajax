@@ -6,5 +6,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository("authDAO")
 public interface AuthDAO{
-	public abstract List<AuthVO> getAuthListById(String id);
+	/**
+	 * 해당 유저 일련 번호가 소유한 권한 목록을 반환합니다.
+	 * @param memNo
+	 * @return
+	 */
+	public abstract List<AuthVO> getAuthListByNo(int memNo);
 }

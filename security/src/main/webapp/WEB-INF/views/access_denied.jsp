@@ -37,11 +37,25 @@
 	<div style="display: inline-block">
 		<%-- <jsp:include page="/WRB-INF/views/leftmenu.jsp"></jsp:include> --%>
 		<div style="float:right;">
-			접근권한이 없습니다.<br> 담당자에게 문의하여 주시기 바랍니다.<br>
-			${errormsg}<br>
-			<c:if test="${not empty username}">
-				${username}<br />
-			</c:if>
+			<p>
+			접근권한이 없습니다.<br />
+			담당자에게 문의하여 주시기 바랍니다.<br />
+			</p>
+			<p>
+				에러 메시지: ${errormsg}<br />
+				<c:if test="${not empty username}">
+					계정 일련 번호: ${username}<br />
+				</c:if>
+				<c:if test="${not empty id}">
+					계정 아이디: ${id}<br />
+				</c:if>
+				<c:if test="${not empty name}">
+					계정 닉네임: ${name}<br />
+				</c:if>
+				<c:if test="${not empty authorities}">
+					계정 보유 권한: ${authorities}<br />
+				</c:if>
+			</p>
 			
 			
 			

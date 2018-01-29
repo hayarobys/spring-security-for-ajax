@@ -4,12 +4,12 @@
 
 <mapper namespace="com.suph.security.AuthDAO">
 	<resultMap type="com.suph.security.AuthVO" id="AuthVO">
-		<result column="AUTH_NO" property="no"/>
-		<result column="AUTH_NM" property="name"/>
-		<result column="AUTH_EXPLANATION" property="explanation"/>
+		<result column="AUTH_NO" property="no"/>	<!-- 권한 일련 번호 -->
+		<result column="AUTH_NM" property="name"/>	<!-- 권한명 -->
+		<result column="AUTH_EXPLANATION" property="explanation"/>	<!-- 권한 설명 -->
 	</resultMap>
 
-	<select id="getAuthListById" parameterType="String" resultMap="AuthVO">
+	<select id="getAuthListByNo" parameterType="int" resultMap="AuthVO">
 		SELECT
 			A.AUTH_NO,
 			A.AUTH_NM,
@@ -21,6 +21,6 @@
 		WHERE
 				MT.MEM_ENABLE = 'Y'
 			AND
-				MT.MEM_ID = #{id};
+				MT.MEM_NO = #{value};
 	</select>
 </mapper>

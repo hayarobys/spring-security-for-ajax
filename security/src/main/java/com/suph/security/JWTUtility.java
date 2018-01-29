@@ -31,7 +31,7 @@ public class JWTUtility{
 	public static String createJWT(
 		Date issuedAt, Date expiration, String issuer,
 		Map<String, Object> claims,
-		String salt
+		String secret
 	){
 		/*
 		Properties prop = new Properties();
@@ -56,10 +56,10 @@ public class JWTUtility{
 				.setIssuedAt(issuedAt)		// 생성일
 				.setIssuer(issuer)			// 생성자
 				//.setAudience(audience)	// 대상자(소유자)
-				.signWith(SignatureAlgorithm.HS256, JWTUtility.generateKey(salt))	// 암호화 방식, 개인키
+				.signWith(SignatureAlgorithm.HS256, JWTUtility.generateKey(secret))	// 암호화 방식, 개인키
 				.compact();					// 생성
 		
-		logger.debug("generated key {}", salt);
+		logger.debug("generated key {}", secret);
 		logger.debug("generated token {}", token);
 		
 		return token;

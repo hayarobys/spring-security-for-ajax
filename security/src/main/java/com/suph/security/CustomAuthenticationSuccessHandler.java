@@ -45,9 +45,17 @@ import org.springframework.util.StringUtils;
 
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler{
 	private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
+	
+	/**
+	 * 인증 실패시 스프링 시큐리티에서 RequestCache에 요청 URL을 저장하고, 인증 프로세서를 처리합니다.
+	 * 즉 requestChache엔 요청했던 URL정보가 세션 형태로 담겨있습니다. 
+	 */
 	private RequestCache requestCache = new HttpSessionRequestCache();
+	/** 인증 성공시 이동시킬 경로가 저장된 파라미터 명 */
 	private String targetUrlParameter;
+	/** Referer나 targetUrl 혹은 sessionUrl들이 비어있을 경우 이동시킬 기본 url */
 	private String defaultUrl;
+	/** Referer값이 존재할 경우 Referer경로로 이동시킬지 여부 설정 */
 	private boolean useReferer;
 	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 	
@@ -57,10 +65,20 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		useReferer = false;
 	}
 	
+	/**
+	 * 인증 성공시 이동시킬 url이 저장될 파라미터명을 반환합니다.
+	 * @return
+	 */
 	public String getTargetUrlParameter(){
 		return targetUrlParameter;
 	}
 
+	/**
+	 * 인증 성공시 이동시킬 url을 저장할 파라미터명을 설정합니다.
+	 * <input type="hidden"> name="targetUrl" value="/main" /> 또는
+	 * http://localhost:8080/contextPath/~~?targetUrl="/main" 식으로 사용할 파라미터 명을 지정합니다.
+	 * @param targetUrlParameter
+	 */
 	public void setTargetUrlParameter(String targetUrlParameter){
 		this.targetUrlParameter = targetUrlParameter;
 	}
@@ -81,7 +99,11 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		this.useReferer = useReferer;
 	}
 	
-	// 로그인 성공 시 호출되는 메서드
+	/**
+	 * 로그인 성공 시 호출되는 메서드.
+	 * 인증 성공 시 내부전략에 따라 요청자를 특정 페이지로 이동시킵니다.
+	 * 전략은 decideRedirectStrategy 메소드를 참고하십시오.
+	 */
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication auth)
 			throws IOException, ServletException{
@@ -98,8 +120,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		// 로그인에 단 한 번이라도 실패했을 경우 세션엔 마지막 실패 원인 메시지가 저장됩니다.
 		// 이는 로그인 성공후에도 남아있기에, AuthenticationSuccessHandler를 구현한 클래스들에선 기본적으로 저 메시지를 지워주고 있습니다.
 		clearAuthenticationAttributes(request);
-		
-		//addAuthCookie(response, auth);
 		
 		int intRedirectStrategy = decideRedirectStrategy(request, response);
 		switch(intRedirectStrategy){
@@ -132,36 +152,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		
 		session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
 	}
-	
-	/**
-	 * 로그인 성공시 JWT 토큰을 생성합니다.
-	 * 토큰에는 다음의 정보가 담깁니다. 권한, 닉네임, 아이디, 만료일자, 생성일자
-	 * 
-	 * @param response
-	 * @param authentication
-	 */
-	@Deprecated
-	public void addAuthCookie(HttpServletResponse response, Authentication authentication){
-		// UsernamePasswordAuthenticationToken의 Object principal; 반환. userDetails를 구현한 MemberInfo 객체가 반환됨
-		MemberInfo user = (MemberInfo)authentication.getPrincipal();
-		String cookieValue = user.getId() + "," + user.getName();	// 로그인 성공한 유저의 아이디 반환
-
-		if(authentication.getAuthorities() != null){
-			for(GrantedAuthority auth : authentication.getAuthorities()){
-				cookieValue += "," + auth.getAuthority();	// {AUTH : 아이디,닉네임,ROLE_ADMIN,ROLE_MANAGER} 식으로 쿠키에 넣을값 생성
-			}
-		}
 		
-		try{
-			// 실제로는 쿠키값을 암호화해서 저장한다.(추후 JWT를 사용해 보자)
-			Cookie cookie = new Cookie("AUTH", URLEncoder.encode(cookieValue, "utf-8"));
-			cookie.setPath("/");
-			response.addCookie(cookie);
-		}catch(UnsupportedEncodingException e){
-			throw new RuntimeException(e);
-		}
-	}
-	
 	/**
 	 * 인증 성공후 어떤 URL로 redirect 할지를 결정한다
 	 * 판단 기준은 targetUrlParameter 값을 읽은 URL이 존재할 경우 그것을 1순위
@@ -201,6 +192,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		return result;
 	}
 	
+	/**
+	 * 요청자를 targetUrlParameter에 적힌 url로 이동시킵니다.
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
 	private void useTargetUrl(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 		
@@ -212,17 +209,36 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		redirectStrategy.sendRedirect(request, response, targetUrl);
 	}
 	
+	/**
+	 * 요청자를 sessionUrl에 저장된 값으로 이동시킵니다.
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
 	private void useSessionUrl(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 		String targetUrl = savedRequest.getRedirectUrl();
 		redirectStrategy.sendRedirect(request, response, targetUrl);
 	}
 	
+	/**
+	 * 요청 헤더에 Referer값이 있을 경우 요청자를 이전 페이지로 이동시킵니다.
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
 	private void useRefererUrl(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		String targetUrl = request.getHeader("REFERER");
 		redirectStrategy.sendRedirect(request, response, targetUrl);
 	}
 	
+	/**
+	 * 요청자를 기본 설정된 페이지로 이동시킵니다. (미 지정시 기본값은 메인페이지)
+	 * targetUrlParameter, sessionUrl, Referer값들이 비어있을 경우 호출됩니다.
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
 	private void useDefaultUrl(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		redirectStrategy.sendRedirect(request, response, defaultUrl);
 	}
