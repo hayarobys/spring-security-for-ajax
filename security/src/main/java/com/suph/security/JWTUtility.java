@@ -112,15 +112,15 @@ public class JWTUtility{
 	 * JWT의 위/변조 여부를 검증하고, Body부분을 Map형식으로 파싱하여 반환합니다.
 	 * 
 	 * @param token	JWT 문자열
-	 * @param key	복호화에 필요한 개인키
+	 * @param secret	복호화에 필요한 개인키
 	 * @return JWT의 body()를 담은 Claims 반환
 	 * @throws SignatureException	위/변조 확인시 예외 발생
 	 */
-	public static Claims getClaims(String token, String salt) throws Exception{
+	public static Claims getClaims(String token, String secret) throws Exception{
 		Claims claims = new DefaultClaims();
 		try{
 			claims = Jwts.parser()
-			.setSigningKey(salt.getBytes("UTF-8"))
+			.setSigningKey(secret.getBytes("UTF-8"))
 			.parseClaimsJws(token).getBody();
 			// OK, we can trust this JWT
 			

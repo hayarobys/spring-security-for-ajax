@@ -30,8 +30,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
 
 public class CustomSecurityContextRepository implements SecurityContextRepository{
 	private static final Logger logger = LoggerFactory.getLogger(CustomSecurityContextRepository.class);
@@ -40,7 +38,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	@Value("#{security['spring_security_context_key']}")
 	private String SPRING_SECURITY_CONTEXT_KEY;
 	
-	/** 시큐리티 쿠키의 유효 시간 입니다.(단위: ms) */
+	/** 시큐리티 쿠키의 유효 시간 입니다.(단위: sec) */
 	@Value("#{security['security_cookie.exp_time_per_sec']}")
 	private int SECURITY_COOKIE_EXP_TIME;
 	
