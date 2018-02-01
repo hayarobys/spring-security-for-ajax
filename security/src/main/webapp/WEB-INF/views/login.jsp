@@ -18,7 +18,7 @@
 			<tr>
 				<td>pwd</td>
 				<td>
-					<input style="width:145px;" type="text" id="loginpwd" name="loginpwd" value="${loginpwd}"/>
+					<input style="width:145px;" type="password" id="loginpwd" name="loginpwd" value="${loginpwd}"/>
 				</td>
 			</tr>
 		<%--

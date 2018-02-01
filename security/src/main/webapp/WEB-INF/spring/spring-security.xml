@@ -150,6 +150,7 @@
 			예를 들어 UsernamePasswordAuthenticationFilter를 <custom-filter>에 지정했을 경우
 			다른곳에 <form-login>태그를 사용해선 안된다.
 		-->
+		<custom-filter after="LOGOUT_FILTER" ref="tooLongLoginBlockFilter" />
 		<custom-filter before="FILTER_SECURITY_INTERCEPTOR" ref="filterSecurityInterceptor"/>
 		
 		
@@ -158,6 +159,16 @@
 	</http>
 	
 	
+	<!-- 너무 오랜시간 로그인한 유저를 재로그인 페이지로 유도하는 필터 -->
+	<beans:bean id="tooLongLoginBlockFilter" class="com.suph.security.TooLongLoginBlockFilter">
+		<beans:property name="tooLongLoginBlockHandler" ref="tooLongLoginBlockHandler" />
+	</beans:bean>
+	
+	<beans:bean id="tooLongLoginBlockHandler" class="com.suph.security.SimpleTooLongLoginBlockHandler">
+		<beans:property name="loginidname" value="loginid"/>
+		<beans:property name="exceptionmsgname" value="securityexceptionmsg"/>
+		<beans:property name="defaultFailureUrl" value="/login"/>
+	</beans:bean>
 	
 	<!--====================================== 권한 필터(권한을 총괄하는 필터) - 인증 정보/ 권한 정보/ 판단 주체로 구성 ======================================-->
 	<!-- org.springframework.security.web.access.intercept.FilterSecurityInterceptor에서 관장 -->

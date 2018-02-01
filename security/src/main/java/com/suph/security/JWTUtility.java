@@ -17,7 +17,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.impl.DefaultClaims;
 
 public class JWTUtility{
-	private static final Logger logger = LoggerFactory.getLogger(JWTUtility.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JWTUtility.class);
 	
 	/**
 	 * 입력된 정보로 JWT(Json Web Token)를 생성합니다.
@@ -45,9 +45,6 @@ public class JWTUtility{
 			ioe.printStackTrace();
 		}
 		*/
-		// 지금은 임시로 키를 생성하고 있지만, 보통 application config 파일에서 읽어들인다.
-		// 그렇다면 congig파일에 대한 보안처리는 어떻게 할까?
-		//Key key = MacProvider.generateKey();
 		
 		String token = Jwts.builder()
 				.setHeaderParam("type", "JWT")
@@ -59,8 +56,7 @@ public class JWTUtility{
 				.signWith(SignatureAlgorithm.HS256, JWTUtility.generateKey(secret))	// 암호화 방식, 개인키
 				.compact();					// 생성
 		
-		logger.debug("generated key {}", secret);
-		logger.debug("generated token {}", token);
+		LOGGER.debug("generated token {}", token);
 		
 		return token;
 	}
@@ -75,10 +71,10 @@ public class JWTUtility{
 		try {
 			key = salt.getBytes("UTF-8");
 		}catch(UnsupportedEncodingException e){
-			if(logger.isInfoEnabled()){
+			if(LOGGER.isInfoEnabled()){
 				e.printStackTrace();
 			}else{
-				logger.error("Making JWT Key Error ::: {}", e.getMessage());
+				LOGGER.error("Making JWT Key Error ::: {}", e.getMessage());
 			}
 		}
 		return key;
@@ -126,25 +122,25 @@ public class JWTUtility{
 			
 		}catch(ExpiredJwtException eje){
 	    //JWT를 생성할 때 지정한 유효기간 초과할 때.
-	        logger.debug("JWT 유효기간 초과");
+	        LOGGER.debug("JWT 유효기간 초과");
 	        throw new RuntimeException("JWT 유효기간 초과");
         }catch(UnsupportedJwtException uje){
         //예상하는 형식과 일치하지 않는 특정 형식이나 구성의 JWT일 때
-        	logger.debug("JWT 형식 불일치");
+        	LOGGER.debug("JWT 형식 불일치");
         	throw new RuntimeException("JWT 형식 불일치");
         }catch(MalformedJwtException mje){
         //JWT가 올바르게 구성되지 않았을 때
-        	logger.debug("잘못된 JWT 구성");
+        	LOGGER.debug("잘못된 JWT 구성");
         	throw new RuntimeException("잘못된 JWT 구성");
         }catch(SignatureException se){
         //JWT의 기존 서명을 확인하지 못했을 때
-        	logger.debug("JWT 서명 확인 불가");
+        	LOGGER.debug("JWT 서명 확인 불가");
         	throw new RuntimeException("JWT 서명 확인 불가");
         }catch(IllegalArgumentException iae){
-        	logger.debug("JWT IllegalArgumentException");
+        	LOGGER.debug("JWT IllegalArgumentException");
         	throw new RuntimeException("JWT IllegalArgumentException");
         }catch (Exception e) {
-        	logger.debug("JWT 검증 중, 알 수 없는 오류 발생 {}", e);
+        	LOGGER.debug("JWT 검증 중, 알 수 없는 오류 발생 {}", e);
         	throw new RuntimeException("JWT 검증 중, 알 수 없는 오류 발생 {}", e);
         }
 		

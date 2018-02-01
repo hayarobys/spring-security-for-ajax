@@ -19,8 +19,8 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 	private String loginidname;
 	/** 로그인 시도한 password 값이 들어오는 input 태그 name */
 	private String loginpasswdname;
-	/** 로그인 성공시 redirect 할 URL이 지정되어 있는 input 태그 name */
-	private String loginredirectname;
+//	/** 로그인 성공시 redirect 할 URL이 지정되어 있는 input 태그 name */
+//	private String loginredirectname;
 	/** 로그인 실패 사유를 request의 Attribute에 저장할 때 사용될 key 값 */
 	private String exceptionmsgname;
 	/** 로그인 실패시 보여줄 URL(로그인 화면) */
@@ -29,7 +29,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 	public CustomAuthenticationFailureHandler(){
 		this.loginidname = "j_username";
 		this.loginpasswdname = "j_password";
-		this.loginredirectname = "loginRedirect";
+//		this.loginredirectname = "loginRedirect";
 		this.exceptionmsgname = "securityexceptionmsg";
 		this.defaultFailureUrl = "/login.do";
 	}
@@ -65,22 +65,22 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 	public void setLoginpasswdname(String loginpasswdname){
 		this.loginpasswdname = loginpasswdname;
 	}
-
-	/**
-	 * 로그인 성공시 이동할 경로를 저장할 input태그의 name명을 반환 합니다.
-	 * @return
-	 */
-	public String getLoginredirectname(){
-		return loginredirectname;
-	}
-
-	/**
-	 * 로그인 성공시 이동시킬 경로를 저장할 input태그의 name명을 지정 합니다.
-	 * @param loginredirectname
-	 */
-	public void setLoginredirectname(String loginredirectname){
-		this.loginredirectname = loginredirectname;
-	}
+//
+//	/**
+//	 * 로그인 성공시 이동할 경로를 저장할 input태그의 name명을 반환 합니다.
+//	 * @return
+//	 */
+//	public String getLoginredirectname(){
+//		return loginredirectname;
+//	}
+//
+//	/**
+//	 * 로그인 성공시 이동시킬 경로를 저장할 input태그의 name명을 지정 합니다.
+//	 * @param loginredirectname
+//	 */
+//	public void setLoginredirectname(String loginredirectname){
+//		this.loginredirectname = loginredirectname;
+//	}
 
 	/**
 	 * 로그인 실패 사유를 저장할 때 사용할 파라미터 명을 반환합니다.
