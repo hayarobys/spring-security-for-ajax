@@ -20,11 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.suph.security.core.userdetails.jdbc.dao.MemberDAO;
 import com.suph.security.core.userdetails.jdbc.vo.MemberVO;
 
-/**
- * 스프링 시큐리티에 관련된 동작을 처리하는 컨트롤러 입니다.
- * @author NB-0267
- *
- */
+/** 스프링 시큐리티에 관련된 동작을 처리하는 컨트롤러 입니다. */
 @Controller
 public class SecurityController {
 	private static final Logger logger = LoggerFactory.getLogger(SecurityController.class);
@@ -82,24 +78,6 @@ public class SecurityController {
 	@RequestMapping("/login")
 	public String login() {
 		return "login";
-	}
-	
-	/**
-	 * 평문 비밀번호를 BCrypt로 암호화하여 보여주는 페이지로 이동합니다.
-	 * @param targetStr
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping(value="/passwordEncoder", method=RequestMethod.GET)
-	public String passwordEncoder(@RequestParam(value="targetStr", required=false, defaultValue="") String targetStr, Model model){
-		if(StringUtils.hasText(targetStr)){
-			// 암호화 작업
-			String bCryptString = passwordEncoder.encode(targetStr);
-			model.addAttribute("targetStr", targetStr);
-			model.addAttribute("bCryptString", bCryptString);
-		}
-		
-		return "/showBCryptString";
 	}
 	
 	/**
