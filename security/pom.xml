@@ -17,7 +17,7 @@
 
 		<mybatis.spring.version>1.2.2</mybatis.spring.version>
 		<mybatis.version>3.2.8</mybatis.version>
-		<mysql.driver.version>5.1.32</mysql.driver.version>
+		<mariadb.java.client.version>2.2.1</mariadb.java.client.version>
 		<dbcp2.version>2.1.1</dbcp2.version>
 		<jackson.version>2.5.0</jackson.version>
 		<jackson.mapper.version>1.9.13</jackson.mapper.version>
@@ -104,13 +104,14 @@
 		</dependency>
 		<!-- ============================================ -->
 		
-		<!-- mysql driver -->
+		<!-- MariaDB Client -->
+		<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql.driver.version}</version>
+		    <groupId>org.mariadb.jdbc</groupId>
+		    <artifactId>mariadb-java-client</artifactId>
+		    <version>${mariadb.java.client.version}</version>
 		</dependency>
-
+		
 		<!-- dbcp2 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
