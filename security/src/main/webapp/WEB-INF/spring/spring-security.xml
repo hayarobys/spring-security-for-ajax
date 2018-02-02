@@ -91,7 +91,7 @@
 		<!-- https 사용시 다음의 코드로 모든 http 접근을 https로 리디렉트 하십시오.  -->
 		<intercept-url pattern="/**" requires-channel="https"/>
 		<port-mappings>
-			<port-mapping http="8090" https="8443"/>
+			<port-mapping http="8080" https="8443"/>
 		</port-mappings>
 		
 		<!-- https 사용시 web.xml에 다음의 구문을 커넥터를 추가하십시오. -->
