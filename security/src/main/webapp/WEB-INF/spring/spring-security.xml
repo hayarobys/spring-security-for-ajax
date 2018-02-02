@@ -18,7 +18,7 @@
 	<!--====================================== 로그인 관련 설정들 =====================================-->
 	<!-- ExceptionTranslationFilter는 사용자가 인증이 필요한 경로에 접근할 경우, HttpSessionRequestCache에 요청된 경로를 저장하고, -->
 	<!-- AuthenticaitonEntryPoint를 통해 로그인 폼으로 리디렉트 시킵니다. -->
-	<beans:bean id="customAuthenticationEntryPoint" class="com.suph.security.CustomAuthenticationEntryPoint">
+	<beans:bean id="customAuthenticationEntryPoint" class="com.suph.security.web.CustomAuthenticationEntryPoint">
 		<!-- 인증 성공시 이동시킬 경로를 저장할 파라미터명 지정합니다. HttpSessionRequestCache를 이용하는대신 URL을 통해 값을 전달하는 방법입니다. -->
 		<beans:property name="loginredirectname" value="loginRedirect"/>
 		
@@ -29,13 +29,13 @@
 	<!-- 따라서 RequestCache를 커스터마이징 하여 Session에 요청 경로를 저장하는 코드를 제거합니다. -->
 	<beans:bean id="nullRequestCache" class="org.springframework.security.web.savedrequest.NullRequestCache"/>
 	
-	<beans:bean id="customAuthenticationSuccessHandler" class="com.suph.security.CustomAuthenticationSuccessHandler">
+	<beans:bean id="customAuthenticationSuccessHandler" class="com.suph.security.web.authentication.CustomAuthenticationSuccessHandler">
 		<beans:property name="targetUrlParameter" value="loginRedirect"/>	<!-- 인증 성공했을때, 로그인 요청에 해당 파라미터가 있으면 읽어들여 이동 -->
 		<beans:property name="defaultUrl" value="/main"/>	<!-- REFERER도, 파라미터도 없을때 이동할 페이지 -->
 		<beans:property name="useReferer" value="false"/>	<!-- 기본값 false -->
 	</beans:bean>
 	
-	<beans:bean id="customAuthenticationFailureHandler" class="com.suph.security.CustomAuthenticationFailureHandler">
+	<beans:bean id="customAuthenticationFailureHandler" class="com.suph.security.web.authentication.CustomAuthenticationFailureHandler">
 		<beans:property name="loginidname" value="loginid"/>
 		<beans:property name="loginpasswdname" value="loginpw"/>
 		<!-- <beans:property name="loginredirectname" value="loginRedirect"/> -->
@@ -43,14 +43,14 @@
 		<beans:property name="defaultFailureUrl" value="/login"/>	<!-- 로그인 실패시 보여줄 로그인 페이지 폼 -->
 	</beans:bean>
 
-	<beans:bean id="customSecurityContextRepository" class="com.suph.security.CustomSecurityContextRepository"/>
-	<beans:bean id="customLogoutHandler" class="com.suph.security.CustomLogoutSuccessHandler"/>
+	<beans:bean id="customSecurityContextRepository" class="com.suph.security.web.context.CustomSecurityContextRepository"/>
+	<beans:bean id="customLogoutHandler" class="com.suph.security.web.authentication.logout.CustomLogoutSuccessHandler"/>
 	
-	<beans:bean id="accessDenied" class="com.suph.security.CustomAccessDeniedHandler">
+	<beans:bean id="accessDenied" class="com.suph.security.web.access.CustomAccessDeniedHandler">
 		<beans:property name="errorPage" value="/access_denied"/>
 	</beans:bean>
 	
-	<beans:bean id="tokenRepository" class="com.suph.security.CustomCookieCsrfTokenRepository" />
+	<beans:bean id="tokenRepository" class="com.suph.security.web.csrf.CustomCookieCsrfTokenRepository" />
 	<!-- <beans:bean id="tokenRepository" class="org.springframework.security.web.csrf.CookieCsrfTokenRepository" /> -->
 	<!-- <beans:bean id="tokenRepository" class="com.suph.security.CustomHttpSessionCsrfTokenRepository" /> -->
 	
@@ -179,11 +179,11 @@
 	
 	
 	<!-- 너무 오랜시간 로그인한 유저를 재로그인 페이지로 유도하는 필터 -->
-	<beans:bean id="tooLongLoginBlockFilter" class="com.suph.security.TooLongLoginBlockFilter">
+	<beans:bean id="tooLongLoginBlockFilter" class="com.suph.security.web.toolonglogin.TooLongLoginBlockFilter">
 		<beans:property name="tooLongLoginBlockHandler" ref="tooLongLoginBlockHandler" />
 	</beans:bean>
 	
-	<beans:bean id="tooLongLoginBlockHandler" class="com.suph.security.SimpleTooLongLoginBlockHandler">
+	<beans:bean id="tooLongLoginBlockHandler" class="com.suph.security.web.toolonglogin.SimpleTooLongLoginBlockHandler">
 		<beans:property name="loginidname" value="loginid"/>
 		<beans:property name="exceptionmsgname" value="securityexceptionmsg"/>
 		<beans:property name="defaultFailureUrl" value="/login"/>
@@ -214,10 +214,10 @@
 		<beans:property name="enableGroups" value="false"/>
 	</beans:bean>
 	 -->
-	<beans:bean id="loginService" class="com.suph.security.LoginServiceImpl"/>
+	<beans:bean id="loginService" class="com.suph.security.core.userdetails.jdbc.impl.LoginServiceImpl"/>
 	
 	<!-- <beans:bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/> -->
-	<beans:bean id="bcryptPasswordEncoder" class="com.suph.security.CustomBCryptPasswordEncoder"/>
+	<beans:bean id="bcryptPasswordEncoder" class="com.suph.security.crypto.bcrypt.CustomBCryptPasswordEncoder"/>
 	
 	<authentication-manager>	<!-- 인증 관련 정보 -->
 		<!-- <authentication-provider>: AuthenticationManager 인터페이스를 구현한 ProviderManager가 리스트로 가지는 -->
@@ -261,18 +261,18 @@
 	<!-- <bean class="">속성에 인터페이스를 지정해선 안된다. -->
 	<!-- <beans:bean id="securedObjectDAO" class="com.suph.security.SecuredObjectDAO"/> -->
 	
-	<beans:bean id="securedObjectService" class="com.suph.security.SecuredObjectServiceImpl">
-		<beans:property name="securedObjectDAO" ref="securedObjectDAO"/>
+	<beans:bean id="securedObjectService" class="com.suph.security.core.resourcedetails.jdbc.impl.SecuredObjectServiceImpl">
+		<beans:property name="securedObjectDAO" ref="securedObjectDAO"/>	<!-- @Repository("securedObjectDAO") -->
 	</beans:bean>
 	
 	<!-- URL별 권한 정보를 반환할 팩토리 빈 객체 --> 
-	<beans:bean id="requestMap" class="com.suph.security.UrlResourcesMapFactoryBean" init-method="init">
+	<beans:bean id="requestMap" class="com.suph.security.factory.UrlResourcesMapFactoryBean" init-method="init">
 		<beans:property name="securedObjectService" ref="securedObjectService"/>	<!-- 어노테이션 주입으로 대체방법은? -->
 	</beans:bean>
 	
 	<!-- URL별 권한 정보를 메모리에 올려두고 관리하다가, 요청시 갱신 작업을 수행하는 객체 -->
 	<!-- FilterSecurityInterceptor에서 리소스에 대한 보안 설정(Configattribute) 정보를 확인하는데 사용된다. -->
-	<beans:bean id="reloadableFilterInvocationSecurityMetadataSource" class="com.suph.security.ReloadableFilterInvocationSecurityMetadataSource">
+	<beans:bean id="reloadableFilterInvocationSecurityMetadataSource" class="com.suph.security.web.access.intercept.ReloadableFilterInvocationSecurityMetadataSource">
 		<beans:constructor-arg ref="requestMap"/>
 		<beans:property name="securedObjectService" ref="securedObjectService"/>	<!-- 어노테이션 주입으로 대체방법은? -->
 	</beans:bean>
@@ -308,11 +308,11 @@
 	</beans:bean>
 	 -->
 	<!-- <beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased"> -->
-	<beans:bean id="accessDecisionManager" class="com.suph.security.CustomAffirmativeBased">
+	<beans:bean id="accessDecisionManager" class="com.suph.security.web.access.vote.CustomAffirmativeBased">
 		<beans:constructor-arg>
 			<beans:list>
 				<!-- <beans:bean class="org.springframework.security.access.vote.RoleVoter"> -->
-				<beans:bean class="com.suph.security.CustomRoleVoter">
+				<beans:bean class="com.suph.security.web.access.vote.CustomRoleVoter">
 					<beans:property name="rolePrefix" value=""/>
 				</beans:bean>
 			</beans:list>

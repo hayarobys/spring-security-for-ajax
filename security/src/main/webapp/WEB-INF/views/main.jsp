@@ -2,7 +2,7 @@
 
 <%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
 <%@ page import="org.springframework.security.core.Authentication" %>
-<%@ page import="com.suph.security.MemberInfo" %>
+<%@ page import="com.suph.security.core.userdetails.MemberInfo" %>
 <%@ page import="org.slf4j.Logger" %>
 <%@ page import="org.slf4j.LoggerFactory" %>
 
@@ -135,16 +135,19 @@
 			$.ajax({
 				dataType: "json",
 				contentType: "application/json;charset=UTF-8",
-				type: "GET",	// ajax post 요청시 쿠키에 저장된 csrf토큰값이 변경되지만, 헤더 메타 태그에 넣어둔 csrf토큰 값은 그대로 있기에 두번째 요청부터 csrf불일치 오류가 발생한다. 주의 할 것
+				type: "GET",
+				// 모든 종류의 HTTP 요청시 쿠키에 저장된 csrf토큰값이 변경되지만,
+				// ajax요청일 경우 헤더 메타 태그에 넣어둔 csrf토큰 값은 그대로 있기에 다음 요청에서 자칫 쿠키와 헤더 csrf의 불일치 오류가 발생할 수 있다.
+				// 또한 GET으로 보낸 경우라도 CsrfFilter에서 검사하지 않을 뿐 쿠키Csrf토큰 값은 계속 새로 발급되는 것에 주의하자.
 				url: "${pageContext.request.contextPath}/hello-message",
 				beforeSend: function(xhr){
 					xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
 					xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
 				},
-				success: function(data){
-					if(data.result == "success"){
-						console.log("안녕 메시지 요청 성공", data.message);
-						$("#message").append(data.message + "<br />");
+				success: function(responseJSON, statusText, xhr){
+					if(statusText == "success"){
+						console.log("안녕 메시지 요청 성공", responseJSON.message);
+						$("#message").append(responseJSON.message + "<br />");
 					}else{
 						console.log("요청 실패");
 					}

@@ -55,7 +55,7 @@
 			<tr>
 				<td colspan="2">
 					<input type="submit" id="loginbtn" value="로그인"/>
-					<%-- <sec:csrfInput/> --%>
+					<sec:csrfInput/>
 				</td>
 			</tr>
 		</table>
