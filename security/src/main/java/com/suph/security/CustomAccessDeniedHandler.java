@@ -7,13 +7,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
+import io.jsonwebtoken.lang.Assert;
+
 public class CustomAccessDeniedHandler implements AccessDeniedHandler{
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
+	
 	/** 권한 부족으로 접근 거부시 보여줄 페이지 URL */
 	private String errorPage;
 	
@@ -32,7 +38,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler{
 	@Override
 	public void handle( HttpServletRequest request, HttpServletResponse response,
 			AccessDeniedException accessDeniedException ) throws IOException, ServletException{
-		
+		LOGGER.debug("어세스 디나이드 핸들러 접근");
 		// Ajax를 통해 들어온 것인지 파악한다.
 		String ajaxHeader = request.getHeader("X-Ajax-call");
 		String result = "";
@@ -44,27 +50,35 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler{
 		if(ajaxHeader == null){
 		// null로 받은 경우는 X-Ajax-call 헤더 변수가 없다는 의미이기 때문에 Ajax가 아닌 일반적인 방법으로 접근했음을 의미한다.
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			Object principal = auth.getPrincipal();
 			
-			if(principal instanceof MemberInfo){
-				MemberInfo memberInfo = (MemberInfo)principal;
+			try{
+				Assert.notNull(auth);
 				
-				String username = memberInfo.getUsername();
-				String id = memberInfo.getId();
-				String name = memberInfo.getName();
-				Collection<? extends GrantedAuthority> authorities = memberInfo.getAuthorities();
+				Object principal = auth.getPrincipal();
 				
-				request.setAttribute("username", username);
-				request.setAttribute("id", id);
-				request.setAttribute("name", name);
-				request.setAttribute("authorities", authorities);
+				if(principal instanceof MemberInfo){
+					MemberInfo memberInfo = (MemberInfo)principal;
+					
+					String username = memberInfo.getUsername();
+					String id = memberInfo.getId();
+					String name = memberInfo.getName();
+					Collection<? extends GrantedAuthority> authorities = memberInfo.getAuthorities();
+					
+					request.setAttribute("username", username);
+					request.setAttribute("id", id);
+					request.setAttribute("name", name);
+					request.setAttribute("authorities", authorities);
+				}
+			}catch(IllegalArgumentException iae){
+				LOGGER.debug("유효한 Authentication을 찾지 못했습니다. 접근 거부 페이지를 응답합니다.");
 			}
-						
+			
 			request.setAttribute("errormsg", accessDeniedException);
 			request.getRequestDispatcher(errorPage).forward(request, response);	// xml등에서 미리 설정한 에러페이지로 이동
 			
 		}else{
 		// 그외 요청(Ajax라거나...)에서 권한이 불충분 한 것이라면
+			LOGGER.debug("이 Ajax요청에 필요한 권한이 불충분 합니다");
 			if("true".equals(ajaxHeader)){	// true로 값을 받았다는 것은 ajax로 접근했음을 의미한다.
 				result = "{\"result\":\"fail\",\"message\":\"" + accessDeniedException.getMessage() + "\"}";
 				

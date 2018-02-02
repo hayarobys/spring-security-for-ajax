@@ -1,5 +1,10 @@
 package com.suph.security;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 스프링 시큐리티에 관련된 동작을 처리하는 컨트롤러 입니다.
@@ -51,6 +57,16 @@ public class SecurityController {
 	@RequestMapping("/main")
 	public String main() {
 		return "main";
+	}
+	
+	@RequestMapping(value="/hello-message", method={RequestMethod.POST, RequestMethod.GET})
+	public @ResponseBody Map<String, Object> ajaxGetHelloMessage(HttpServletRequest request){
+		Map<String, Object> result = new HashMap<String, Object>();
+		
+		result.put("result", "success");
+		result.put("message", "hello ~ " + request.getMethod());
+		
+		return result;
 	}
 	
 	/**

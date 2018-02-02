@@ -201,9 +201,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	private void useTargetUrl(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 		
-		if(savedRequest != null){
-			requestCache.removeRequest(request, response);
-		}
+		//if(savedRequest != null){
+		//	requestCache.removeRequest(request, response);
+		//}
 		
 		String targetUrl = request.getParameter(targetUrlParameter);
 		redirectStrategy.sendRedirect(request, response, targetUrl);

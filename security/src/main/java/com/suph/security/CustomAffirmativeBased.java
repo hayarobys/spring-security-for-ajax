@@ -18,7 +18,7 @@ public class CustomAffirmativeBased extends AffirmativeBased{
 	 * 보유한 AccessDecisionVoter들 중 단 하나라도 승인결정을 한다면 AffirmativeBased는 리소스 접근을 허용하도록 동작합니다. 
 	 * @param decisionVoters
 	 */
-	public CustomAffirmativeBased(List<AccessDecisionVoter> decisionVoters) {
+	public CustomAffirmativeBased(List<AccessDecisionVoter<? extends Object>> decisionVoters) {
 		super(decisionVoters);
 	}
 	

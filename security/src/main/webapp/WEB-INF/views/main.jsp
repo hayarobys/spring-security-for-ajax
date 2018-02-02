@@ -1,11 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
 <%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
 <%@ page import="org.springframework.security.core.Authentication" %>
 <%@ page import="com.suph.security.MemberInfo" %>
 <%@ page import="org.slf4j.Logger" %>
 <%@ page import="org.slf4j.LoggerFactory" %>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <%	
 	// 로그인 정보를 가져오기 위해 스프링 시큐리티에서 제공하는 방법
@@ -38,6 +41,13 @@
 <html>
 <head>
 	<meta charset="UTF-8">
+	
+	<!-- Ajax, Json에서 사용하기 위한 CSRF 메타 태그 -->
+	<sec:csrfMetaTags /> <!-- 로 대체 가능 -->
+	<%-- <meta name="_csrf" content="${_csrf.token}" /> --%>
+	<!-- default header name is X_CSRF_TOKEN -->
+	<%-- <meta name="_csrf_header" content="${_csrf.headerName}" /> --%>
+	
 	<title>메인화면</title>
 </head>
 <body>
@@ -62,6 +72,8 @@
 					<tr>
 						<td colspan="2">
 							<input type="submit" id="loginbtn" value="로그인"/>
+							<%-- <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> --%>
+							<sec:csrfInput /> <!-- 을 사용하는 방법도 존재 -->
 						</td>
 					</tr>
 				</table>
@@ -73,7 +85,17 @@
 		</sec:authorize>
 		<sec:authorize access="isAuthenticated()">
 			<%=name%>님 반갑습니다<br/>
-			<a href="<%=request.getContextPath()%>/j_spring_security_logout">로그아웃</a>
+			<%-- <a href="<%=request.getContextPath()%>/j_spring_security_logout">로그아웃</a> --%>
+			
+			<%-- <c:url var="logoutUrl" value="/j_spring_security_logout"/> --%>
+			<c:url var="logoutUrl" value="/logout"/>
+			<form action="${logoutUrl}" method="post">
+				<input type="submit" value="로그아웃" />
+				<%-- <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> --%>
+				<sec:csrfInput /> <!-- 을 사용하는 방법도 존재 -->
+			</form>
+			
+			
 		</sec:authorize>
 		<ul>
 			<sec:authorize access="hasRole('ROLE_ADMIN')">
@@ -94,10 +116,48 @@
 		</ul>
 		<p>
 			메인 컨텐츠1
+			<input type="button" value="ajax요청(반가워! 전송)" onclick="javascript:getHelloMessage()"/>
+			<article id="message">
+			
+			</article>
 		</p>
 		<p>
 			메인 컨텐츠2
 		</p>
 	</div>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		function getHelloMessage(){
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			
+			$.ajax({
+				dataType: "json",
+				contentType: "application/json;charset=UTF-8",
+				type: "GET",	// ajax post 요청시 쿠키에 저장된 csrf토큰값이 변경되지만, 헤더 메타 태그에 넣어둔 csrf토큰 값은 그대로 있기에 두번째 요청부터 csrf불일치 오류가 발생한다. 주의 할 것
+				url: "${pageContext.request.contextPath}/hello-message",
+				beforeSend: function(xhr){
+					xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
+					xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
+				},
+				success: function(data){
+					if(data.result == "success"){
+						console.log("안녕 메시지 요청 성공", data.message);
+						$("#message").append(data.message + "<br />");
+					}else{
+						console.log("요청 실패");
+					}
+				},
+				error: function(xhr, status, error){
+					var httpStatusCode = xhr.status;	// 상태코드
+					var httpStatusMessage = xhr.statusTest;	// 상태 메시지
+					
+					console.log("상태코드: ", httpStatusCode);
+					console.log("상태메시지: ", httpStatusMessage);
+				}
+			});
+		}
+	</script>
 </body>
 </html>

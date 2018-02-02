@@ -50,6 +50,10 @@
 		<beans:property name="errorPage" value="/access_denied"/>
 	</beans:bean>
 	
+	<beans:bean id="tokenRepository" class="com.suph.security.CustomCookieCsrfTokenRepository" />
+	<!-- <beans:bean id="tokenRepository" class="org.springframework.security.web.csrf.CookieCsrfTokenRepository" /> -->
+	<!-- <beans:bean id="tokenRepository" class="com.suph.security.CustomHttpSessionCsrfTokenRepository" /> -->
+	
 	<!-- use-expressions: true값을 줄 경우 intercept-url의 access속성에서 몇가지 표현식 사용이 가능해진다. -->
 	<!-- security-context-repository-ref: 로그인 성공 시(인증 성공 시) SecurityContext생성 전략을 구현한 클래스 지정. 여기선 쿠키에서 특정 값을 읽어와 메모리에 저장하도록 구현했다. -->
 	<!-- entry-point-ref: 인증이 필요한 페이지에 접근시 특정 필터에서 예외가 발생하고, 그 예외를 받은 ExceptionTranslationFilter는 -->
@@ -62,6 +66,12 @@
 		entry-point-ref="customAuthenticationEntryPoint"
 	>
 		<request-cache ref="nullRequestCache"/>
+		
+		<!-- CSRF 방어 필터 추가. 단 필터만 선언하지 말고, 요청/응답 페이지 내에서도 해당 토큰을 주었다 받았다 해주어야 함 -->
+		<!-- Ajax, Multipart Form, GET 각각의 토큰 포함 방식이 다름에 주의 -->
+		<!-- 적절한 HTTP동사를 함께 사용할때 효과가 극대화 됨을 명심 -->
+		<csrf token-repository-ref="tokenRepository" />
+		
 	<!--
 		auto-config를 사용함으로써 아래의  http 내부 태그들이 기본값으로 설정되었다.
 		어디까지나 예제라서 기본값을 쓰는거지, 우리 현실에 맞는 방식은 아님을 명심하자.
@@ -136,9 +146,18 @@
 			authentication-failure-handler-ref="customAuthenticationFailureHandler"
 		/>
 		
+		<!-- logout-url: 로그아웃 처리를 요청할 때 사용할 URL. 스프링 시큐리티 4.x의 디폴트는 /logout  ,  3.x의 디폴트는 j_spring_security_logout -->
+		<!-- invalidate-session: 세션 삭제 여부 -->
+		<!-- logout-success-url: 로그아웃 성공시 이동할 URL -->
+		<!-- success-handler-ref: 로그아웃 성공시 호출될 핸들러 -->
+		<!-- delete-cookies: 삭제할 쿠키 이름 지정시 쿠키 삭제 -->
+		<!-- 주의사항: CsrfFilter 사용시 LogoutFilter가 HTTP POST만 받도록 업데이트 된다. 반드시 POST로 요청하자 -->
+		<logout logout-url="/logout" invalidate-session="true" logout-success-url="/main" />
 		
-		<!-- 미로그인 유저를 지칭할 권한명 지정. 기본값은 ROLE_ANONYMOUS -->
-		<anonymous granted-authority="ANONYMOUS"/>
+		<!-- 미로그인 유저를 지칭할 권한명 지정. 기본값은 ROLE_ANONYMOUS. 리소스 접근에 필요한 권한명과 다를 경우 -->
+		<!-- 메인페이지접근 > 권한명 달라서 거부 > 거부페이지접근 > 거부페이지조차 권한명 달라서 거부 > 다시 거부페이지 접근 > 역시 거부 > 무한반복 -->
+		<!-- 과 같은 과정이 일어나니 주의해서 설정하자 -->
+		<anonymous granted-authority="ROLE_ANONYMOUS"/>
 		
 		
 		
@@ -299,8 +318,8 @@
 			</beans:list>
 		</beans:constructor-arg>
 		
-		<!-- 모두가 기권(판단 보류) 결정을 내리면 접근을 허가하겠습니까? 아니요. -->
-		<beans:property name="allowIfAllAbstainDecisions" value="false"/>
+		<!-- 모두가 기권(판단 보류) 결정을 내리면 접근을 허가하겠습니까? 아니요. 스프링 시큐리티 3.2.4 지원 , 스프링 시큐리티 4.2.4미지원 -->
+		<!-- <beans:property name="allowIfAllAbstainDecisions" value="false"/> -->
 	</beans:bean>
 </beans:beans>
 
