@@ -52,6 +52,7 @@ WHERE
 ORDER BY
   R.SORT_ORDER ASC, A.AUTH_NO;
   
+  
 -- 연결된 권한이 있는 리소스만 출력
 SELECT
   R.SORT_ORDER,

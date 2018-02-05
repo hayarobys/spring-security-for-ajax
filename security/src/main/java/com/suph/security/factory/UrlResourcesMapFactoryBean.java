@@ -27,7 +27,7 @@ public class UrlResourcesMapFactoryBean
 		requestMap = securedObjectService.getRolesAndUrl();
 	}
 	
-	/**
+	/*
 	 * 싱글턴
 	 */
 	@Override

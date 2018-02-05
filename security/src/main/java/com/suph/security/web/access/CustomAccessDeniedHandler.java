@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,8 +20,19 @@ import com.suph.security.core.userdetails.MemberInfo;
 
 import io.jsonwebtoken.lang.Assert;
 
+/**
+ * 인증 상태의 요청이 인가에 실패 했을시 처리 동작을 정의한 클래스 입니다.
+ */
 public class CustomAccessDeniedHandler implements AccessDeniedHandler{
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
+	
+	/** Ajax 구분을 위해 헤더에서 검색할 키 명 입니다. */
+	@Value("#{security['spring.ajax_header_key']}")
+	private String SPRING_AJAX_HEADER_KEY;
+	
+	/** # Ajax 구분을 위해 헤더에서 검색할 키 값 입니다. */
+	@Value("#{security['spring.ajax_header_value']}")
+	private String SPRING_AJAX_HEADER_VALUE;
 	
 	/** 권한 부족으로 접근 거부시 보여줄 페이지 URL */
 	private String errorPage;
@@ -40,9 +52,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler{
 	@Override
 	public void handle( HttpServletRequest request, HttpServletResponse response,
 			AccessDeniedException accessDeniedException ) throws IOException, ServletException{
-		LOGGER.debug("어세스 디나이드 핸들러 접근");
 		// Ajax를 통해 들어온 것인지 파악한다.
-		String ajaxHeader = request.getHeader("X-Ajax-call");
+		String ajaxHeader = request.getHeader(SPRING_AJAX_HEADER_KEY);
 		String result = "";
 		
 		// 권한이 없을시 뜨는 예외 처리 장소이므로 응답 상태 코드를 403(접근금지/권한없음)으로 설정한다.
@@ -81,7 +92,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler{
 		}else{
 		// 그외 요청(Ajax라거나...)에서 권한이 불충분 한 것이라면
 			LOGGER.debug("이 Ajax요청에 필요한 권한이 불충분 합니다");
-			if("true".equals(ajaxHeader)){	// true로 값을 받았다는 것은 ajax로 접근했음을 의미한다.
+			if(SPRING_AJAX_HEADER_VALUE.equals(ajaxHeader)){	// true로 값을 받았다는 것은 ajax로 접근했음을 의미한다.
 				result = "{\"result\":\"fail\",\"message\":\"" + accessDeniedException.getMessage() + "\"}";
 				
 			}else{	// 헤더값 설정을 잘못했다고 간주하고 그에 따른 에러메시지를 보낸다.

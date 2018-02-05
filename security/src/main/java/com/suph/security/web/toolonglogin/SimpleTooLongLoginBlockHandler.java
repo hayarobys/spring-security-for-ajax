@@ -35,17 +35,18 @@ public class SimpleTooLongLoginBlockHandler implements TooLongLoginBlockHandler{
 	public void onTooLongLoginBlock(
 			HttpServletResponse response, HttpServletRequest request, TooLongLoginException exception
 	) throws IOException, ServletException{
+		//LOGGER.debug("SecurityContextHolder의 Authentication이 null값으로 초기화 됩니다.");
 		SecurityContextHolder.clearContext();
 		MemberInfo memberInfo = exception.getMemberInfo();
 		
-		LOGGER.info("마지막 로그인으로부터 오랜 시간이 경과 했습니다. 재로그인 해주세요.");
-		//LOGGER.debug("SecurityContextHolder의 Authentication이 null값으로 초기화 됩니다.");
+		// "마지막 로그인으로부터 오랜 시간이 경과 했습니다. 재로그인 해주세요."
+		LOGGER.info(exception.getMessage());
 		
 		// 현재 접근 요청자의 ID를 request영역에 저장해두어 로그인 페이지에서 이를 접근하도록 한다.
 		String loginid = memberInfo.getId();
 		
 		request.setAttribute(loginidname, loginid);
-		request.setAttribute(exceptionmsgname, "마지막 로그인으로부터 오랜 시간이 경과 했습니다. 재로그인 해주세요.");
+		request.setAttribute(exceptionmsgname, exception.getMessage());
 		request.getRequestDispatcher(defaultFailureUrl).forward(request, response);
 	}
 	

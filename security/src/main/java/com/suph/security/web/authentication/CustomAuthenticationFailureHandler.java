@@ -8,12 +8,25 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.savedrequest.SavedRequest;
 
+/**
+ * 인증 실패시(로그인 실패시의) 동작을 정의한 클래스 입니다.
+ */
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler{
 	
 	protected final static Logger logger = LoggerFactory.getLogger(CustomAuthenticationFailureHandler.class);
+	
+	/** Ajax 구분을 위해 헤더에서 검색할 키 명 입니다. */
+	@Value("#{security['spring.ajax_header_key']}")
+	private String SPRING_AJAX_HEADER_KEY;
+	
+	/** # Ajax 구분을 위해 헤더에서 검색할 키 값 입니다. */
+	@Value("#{security['spring.ajax_header_value']}")
+	private String SPRING_AJAX_HEADER_VALUE;
 	
 	/** 로그인 시도한 id값이 들어오는 input 태그 name */
 	private String loginidname;
@@ -123,19 +136,27 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 	public void onAuthenticationFailure(
 			HttpServletRequest request, HttpServletResponse response, AuthenticationException exception
 	) throws IOException, ServletException{
+		// ajax 요청인지 확인
+		String ajaxHeader = request.getHeader(SPRING_AJAX_HEADER_KEY);
 		
-		// Request 객체의 Attribute에 사용자가 실패시 입력했던 로그인 ID와 비밀번호를 저장해두어 로그인 페이지에서 이를 접근하도록 한다.
-		String loginid = request.getParameter(loginidname);
-		String loginpasswd = request.getParameter(loginpasswdname);
-		
-		request.setAttribute(loginidname, loginid);
-		request.setAttribute(loginpasswdname, loginpasswd);
-		
-		// Request 객체의 Attribute에 예외 메시지 저장
-		request.setAttribute(exceptionmsgname, exception.getMessage());
-		request.getRequestDispatcher(defaultFailureUrl).forward(request, response);	// redirect하면 request영역을 공유할 수 없다. forward해주자.
-		// forward함으로써 클라이언트가 보낸 request에 담긴 객체를 defaultFailureUrl페이지에서 다시 불러쓸 수 있다.
-		// 다만 클라이언트의 주소창 값은 직전에 요청한 주소로 변경된다. 여기선 http://localhost:8443/security/login_check로 변경
+		if( !(ajaxHeader == null) && SPRING_AJAX_HEADER_VALUE.equals(ajaxHeader) ){
+		// Ajax 요청이라면, 인증에 실패했으므로 401 status 반환
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+		}else{
+		// 일반 요청이라면
+			// Request 객체의 Attribute에 사용자가 실패시 입력했던 로그인 ID와 비밀번호를 저장해두어 로그인 페이지에서 이를 접근하도록 한다.
+			String loginid = request.getParameter(loginidname);
+			String loginpasswd = request.getParameter(loginpasswdname);
+			
+			request.setAttribute(loginidname, loginid);
+			request.setAttribute(loginpasswdname, loginpasswd);
+			
+			// Request 객체의 Attribute에 예외 메시지 저장
+			request.setAttribute(exceptionmsgname, exception.getMessage());
+			request.getRequestDispatcher(defaultFailureUrl).forward(request, response);	// redirect하면 request영역을 공유할 수 없다. forward해주자.
+			// forward함으로써 클라이언트가 보낸 request에 담긴 객체를 defaultFailureUrl페이지에서 다시 불러쓸 수 있다.
+			// 다만 클라이언트의 주소창 값은 직전에 요청한 주소로 변경된다. 여기선 http://localhost:8443/security/login_check로 변경
+		}
 	}
 }
 

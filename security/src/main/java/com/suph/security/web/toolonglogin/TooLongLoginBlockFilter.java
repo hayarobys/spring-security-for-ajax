@@ -62,7 +62,7 @@ public class TooLongLoginBlockFilter implements Filter{
 		try{
 			Assert.notNull(authentication);
 		}catch(IllegalArgumentException iae){
-			LOGGER.debug("유효한 Authentication을 찾지 못했습니다. 다음 필터로 넘어갑니다.");
+			//LOGGER.debug("유효한 Authentication을 찾지 못했습니다. 다음 필터로 넘어갑니다.");
 			chain.doFilter(request, response);
 			return;
 		}
@@ -73,7 +73,7 @@ public class TooLongLoginBlockFilter implements Filter{
 			Date issuedAt = memberInfo.getIssuedAt();	// 최초 로그인 날짜
 			long diff = getDiffFromCurrTimeInMs(issuedAt); // 시간차
 			
-			LOGGER.info("마지막 로그인 시간 으로부터 {}분 지났습니다. (최대시간: {}분)", diff/1000/60, LOGIN_EXP_TIME/1000/60);
+			LOGGER.info("이 요청자(계정번호: {})는 마지막 로그인 시간 으로부터 {}분 지났습니다. (최대시간: {}분)", new Object[]{memberInfo.getNo(), diff/1000/60, LOGIN_EXP_TIME/1000/60});
 			
 			if(diff >= LOGIN_EXP_TIME){
 				// 너무 오랜시간 로그인 했으므로 재로그인 유도

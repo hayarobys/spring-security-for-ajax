@@ -58,6 +58,16 @@ public class SecurityController {
 		return "main";
 	}
 	
+	/**
+	 * Ajax 로그인 예제가 있는
+	 * Rest 메인 페이지로 이동합니다.
+	 * @return
+	 */
+	@RequestMapping("/rest-main")
+	public String restMain() {
+		return "rest-main";
+	}
+	
 	@RequestMapping(value="/hello-message", method={RequestMethod.POST, RequestMethod.GET})
 	public @ResponseBody Map<String, Object> ajaxGetHelloMessage(HttpServletRequest request){
 		Map<String, Object> result = new HashMap<String, Object>();
