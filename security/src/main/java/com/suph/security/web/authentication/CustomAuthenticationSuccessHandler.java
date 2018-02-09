@@ -131,12 +131,15 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		int intRedirectStrategy = decideRedirectStrategy(request, response);
 		switch(intRedirectStrategy){
 		case 1:
-			useTargetUrl(request, response);
+			useAjax(request, response);
 			break;
 		case 2:
-			useSessionUrl(request, response);
+			useTargetUrl(request, response);
 			break;
 		case 3:
+			useSessionUrl(request, response);
+			break;
+		case 4:
 			useRefererUrl(request, response);
 			break;
 		default:

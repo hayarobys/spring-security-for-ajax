@@ -1,5 +1,7 @@
 package com.suph.security.web.context;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -41,15 +43,23 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	@Value("#{security['spring_security_context_key']}")
 	private String SPRING_SECURITY_CONTEXT_KEY;
 	
+	/** 클라이언트에서 사용할 수 있게 닉네임 정보를 담아둘 JWT닉네임 쿠키의 key명 입니다. */
+	@Value("#{security['jwt_nickname_cookie_key']}")
+	private String JWT_NICKNAME_COOKIE_KEY;
+	
 	/** SecurityContext 생성을 위한 JWT가 저장될 쿠키의 key명 입니다. */
 	@Value("#{security['jwt.claim.issuer']}")
-	private String JWT_ISSUER;
+	private String SECURITY_JWT_ISSUER;
+	
+	/** JWT 닉네임 토큰의 유효 시간 입니다.(단위: ms) */
+	@Value("#{security['nickname_cookie.exp_time_per_ms']}")
+	private long NICKNAME_TOKEN_EXP_TIME;
 	
 	/** 시큐리티 쿠키의 유효 시간 입니다.(단위: sec) */
 	@Value("#{security['security_cookie.exp_time_per_sec']}")
 	private int SECURITY_COOKIE_EXP_TIME;
 	
-	/** JWT 토큰의 유효 시간 입니다.(단위: ms) */
+	/** JWT 인증 토큰의 유효 시간 입니다.(단위: ms) */
 	@Value("#{security['jwt.exp_time_per_ms']}")
 	private long TOKEN_EXP_TIME;
 	
@@ -59,23 +69,31 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	
 	/** JWT 암/복호화에 사용되는 대칭키 입니다. */
 	@Value("#{security['jwt.secret']}")
-	private String SECRET;
+	private String SECURITY_SECRET;
 	
-	/** JWT payload에 저장할 계정 일련 번호 Claim명 입니다. */
+	/** JWT 인증토큰의 payload에 저장할 계정 일련 번호 Claim명 입니다. */
 	@Value("#{security['jwt.claim.no']}")
-	private String JWTNo;
+	private String SECURITY_JWT_NO;
 	
-	/** JWT payload에 저장할 아이디 Claim명 입니다. */
+	/** JWT 인증토큰의 payload에 저장할 아이디 Claim명 입니다. */
 	@Value("#{security['jwt.claim.id']}")
-	private String JWTId;
+	private String SECURITY_JWT_ID;
 	
-	/** JWT payload에 저장할 닉네임 Claim명 입니다. */
+	/** JWT 인증토큰의 payload에 저장할 닉네임 Claim명 입니다. */
 	@Value("#{security['jwt.claim.name']}")
-	private String JWTName;
+	private String SECURITY_JWT_NAME;
 	
-	/** JWT payload에 저장할 권한 Claim명 입니다. */
+	/** JWT 인증토큰의 payload에 저장할 권한 Claim명 입니다. */
 	@Value("#{security['jwt.claim.authorities']}")
-	private String JWTAuthorities;
+	private String SECURITY_JWT_AUTHORITIES;
+	
+	/** JWT 닉네임 토큰의 payload에 저장할 닉네임 Claim명 입니다. */
+	@Value("#{security['client.jwt.claim.name']}")
+	private String CLIENT_JWT_NAME;
+	
+	/** JWT 닉네임 토큰의 payload에 저장할 권한 Claim명 입니다. */
+	@Value("#{security['client.jwt.claim.authorities']}")
+	private String CLIENT_JWT_AUTHORITIES;
 	
 	/**	(미인증된)기본 내용과 동일한지를 확인하는 데 사용되는 SecurityContext 객체 */
 	private final Object contextObject = SecurityContextHolder.createEmptyContext();
@@ -102,7 +120,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
         Cookie jwtCookie = getCookieFromRequest(request, SPRING_SECURITY_CONTEXT_KEY);
         if(jwtCookie == null){
         	logger.debug("요청으로부터 " + SPRING_SECURITY_CONTEXT_KEY + "에 해당하는 jwtCookie를 발견하지 못했습니다. 새로운 Cookie를 생성합니다.");
-        	jwtCookie = generateContextClearCookie(SPRING_SECURITY_CONTEXT_KEY);
+        	jwtCookie = generateContextClearCookie(SPRING_SECURITY_CONTEXT_KEY, true, true);
         }
         
         SecurityContext context = readSecurityContextFromJWT(jwtCookie.getValue());
@@ -201,7 +219,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 		Claims claims = null;
 		
 		try{
-			claims = JWTUtility.getClaims(jwt, SECRET);
+			claims = JWTUtility.getClaims(jwt, SECURITY_SECRET);
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error("JWT파싱에 실패했습니다. {}", e.getMessage());
@@ -209,28 +227,28 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 		}
 		
 		// 계정 일련 번호
-		String no = (String)JWTUtility.getClaim(claims, JWTNo);
+		String no = (String)JWTUtility.getClaim(claims, SECURITY_JWT_NO);
 		if( !StringUtils.hasText(no) ){
 			logger.error("JWT에 유효한 no이 없습니다.");
 			return null;
 		}
 		
 		// 계정 아이디
-		String id = (String)JWTUtility.getClaim(claims, JWTId);
+		String id = (String)JWTUtility.getClaim(claims, SECURITY_JWT_ID);
 		if( !StringUtils.hasText(id) ){
 			logger.error("JWT에 유효한  id가 없습니다.");
 			return null;
 		}
 		
 		// 계정 닉네임
-		String name = (String)JWTUtility.getClaim(claims, JWTName);
+		String name = (String)JWTUtility.getClaim(claims, SECURITY_JWT_NAME);
 		if( !StringUtils.hasText(name) ){
 			logger.error("JWT에 유효한 name이 없습니다.");
 			return null;
 		}
 		
 		// 계정 보유 권한
-		String authorities = (String)JWTUtility.getClaim(claims, JWTAuthorities);
+		String authorities = (String)JWTUtility.getClaim(claims, SECURITY_JWT_AUTHORITIES);
 		if( !StringUtils.hasText(authorities) ){
 			logger.error("JWT에 유효한 권한이 없습니다.");
 			return null;
@@ -296,20 +314,22 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	 * 제공받은 key값으로 비어있는 쿠키로 덮어쓰는 용도의 쿠키를 생성하여 반환합니다.
 	 * @return
 	 */
-	public static Cookie generateContextClearCookie(String key){
+	public static Cookie generateContextClearCookie(String key, boolean isSecure, boolean isHttpOnly){
 		Cookie cookie = new Cookie(key, null);
 		cookie.setMaxAge(0);
 		cookie.setPath("/");
-		cookie.setSecure(true);
-		cookie.setHttpOnly(true);
+		cookie.setSecure(isSecure);
+		cookie.setHttpOnly(isHttpOnly);
 		
 		return cookie;
 	}
-	
+		
 	/**
+	 * 인증 토큰 생성
 	 * 스프링 시큐리티에서 최종적으로 생성한 SecurityContext를 JWT Cookie로 변환하는데 사용됩니다.
 	 * 단 JWT생성일은 요청당시 JWT의 내용을 그대로 유지합니다. 요청당시 토큰이나 생성일이 없었다면 현재시간으로 생성 합니다.
 	 * 이는 로그인 유효 시간을 검사하는데 사용됩니다.
+	 * 클라이언트에서 변조는 못해서 그 내용을 볼 수는 있으므로 절대로 패스워드, 주민번호 등의 민감한 정보를 담아선 안됩니다.
 	 * @param context
 	 * @return
 	 */
@@ -336,13 +356,13 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			}
 			String authorities = authBuilder.toString();
 			
-			contextClaims.put(JWTNo, no);
-			contextClaims.put(JWTId, id);
-			contextClaims.put(JWTName, name);
-			contextClaims.put(JWTAuthorities, authorities);
+			contextClaims.put(SECURITY_JWT_NO, no);
+			contextClaims.put(SECURITY_JWT_ID, id);
+			contextClaims.put(SECURITY_JWT_NAME, name);
+			contextClaims.put(SECURITY_JWT_AUTHORITIES, authorities);
 			
 		}else if(principal instanceof String){
-			contextClaims.put(JWTName, (String)principal);
+			contextClaims.put(SECURITY_JWT_NAME, (String)principal);
 		}
 		
 		// 토큰 최초 생성일이 존재하지 않다면 현재 시간으로 재생성
@@ -353,12 +373,75 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 		String jwtContext = JWTUtility.createJWT(
 				issuedAt,
 				new Date(System.currentTimeMillis() + TOKEN_EXP_TIME),
-				JWT_ISSUER,
+				SECURITY_JWT_ISSUER,
 				contextClaims,
-				SECRET
+				SECURITY_SECRET
 		);
 		Cookie jwtContextCookie = new Cookie(SPRING_SECURITY_CONTEXT_KEY, jwtContext);
 		jwtContextCookie.setMaxAge(SECURITY_COOKIE_EXP_TIME);
+		jwtContextCookie.setPath("/");
+		jwtContextCookie.setSecure(isSecure);
+		jwtContextCookie.setHttpOnly(isHttpOnly);
+		
+		return jwtContextCookie;
+	}
+	
+	/**
+	 * 닉네임 토큰 생성
+	 * 스프링 시큐리티에서 최종적으로 생성한 SecurityContext를 JWT Cookie로 변환하는데 사용됩니다.
+	 * 단 이 쿠키는 클라이언트에서 닉네임, 권한별 메뉴 표시 등의 스크립트 처리를 위해서만 사용되어야 하며, 절대로 인증 및 인가 용도로 사용해선 안됩니다.
+	 * 스크립트 접근이 가능하도록 http-only 옵션을 걸지 않습니다.
+	 * @param context
+	 * @param isSecure
+	 * @param isHttpOnly
+	 * @return
+	 */
+	protected Cookie generateJWTNameCookie(SecurityContext context, boolean isSecure, boolean isHttpOnly){
+		Map<String, Object> contextClaims = new HashMap<String, Object>();
+		
+		Authentication authentication = context.getAuthentication();
+		Object principal = authentication.getPrincipal();
+		Date issuedAt = null;
+		if(principal instanceof MemberInfo){
+			MemberInfo memberInfo = (MemberInfo)principal;
+			String name = memberInfo.getName();
+			issuedAt = memberInfo.getIssuedAt();
+			
+			Collection<? extends GrantedAuthority> authorityList = memberInfo.getAuthorities();
+			StringBuilder authBuilder = new StringBuilder();
+			for(GrantedAuthority auth : authorityList){
+				if(authBuilder.length() > 0){
+					authBuilder.append(',');
+				}
+				authBuilder.append(auth.getAuthority());
+			}
+			String authorities = authBuilder.toString();
+			
+			try{
+				contextClaims.put(CLIENT_JWT_NAME, URLEncoder.encode(name,"utf-8"));
+			}catch(UnsupportedEncodingException e){
+				e.printStackTrace();
+			}
+			contextClaims.put(CLIENT_JWT_AUTHORITIES, authorities);
+			
+		}else if(principal instanceof String){
+			contextClaims.put(CLIENT_JWT_NAME, (String)principal);
+		}
+		
+		// 토큰 최초 생성일이 존재하지 않다면 현재 시간으로 재생성
+		if(issuedAt == null){
+			issuedAt = new Date();
+		}
+		
+		String jwtContext = JWTUtility.createJWT(
+				issuedAt,
+				new Date(System.currentTimeMillis() + NICKNAME_TOKEN_EXP_TIME),
+				SECURITY_JWT_ISSUER,
+				contextClaims,
+				SECURITY_SECRET
+		);
+		Cookie jwtContextCookie = new Cookie(JWT_NICKNAME_COOKIE_KEY, jwtContext);
+		//jwtContextCookie.setMaxAge(SECURITY_COOKIE_EXP_TIME);	// 영구 토큰
 		jwtContextCookie.setPath("/");
 		jwtContextCookie.setSecure(isSecure);
 		jwtContextCookie.setHttpOnly(isHttpOnly);
@@ -407,8 +490,10 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 				
 				if(!contextObject.equals(contextBeforeExecution)){
 				// 다만 보안필터체인을 돌기전에 생성한 SecurityContext가 인증 상태었다면 기존 SecurityContext 쿠키를 제거하라고 응답합니다.
-					Cookie clearCookie = generateContextClearCookie(SPRING_SECURITY_CONTEXT_KEY);
-					response.addCookie(clearCookie);
+					Cookie clearSecurityCookie = generateContextClearCookie(SPRING_SECURITY_CONTEXT_KEY, true, true);
+					Cookie clearNameCookie = generateContextClearCookie(JWT_NICKNAME_COOKIE_KEY, true, false);
+					response.addCookie(clearSecurityCookie);
+					response.addCookie(clearNameCookie);
 				}
 				
 				return;
@@ -433,6 +518,12 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			
 			//logger.debug("다음의 SecurityContext를 쿠키에 저장합니다: {}", context);
 			
+			if(contextChanged(context)){
+			// 보안필터체인을 돌고난 후의 SecurityContext가 이전과 다르다면 쿠키에 저장합니다.
+				// 인증  정보에 변동이 발생한 경우에만 닉네임 토큰을 재발급 합니다.
+				Cookie jwtNameCookie = generateJWTNameCookie(context, true, false);
+				response.addCookie(jwtNameCookie);
+			}
 		}
 		
 		/**

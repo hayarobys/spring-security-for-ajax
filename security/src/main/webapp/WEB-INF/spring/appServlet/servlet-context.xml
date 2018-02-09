@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
@@ -18,4 +18,11 @@
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
+	
+	<!-- <mvc:annotation-driven /> 사용시 HttpMessageConverter를 기본적으로 등록 -->
+	<!-- Default HttpMessageConverter로 등록되는 여러 종류의 컨버터 중에는 MappingJackson2HttpMessageConverter가 포함 -->
+	<!-- 다만 MappingJackson2HttpMessageConverter는 classpath에 Jackson 라이브러리가 존재할 경우에만 자동 생성 -->
+	<!-- 따라서 Spring의 Default 전략을 사용하기로 했다면 MessageConverter를 따로 등록하지 않아도 @ResponseBody 사용 가능 -->
+	<!-- 참고 주소: http://seongilman.tistory.com/117 -->
+	<!-- <beans:bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" /> -->
 </beans:beans>

@@ -7,6 +7,12 @@
 		<result column="RESOURCE_PATTERN" property="pattern" />
 		<result column="AUTH_NM" property="authority" />
 	</resultMap>
+	
+	<resultMap type="com.suph.security.core.userdetails.jdbc.vo.AuthVO" id="AuthVO">
+		<result column="AUTH_NO" property="no" />
+		<result column="AUTH_NM" property="name" />
+		<result column="AUTH_EXPLANATION" property="explanation" />
+	</resultMap>
 
 	<!-- url/method/pointcut 형식인 리소스 패턴 - 권한 매핑 정보를 조회합니다 -->
 	<select id="getRolesAndResources" parameterType="String" resultMap="RoleVO">
@@ -21,6 +27,24 @@
 			R.RESOURCE_TYPE = #{type}
 		ORDER BY
 			R.SORT_ORDER ASC,
+			A.AUTH_NO
+	</select>
+	
+	<!-- 특정 리소스 패턴에 매핑된 권한 정보를 조회합니다 -->
+	<select id="getAuthListByResourceNo" parameterType="HashMap" resultMap="AuthVO">
+		SELECT
+			A.AUTH_NO,
+			A.AUTH_NM,
+			A.AUTH_EXPLANATION
+		FROM
+			TB_RESOURCE AS R
+			INNER JOIN TB_RESOURCE_AUTH AS RA ON (RA.RESOURCE_NO = R.RESOURCE_NO)
+			INNER JOIN TB_AUTH AS A ON (RA.AUTH_NO = A.AUTH_NO)
+		WHERE
+				R.RESOURCE_TYPE = #{type}
+			AND
+				R.RESOURCE_NO = #{resourceNo}
+		ORDER BY
 			A.AUTH_NO
 	</select>
 </mapper>

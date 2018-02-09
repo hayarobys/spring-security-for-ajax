@@ -22,6 +22,10 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler{
 	@Value("#{security['spring_security_context_key']}")
 	private String SPRING_SECURITY_CONTEXT_KEY;
 	
+	/** 클라이언트에서 사용할 수 있게 닉네임 정보를 담아둘 JWT닉네임 쿠키의 key명 입니다. */
+	@Value("#{security['jwt_nickname_cookie_key']}")
+	private String JWT_NICKNAME_COOKIE_KEY;
+	
 	/** Ajax 구분을 위해 헤더에서 검색할 키 명 입니다. */
 	@Value("#{security['spring.ajax_header_key']}")
 	private String SPRING_AJAX_HEADER_KEY;
@@ -37,7 +41,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler{
 	@Override
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException, ServletException{
-		logout(request, response, authentication, SPRING_SECURITY_CONTEXT_KEY);
+		logout(request, response, authentication, SPRING_SECURITY_CONTEXT_KEY, JWT_NICKNAME_COOKIE_KEY);
 		
 		// ajax 요청인지 확인
 		String ajaxHeader = request.getHeader(SPRING_AJAX_HEADER_KEY);

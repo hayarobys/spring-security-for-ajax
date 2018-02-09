@@ -1,5 +1,6 @@
 package com.suph.security.core.userdetails.jdbc.impl;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -94,7 +95,15 @@ public class LoginServiceImpl implements LoginService{
 	 * @return 해당 계정의 권한 목록
 	 */
 	protected List<GrantedAuthority> loadUserAuthorities(int memNo){
-		List<AuthVO> list = authDAO.getAuthListByNo(memNo);
+		List<AuthVO> list = null;
+		try{
+			list = authDAO.getAuthListByNo(memNo);
+		}catch(SQLException sqle){
+			logger.error("유저번호 {}의 권한 목록 조회를 실패했습니다.", memNo);
+			sqle.printStackTrace();
+			return null;
+		}
+		
 		List<GrantedAuthority> resultList = new ArrayList<GrantedAuthority>();
 		for(AuthVO vo : list){
 			resultList.add( new SimpleGrantedAuthority(vo.getName()) );

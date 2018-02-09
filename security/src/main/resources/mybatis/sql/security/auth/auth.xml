@@ -8,7 +8,8 @@
 		<result column="AUTH_NM" property="name"/>	<!-- 권한명 -->
 		<result column="AUTH_EXPLANATION" property="explanation"/>	<!-- 권한 설명 -->
 	</resultMap>
-
+	
+	<!-- 특정 계정이 보유한 권한 목록 조회 -->
 	<select id="getAuthListByNo" parameterType="int" resultMap="AuthVO">
 		SELECT
 			A.AUTH_NO,
@@ -22,5 +23,10 @@
 				MT.MEM_ENABLE = 'Y'
 			AND
 				MT.MEM_NO = #{value};
+	</select>
+	
+	<!-- 모든 권한 목록 조회 -->
+	<select id="getAuthList" resultMap="AuthVO">
+		SELECT * FROM TB_AUTH
 	</select>
 </mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.suph.security.core.resourcedetails.jdbc.dao.ResourceDAO">
+
+	<resultMap type="com.suph.security.core.resourcedetails.jdbc.vo.ResourceVO" id="ResourceVO">
+		<result column="RESOURCE_NO" property="resourceNo" />
+		<result column="SORT_ORDER" property="sortOrder" />
+		<result column="RESOURCE_TYPE" property="resourceType" />
+		<result column="RESOURCE_PATTERN" property="resourcePattern" />
+		<result column="RESOURCE_NM" property="resourceNm" />
+	</resultMap>
+
+	<!-- 리소스 목록을 조회합니다 -->
+	<select id="getResourceList" resultMap="ResourceVO">
+		SELECT
+			RESOURCE_NO AS resourceNo,
+			SORT_ORDER AS sortOrder,
+			RESOURCE_TYPE AS resourceType,
+			RESOURCE_PATTERN AS resourcePattern,
+			RESOURCE_NM AS resourceNm
+		FROM
+			TB_RESOURCE
+		ORDER BY
+			SORT_ORDER ASC
+	</select>
+</mapper>

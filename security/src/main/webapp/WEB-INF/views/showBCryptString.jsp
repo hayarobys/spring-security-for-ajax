@@ -4,6 +4,7 @@
 <head>
 	
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="shorcut icon" href="./resources/favicon.ico" type="image/x-icon" />
 	<title>BCrypt 변환 보기</title>
 	
 </head>

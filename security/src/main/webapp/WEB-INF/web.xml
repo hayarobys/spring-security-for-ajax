@@ -34,9 +34,6 @@
 	</filter>
 	
 	<!-- url-pattern : 해당 애플리케이션 내에서 필터를 적용시키고자 하는 범위. -->
-	<!--	/* - 애플리케이션 내 모든 post 방식에서 적용(servlet, jsp 구분 없이). -->
-	<!--	/*.do - 애플리케이션 내 *.do로 이름을 지은 서블릿 post 메소드만 적용. -->
-	<!-- servlet-name : 애플리케이션 내 특정 서블릿에만 적용할 때 씀.-->
 	<filter-mapping>
 		<filter-name>encodingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
@@ -57,7 +54,16 @@
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
-
+	<!-- html확장자에 대해 DispatcherServlet으로 보내지 않고, 파일 경로로 인식하여 곧바로 반환한다. -->
+	<!-- 서블릿의 이 코드는 스프링의 <mvc:resources mapping="/resources/**" location="/rest-web/"> 으로 변경 가능하다. -->
+	<!-- webapp/rest-web/ 안에 있는 file들을 URL: http://localhost/resources/에 mapping 시켜주는 것이다. -->
+	<!-- 
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>*.html</url-pattern>
+	</servlet-mapping>
+	-->
+	
 	<filter>
 		<!-- 스프링 시큐리티에서 따로 setTargetBeanName(String)을 호출하지 않을 경우
 		 기본값으로 filter-name명으로 filter-class를 찾기 때문에, filter-name에 꼭 저 이름을 주어야 합니다.

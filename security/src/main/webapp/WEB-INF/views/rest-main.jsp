@@ -25,6 +25,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
+	<link rel="shorcut icon" href="./resources/favicon.ico" type="image/x-icon" />
 	<sec:csrfMetaTags />
 	<title>메인화면</title>
 </head>

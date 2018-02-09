@@ -10,34 +10,45 @@
 		</layout>
 	</appender>
 	
+	<!-- Query Loggers -->
+	<logger name="jdbc.resultsettable" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="console" />
+	</logger>
+	
+	<logger name="jdbc.sqlonly" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="console" />
+	</logger>
+	
 	<!-- Application Loggers -->
 	<logger name="com.suph.security">
-		<level value="debug" />
+		<level value="info" />
 	</logger>
 	
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
-		<level value="debug" />
+		<level value="error" />
 	</logger>
 	
 	<logger name="org.springframework.beans">
-		<level value="debug" />
+		<level value="error" />
 	</logger>
 	
 	<logger name="org.springframework.context">
-		<level value="debug" />
+		<level value="error" />
 	</logger>
 
 	<logger name="org.springframework.web">
-		<level value="debug" />
+		<level value="error" />
 	</logger>
 	
 	<logger name="org.springframework.security">
-		<level value="debug" />
+		<level value="error" />
 	</logger>
 	
 	<logger name="org.springframework.security.web.context">
-		<level value="debug" />
+		<level value="error" />
 	</logger>
 
 	<!-- Root Logger -->

@@ -10,13 +10,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.suph.security.core.resourcedetails.jdbc.ResourceService;
+import com.suph.security.core.userdetails.AuthService;
 import com.suph.security.core.userdetails.jdbc.dao.MemberDAO;
 import com.suph.security.core.userdetails.jdbc.vo.MemberVO;
 
@@ -30,6 +30,12 @@ public class SecurityController {
 	
 	@Autowired
 	private MemberDAO memberDAO;
+	
+	@Autowired
+	private ResourceService resourceService;
+	
+	@Autowired
+	private AuthService authService;
 	
 	/**
 	 * 관리자 전용 화면으로 이동합니다.
@@ -50,6 +56,48 @@ public class SecurityController {
 	}
 	
 	/**
+	 * URL 관리 화면으로 이동합니다.
+	 * @return
+	 */
+	@RequestMapping("/url-controll")
+	public String urlControll(){
+		return "url-controll";
+	}
+	
+	/**
+	 * 리소스 목록을 JSON 형식으로 반환합니다.
+	 * @return
+	 */
+	@RequestMapping(value="/resource-list", method=RequestMethod.GET)
+	public @ResponseBody Map<String, Object> resourceList(){
+		return resourceService.getResourceList();
+	}
+	
+	/**
+	 * 특정 url 접근에 필요한 권한 목록을 조회합니다.
+	 * @param authNo
+	 * @return
+	 */
+	@RequestMapping(value="/auth-list/{authNo}", method=RequestMethod.GET)
+	public @ResponseBody Map<String, Object> authList(@PathVariable int authNo){
+		return resourceService.getAuthListByResourceNo(authNo);
+	}
+	
+	/**
+	 * 모든 권한 목록을 조회합니다.
+	 * @return
+	 */
+	@RequestMapping(value="/auth-list", method=RequestMethod.GET)
+	public @ResponseBody Map<String, Object> authList(){
+		return authService.getAuthList();
+	}
+	
+	/**
+	 * 모든 권한 목록을 조회합니다.
+	 */
+	
+	
+	/**
 	 * 메인 페이지로 이동합니다.
 	 * @return
 	 */
@@ -68,6 +116,11 @@ public class SecurityController {
 		return "rest-main";
 	}
 	
+	/**
+	 * Json 응답을 전송합니다.
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping(value="/hello-message", method={RequestMethod.POST, RequestMethod.GET})
 	public @ResponseBody Map<String, Object> ajaxGetHelloMessage(HttpServletRequest request){
 		Map<String, Object> result = new HashMap<String, Object>();

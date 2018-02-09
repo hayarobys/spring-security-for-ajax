@@ -1,5 +1,6 @@
 package com.suph.security.core.userdetails.jdbc.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -13,5 +14,11 @@ public interface AuthDAO{
 	 * @param memNo
 	 * @return
 	 */
-	public abstract List<AuthVO> getAuthListByNo(int memNo);
+	public abstract List<AuthVO> getAuthListByNo(int memNo) throws SQLException;
+	
+	/**
+	 * 모든 권한 목록을 반환합니다.
+	 * @return
+	 */
+	public abstract List<AuthVO> getAuthList() throws SQLException;
 }
