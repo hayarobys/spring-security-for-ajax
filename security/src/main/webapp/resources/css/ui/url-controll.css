@@ -1,0 +1,28 @@
+@CHARSET "UTF-8";
+
+#box{
+	margin: auto;
+	width: 900px;
+	height: 900px;
+}
+
+.data_box{
+	display: inline-block;
+	float: left;
+	width: 48%;
+	margin: 5px;
+}
+
+.title{
+	background-color: #04BCD4;
+	text-align: center;
+	border-radius: 8px;
+	padding: 5px;
+	margin-bottom: 10px;
+}
+
+.title_font{
+	color: white;
+	font-size: 1.4em;
+	font-weight: bold;
+}

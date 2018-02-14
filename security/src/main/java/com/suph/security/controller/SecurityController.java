@@ -93,9 +93,13 @@ public class SecurityController {
 	}
 	
 	/**
-	 * 모든 권한 목록을 조회합니다.
+	 * 특정 리소스 별 권한을 재지정 합니다.
+	 * @return
 	 */
-	
+	@RequestMapping(value="/resource-auth", method=RequestMethod.PATCH)	// 임시 GET
+	public @ResponseBody Map<String, Object> saveResourceAuth(){
+		return null;
+	}
 	
 	/**
 	 * 메인 페이지로 이동합니다.
