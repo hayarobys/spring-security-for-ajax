@@ -1,9 +1,8 @@
-package com.suph.security.core.userdetails;
+package com.suph.security.core.service;
 
 import java.util.Map;
 
 public interface AuthService{
-
 	/**
 	 * 모든 권한 목록을 조회합니다.
 	 * @return

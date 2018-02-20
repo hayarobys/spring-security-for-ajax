@@ -1,13 +1,13 @@
-package com.suph.security.core.resourcedetails.jdbc.vo;
+package com.suph.security.core.dto;
 
 import java.util.List;
 
+
 /**
  * 리소스 정보를 담는데 사용됩니다.
- * @author NB-0267
- *
  */
-public class ResourceVO{
+// TB_RESOURCE 테이블
+public class ResourceDTO{
 	/** 리소스 일련 번호 */
 	private int resourceNo;
 	/** 리소스 순서 */
@@ -19,7 +19,7 @@ public class ResourceVO{
 	/** 리소스 이름 */
 	private String resourceNm;
 	
-	private List<ResourceVO> list;
+	private List<ResourceDTO> list;
 	
 	public int getResourceNo(){
 		return resourceNo;
@@ -61,11 +61,11 @@ public class ResourceVO{
 		this.resourceNm = resourceNm;
 	}
 
-	public List<ResourceVO> getList(){
+	public List<ResourceDTO> getList(){
 		return list;
 	}
 
-	public void setList(List<ResourceVO> list){
+	public void setList(List<ResourceDTO> list){
 		this.list = list;
 	}
 }

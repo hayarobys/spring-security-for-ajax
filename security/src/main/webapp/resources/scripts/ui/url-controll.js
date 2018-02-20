@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 /** RESOURCE가 저장될 jqxGrid id */
 var resourceGridId = "#data_resource";
 /** AUTH가 저장될 jqxGrid id */
@@ -164,10 +160,10 @@ function reloadAuthGridByNo(resourceNo){
 * json배열 형식의 리소스 목록을 gridId에 추가 합니다.
 */
 function changeResourceGrid(listData){
-	$(resourceGridId).jqxGrid("clearselection"); // 선택 효과 제거
-	$(authGridId).jqxGrid("clearselection"); // 선택 효과 제거
-	$(resourceGridId).jqxGrid("clear");
-	$(authGridId).jqxGrid("clear");
+	$(resourceGridId).jqxGrid("clearselection"); // RESOURCE 그리드의 선택 효과 제거
+	$(authGridId).jqxGrid("clearselection"); // AUTH 그리드의 선택 효과 제거
+	$(resourceGridId).jqxGrid("clear"); // RESOURCE 그리드의 데이터 제거
+	$(authGridId).jqxGrid("clear"); // AUTH 그리드의 데이터 제거
 	
 	var source = {
 		localdata: listData,
@@ -187,6 +183,7 @@ function changeResourceGrid(listData){
 		loadError: function (xhr, status, error) { }
 	});
 	
+	// RESOURCE 그리드에 새로운 데이터 삽입
 	$(resourceGridId).jqxGrid({
 		source: dataAdapter
 	});
@@ -265,7 +262,27 @@ function save(){
 	console.log('전송할 json 데이터', data);
 	
 	// 전송
-	
+	$.ajax({
+		type: "PATCH",
+		url: "/security/auth-list",
+		data: data,
+		contentType: 'application/json',
+		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
+		beforeSend: function(xhr){
+			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
+			xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
+		},
+		success: function(data, statusText, xhr){
+			if(data.result == "success"){
+				changeAuthGrid(data.list);
+			}else{
+				console.log("해당 RESOURCE의 AUTH 변경을 실패했습니다.");
+			}
+		},
+		error: function(xhr){
+			console.log("error", xhr);
+		}
+	});
 }
 
 /**

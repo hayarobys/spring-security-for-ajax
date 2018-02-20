@@ -4,27 +4,25 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import com.suph.security.core.resourcedetails.SecuredObjectService;
+import com.suph.security.core.service.ResourceAuthService;
 
 public class UrlResourcesMapFactoryBean
 	implements FactoryBean<LinkedHashMap<RequestMatcher, List<ConfigAttribute>>>{
 	
 	//@Autowired
 	//@Qualifier("securedObjectServiceImpl")
-	private SecuredObjectService securedObjectService;
+	private ResourceAuthService resourceAuthService;
 	private LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap;
 	
-	public void setSecuredObjectService(SecuredObjectService securedObjectService){
-		this.securedObjectService = securedObjectService;
+	public void setResourceAuthService(ResourceAuthService resourceAuthService){
+		this.resourceAuthService = resourceAuthService;
 	}
 	
 	public void init() throws Exception{
-		requestMap = securedObjectService.getRolesAndUrl();
+		requestMap = resourceAuthService.getRolesAndUrl();
 	}
 	
 	/*
@@ -33,7 +31,7 @@ public class UrlResourcesMapFactoryBean
 	@Override
 	public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getObject() throws Exception{
 		if(requestMap == null){
-			requestMap = securedObjectService.getRolesAndUrl();
+			requestMap = resourceAuthService.getRolesAndUrl();
 		}
 		return requestMap;
 	}

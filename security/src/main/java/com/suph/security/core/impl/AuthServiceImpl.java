@@ -1,4 +1,4 @@
-package com.suph.security.core.userdetails.jdbc.impl;
+package com.suph.security.core.impl;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -8,9 +8,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.suph.security.core.userdetails.AuthService;
-import com.suph.security.core.userdetails.jdbc.dao.AuthDAO;
-import com.suph.security.core.userdetails.jdbc.vo.AuthVO;
+import com.suph.security.core.dao.AuthDAO;
+import com.suph.security.core.dto.AuthDTO;
+import com.suph.security.core.service.AuthService;
 
 @Service
 public class AuthServiceImpl implements AuthService{
@@ -23,7 +23,7 @@ public class AuthServiceImpl implements AuthService{
 	@Override
 	public Map<String, Object> getAuthList(){
 		Map<String, Object> result = new HashMap<String, Object>();
-		List<AuthVO> list = null;
+		List<AuthDTO> list = null;
 		
 		try{
 			list = dao.getAuthList();
@@ -37,5 +37,4 @@ public class AuthServiceImpl implements AuthService{
 		
 		return result;
 	}
-
 }

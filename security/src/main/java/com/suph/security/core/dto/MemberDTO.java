@@ -1,9 +1,9 @@
- package com.suph.security.core.userdetails.jdbc.vo;
+package com.suph.security.core.dto;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MemberVO{
+public class MemberDTO{
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
 	/** MEM_NO 계정 일련 번호 PK */

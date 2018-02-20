@@ -1,14 +1,9 @@
-package com.suph.security.core.userdetails;
+package com.suph.security.core.service;
 
-import java.util.List;
-
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public interface LoginService extends UserDetailsService{
-
+public interface MemberService{
 	/**
 	 * ID와 일치하는 계정의 정보를 조회하는 메서드 입니다.
 	 * 다음의 구현 원칙을 따르십시오.

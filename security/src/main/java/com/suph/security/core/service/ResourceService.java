@@ -1,9 +1,8 @@
-package com.suph.security.core.resourcedetails.jdbc;
+package com.suph.security.core.service;
 
 import java.util.Map;
 
 public interface ResourceService{
-
 	/**
 	 * 리소스 목록을 조회합니다.
 	 * @return

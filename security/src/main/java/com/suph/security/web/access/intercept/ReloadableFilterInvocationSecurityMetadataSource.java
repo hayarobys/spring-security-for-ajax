@@ -13,14 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import com.suph.security.core.resourcedetails.SecuredObjectService;
+import com.suph.security.core.service.ResourceAuthService;
 
 /**
  * 경로 접근에 필요한 권한 목록을 불러오는 동작을 수행합니다.
@@ -39,10 +37,10 @@ public class ReloadableFilterInvocationSecurityMetadataSource implements FilterI
 	/**
 	 * DB로부터 URL별 권한 목록을 불러오는데 사용할 멤버변수 
 	 */
-	private SecuredObjectService securedObjectService;
+	private ResourceAuthService resourceAuthService;
 	
-	public void setSecuredObjectService(SecuredObjectService securedObjectService){
-		this.securedObjectService = securedObjectService;
+	public void setResourceAuthService(ResourceAuthService resourceAuthService){
+		this.resourceAuthService = resourceAuthService;
 	}
 
 	// 매개변수로 FactoryBean 타입의 객체를 넣어주면 해당 객체의 getObject()가 자동호출된다.
@@ -93,7 +91,7 @@ public class ReloadableFilterInvocationSecurityMetadataSource implements FilterI
 	 * @throws Exception
 	 */
 	public void reload() throws Exception{
-		LinkedHashMap<RequestMatcher, List<ConfigAttribute>> reloadedMap = securedObjectService.getRolesAndUrl();
+		LinkedHashMap<RequestMatcher, List<ConfigAttribute>> reloadedMap = resourceAuthService.getRolesAndUrl();
 		Iterator<Entry<RequestMatcher, List<ConfigAttribute>>> iterator = reloadedMap.entrySet().iterator();
 		
 		// 이전 데이터 삭제

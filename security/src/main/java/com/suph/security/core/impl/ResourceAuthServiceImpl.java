@@ -1,4 +1,4 @@
-package com.suph.security.core.resourcedetails.jdbc.impl;
+package com.suph.security.core.impl;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -12,24 +12,25 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.stereotype.Service;
 
-import com.suph.security.core.resourcedetails.SecuredObjectService;
-import com.suph.security.core.resourcedetails.jdbc.dao.SecuredObjectDAO;
-import com.suph.security.core.resourcedetails.jdbc.vo.RoleVO;
+import com.suph.security.core.dao.ResourceAuthDAO;
+import com.suph.security.core.dto.ResourceAuthDTO;
+import com.suph.security.core.service.ResourceAuthService;
 
-//@Service("securedObjectServiceImpl")
-public class SecuredObjectServiceImpl implements SecuredObjectService{
-	private static final Logger logger = LoggerFactory.getLogger(SecuredObjectServiceImpl.class);
+@Service
+public class ResourceAuthServiceImpl implements ResourceAuthService{
+	private static final Logger logger = LoggerFactory.getLogger(ResourceAuthServiceImpl.class);
 	
 	public static final String TYPE_URL = "url";
 	public static final String TYPE_METHOD = "method";
 	public static final String TYPE_POINTCUT = "pointcut";
 	
 	//@Autowired
-	private SecuredObjectDAO securedObjectDAO;
+	private ResourceAuthDAO resourceAuthDAO;
 	
-	public void setSecuredObjectDAO(SecuredObjectDAO securedObjectDAO){
-		this.securedObjectDAO = securedObjectDAO;
+	public void setResourceAuthDAO(ResourceAuthDAO resourceAuthDAO){
+		this.resourceAuthDAO = resourceAuthDAO;
 	}
 
 	/**
@@ -40,7 +41,7 @@ public class SecuredObjectServiceImpl implements SecuredObjectService{
 	@Override
 	public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getRolesAndUrl() throws Exception{
 		LinkedHashMap<RequestMatcher, List<ConfigAttribute>> convertData = new LinkedHashMap<RequestMatcher, List<ConfigAttribute>>();
-		LinkedHashMap<Object, List<ConfigAttribute>> originalData = getRolesAndResources(SecuredObjectServiceImpl.TYPE_URL);
+		LinkedHashMap<Object, List<ConfigAttribute>> originalData = getRolesAndResources(ResourceAuthServiceImpl.TYPE_URL);
 		
 		Set<Object> keys = originalData.keySet();
 		for(Object key : keys){
@@ -58,7 +59,7 @@ public class SecuredObjectServiceImpl implements SecuredObjectService{
 	@Override
 	public LinkedHashMap<String, List<ConfigAttribute>> getRolesAndMethod() throws Exception{
 		LinkedHashMap<String, List<ConfigAttribute>> convertData = new LinkedHashMap<String, List<ConfigAttribute>>();
-		LinkedHashMap<Object, List<ConfigAttribute>> originalData = getRolesAndResources(SecuredObjectServiceImpl.TYPE_METHOD);
+		LinkedHashMap<Object, List<ConfigAttribute>> originalData = getRolesAndResources(ResourceAuthServiceImpl.TYPE_METHOD);
 		
 		Set<Object> keys = originalData.keySet();
 		for(Object key : keys){
@@ -76,7 +77,7 @@ public class SecuredObjectServiceImpl implements SecuredObjectService{
 	@Override
 	public LinkedHashMap<String, List<ConfigAttribute>> getRolesAndPointcut() throws Exception{
 		LinkedHashMap<String, List<ConfigAttribute>> convertData = new LinkedHashMap<String, List<ConfigAttribute>>();
-		LinkedHashMap<Object, List<ConfigAttribute>> originalData = getRolesAndResources(SecuredObjectServiceImpl.TYPE_POINTCUT);
+		LinkedHashMap<Object, List<ConfigAttribute>> originalData = getRolesAndResources(ResourceAuthServiceImpl.TYPE_POINTCUT);
 		
 		Set<Object> keys = originalData.keySet();
 		for(Object key : keys){
@@ -95,15 +96,15 @@ public class SecuredObjectServiceImpl implements SecuredObjectService{
 	private LinkedHashMap<Object, List<ConfigAttribute>> getRolesAndResources(String resourceType) throws Exception{
 		
 		// DB로부터 URL별 필요 권한 목록을 조회
-		List<RoleVO> resultList = null;
-		if( SecuredObjectServiceImpl.TYPE_METHOD.equals(resourceType) ){
-			resultList = securedObjectDAO.getRolesAndResources(SecuredObjectServiceImpl.TYPE_METHOD);
+		List<ResourceAuthDTO> resultList = null;
+		if( ResourceAuthServiceImpl.TYPE_METHOD.equals(resourceType) ){
+			resultList = resourceAuthDAO.getRolesAndResources(ResourceAuthServiceImpl.TYPE_METHOD);
 			
-		}else if( SecuredObjectServiceImpl.TYPE_POINTCUT.equals(resourceType) ){
-			resultList = securedObjectDAO.getRolesAndResources(SecuredObjectServiceImpl.TYPE_POINTCUT);
+		}else if( ResourceAuthServiceImpl.TYPE_POINTCUT.equals(resourceType) ){
+			resultList = resourceAuthDAO.getRolesAndResources(ResourceAuthServiceImpl.TYPE_POINTCUT);
 			
 		}else{
-			resultList = securedObjectDAO.getRolesAndResources(SecuredObjectServiceImpl.TYPE_URL);
+			resultList = resourceAuthDAO.getRolesAndResources(ResourceAuthServiceImpl.TYPE_URL);
 			
 		}
 		
@@ -116,9 +117,9 @@ public class SecuredObjectServiceImpl implements SecuredObjectService{
 		boolean isResourcesUrl = true;		// url 리소스 인가?
 		
 		// 각 ROW마다 스프링 시큐리티가 읽을 수 있는 형태로 변환작업 수행
-		for(RoleVO vo : resultList){
+		for(ResourceAuthDTO vo : resultList){
 			// 리소스 패턴 얻기 (현재 작업중인 패턴에 저장)
-			presentResourceStr = vo.getPattern();
+			presentResourceStr = vo.getResourceNm();
 			
 			// url 리소스라면 ANT타입 객체로 변환한다.
 			presentResourceObj = isResourcesUrl ? new AntPathRequestMatcher(presentResourceStr) : presentResourceStr;
@@ -142,7 +143,7 @@ public class SecuredObjectServiceImpl implements SecuredObjectService{
 			
 			// 현재 url패턴에 접근 가능한 권한 목록에 DB에서 조회한 정보 반영
 			configList.add(
-					new SecurityConfig( vo.getAuthority() )
+					new SecurityConfig( vo.getAuthNm() )
 			);
 			
 			// 최종적으로 반환할 Map에 재할당. 같은 key(리소스 패턴이 같은게 있다면)가 있다면 이것으로 교체.

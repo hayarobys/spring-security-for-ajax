@@ -1,8 +1,8 @@
-package com.suph.security.core.userdetails.jdbc.vo;
+package com.suph.security.core.dto;
 
 /** 계정 보유 권한을 옮기는데 사용합니다 */
-// TB_AUTH 권한 테이블
-public class AuthVO{
+//TB_AUTH 권한 테이블
+public class AuthDTO{
 	/** AUTH_NO 권한 일련 번호 */
 	private int no;		
 	/** AUTH_NM 권한 명 */

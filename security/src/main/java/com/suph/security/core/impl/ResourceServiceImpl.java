@@ -1,4 +1,4 @@
-package com.suph.security.core.resourcedetails.jdbc.impl;
+package com.suph.security.core.impl;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -8,11 +8,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.suph.security.core.resourcedetails.jdbc.ResourceService;
-import com.suph.security.core.resourcedetails.jdbc.dao.ResourceDAO;
-import com.suph.security.core.resourcedetails.jdbc.dao.SecuredObjectDAO;
-import com.suph.security.core.resourcedetails.jdbc.vo.ResourceVO;
-import com.suph.security.core.userdetails.jdbc.vo.AuthVO;
+import com.suph.security.core.dao.ResourceAuthDAO;
+import com.suph.security.core.dao.ResourceDAO;
+import com.suph.security.core.dto.AuthDTO;
+import com.suph.security.core.dto.ResourceDTO;
+import com.suph.security.core.service.ResourceService;
 
 @Service
 public class ResourceServiceImpl implements ResourceService{
@@ -20,13 +20,13 @@ public class ResourceServiceImpl implements ResourceService{
 	private ResourceDAO resourceDAO;
 	
 	@Autowired
-	private SecuredObjectDAO securedObjectDAO;
+	private ResourceAuthDAO securedObjectDAO;
 	
 	@Override
 	public Map<String, Object> getResourceList(){
 		Map<String, Object> result = new HashMap<String, Object>();
 		
-		List<ResourceVO> list = null;
+		List<ResourceDTO> list = null;
 		try{
 			 list = resourceDAO.getResourceList();
 			 result.put("result", "success");
@@ -49,7 +49,7 @@ public class ResourceServiceImpl implements ResourceService{
 		search.put("type", "url");
 		search.put("resourceNo", resourceNo);
 		
-		List<AuthVO> list = securedObjectDAO.getAuthListByResourceNo(search);
+		List<AuthDTO> list = securedObjectDAO.getAuthListByResourceNo(search);
 		
 		result.put("result", "success");
 		result.put("list", list);
@@ -57,5 +57,4 @@ public class ResourceServiceImpl implements ResourceService{
 		return result;
 	}
 
-	
 }
