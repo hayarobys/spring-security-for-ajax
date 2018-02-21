@@ -1,9 +1,11 @@
 package com.suph.security.core.impl;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -29,6 +31,7 @@ public class ResourceAuthServiceImpl implements ResourceAuthService{
 	
 	@Autowired
 	private ResourceAuthDAO resourceAuthDAO;
+	
 	/*
 	public void setResourceAuthDAO(ResourceAuthDAO resourceAuthDAO){
 		this.resourceAuthDAO = resourceAuthDAO;
@@ -156,5 +159,14 @@ public class ResourceAuthServiceImpl implements ResourceAuthService{
 		}
 		
 		return returnMap;
+	}
+
+	@Override
+	public Map<String, Object> changeResourceAuth(ResourceAuthDTO resourceAuthDTO){
+		Map<String, Object> result = new HashMap<String, Object>();
+		resourceAuthDAO.deleteAuthListByResourceNo(resourceAuthDTO.getResourceNo());
+		resourceAuthDAO.insertAuthListByResourceNo(resourceAuthDTO);
+		result.put("result", "success");
+		return result;
 	}
 }

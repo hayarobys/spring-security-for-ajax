@@ -47,4 +47,23 @@
 		ORDER BY
 			A.AUTH_NO
 	</select>
+	
+	<!-- 특정 리소스에 매칭된 권한들을 제거합니다. -->
+	<delete id="deleteAuthListByResourceNo" parameterType="int">
+		DELETE FROM
+			TB_RESOURCE_AUTH
+		WHERE
+			RESOURCE_NO = #{resourceNo}
+	</delete>
+	
+	<!-- 특정 리소스에 새 권한들을 부여합니다. -->
+	<insert id="insertAuthListByResourceNo" parameterType="ResourceAuthDTO">
+		INSERT INTO
+			TB_RESOURCE_AUTH
+		VALUES
+		<foreach collection="authNoList" item="authNo" separator=",">
+			(#{resourceNo}, #{authNo})
+		</foreach>
+	</insert>
+	
 </mapper>

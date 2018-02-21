@@ -24,7 +24,6 @@ public class MemberController{
 	 */
 	@RequestMapping(value="/member/edit", method=RequestMethod.GET)
 	public Map<String, Object> getMemberEdit(){
-		
 		return null;
 	}
 	

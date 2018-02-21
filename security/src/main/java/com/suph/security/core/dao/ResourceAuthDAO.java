@@ -1,5 +1,6 @@
 package com.suph.security.core.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -23,4 +24,16 @@ public interface ResourceAuthDAO{
 	 * @return
 	 */
 	public abstract List<AuthDTO> getAuthListByResourceNo(Map<String, Object> search);
+	
+	/**
+	 * 특정 RESOURCE에 연결된 모든 AUTH를 제거합니다.
+	 * @param resourceNo
+	 */
+	public abstract void deleteAuthListByResourceNo(int resourceNo);
+	
+	/**
+	 * 특정 RESOURCE에 AUTH 목록을 연결합니다.
+	 * @param resourceAuthDTO
+	 */
+	public abstract void insertAuthListByResourceNo(ResourceAuthDTO resourceAuthDTO);
 }

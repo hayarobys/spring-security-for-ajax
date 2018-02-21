@@ -81,7 +81,7 @@ function getEveryAuthList(){
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
-			xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
+			//xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
 		},
 		success: function(data, statusText, xhr){
 			if(data.result == "success"){
@@ -110,7 +110,7 @@ function reloadResourceGrid(){
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
-			xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
+			//xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
 		},
 		success: function(data, statusText, xhr){
 			//console.log('data', data);	// response body
@@ -141,7 +141,7 @@ function reloadAuthGridByNo(resourceNo){
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
-			xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
+			//xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
 		},
 		success: function(data, statusText, xhr){
 			if(data.result == "success"){
@@ -252,15 +252,12 @@ function save(){
 	
 	// 전송할 json 데이터 생성
 	var data = {};
-	data.resourceNo = selectedResourceNoArray[0];
-	data.authNo = selectedAuthNoArray;
+	data.resourceNo = Number(selectedResourceNoArray[0]);	// String to Number
+	data.authNoList = selectedAuthNoArray;
 	data = JSON.stringify(data);
 	
 	// 출력
-	console.log('현재 선택한 RESOURCE 일련 번호',selectedResourceNoArray);
-	console.log('현재 선택한 AUTH 일련 번호',selectedAuthNoArray);
 	console.log('전송할 json 데이터', data);
-	console.log('JSON.parse(data).resourceNo 출력', JSON.parse(data).resourceNo);
 	
 	// 전송
 	var token = $("meta[name='_csrf']").attr("content");
@@ -274,11 +271,12 @@ function save(){
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
-			xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
+			//xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
 		},
 		success: function(data, statusText, xhr){
-			if(data.result == "success"){
-				changeAuthGrid(data.list);
+			if(data.result == 'success'){
+				//changeAuthGrid(data.list);
+				console.log("data", data);
 			}else{
 				console.log("해당 RESOURCE의 AUTH 변경을 실패했습니다.");
 			}
@@ -300,7 +298,7 @@ function getSelectedNoArray(jqxGridId, returnColumnStr){
 	var selectedRowData = [];
 	
 	for(var i=0; i<selectedRowIndexes.length; i++){
-		selectedRowData[i] = $(jqxGridId).jqxGrid('getcellvalue', selectedRowIndexes[i], returnColumnStr);
+		selectedRowData[i] = Number($(jqxGridId).jqxGrid('getcellvalue', selectedRowIndexes[i], returnColumnStr));
 	}
 	
 	return selectedRowData;

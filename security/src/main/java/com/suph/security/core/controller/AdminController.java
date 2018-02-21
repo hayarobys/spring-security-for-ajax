@@ -12,7 +12,7 @@ public class AdminController{
 	 */
 	@RequestMapping(value="/admin/hello", method=RequestMethod.GET)
 	public String hello(){
-		return "hello";
+		return "admin/hello";
 	}
 	
 	/**
@@ -21,6 +21,6 @@ public class AdminController{
 	 */
 	@RequestMapping(value="/admin", method=RequestMethod.GET)
 	public String admin(){
-		return "admin";
+		return "admin/admin";
 	}
 }

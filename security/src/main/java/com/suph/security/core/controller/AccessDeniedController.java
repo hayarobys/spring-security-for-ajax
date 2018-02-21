@@ -12,6 +12,6 @@ public class AccessDeniedController{
 	 */
 	@RequestMapping(value="/access-denied", method=RequestMethod.GET)
 	public String accessDenied(){
-		return "access_denied";
+		return "access-denied/access-denied";
 	}
 }

@@ -1,5 +1,7 @@
 package com.suph.security.core.dto;
 
+import java.util.List;
+
 /**
  * 리소스-권한 정보를 담는데 사용됩니다.
  * (리소스 접근에 필요한 권한 정보)
@@ -14,7 +16,8 @@ public class ResourceAuthDTO{
 	private int authNo;
 	/** 접근 가능한 권한(필요권한) */
 	private String authNm;	// authority
-	
+	/** 접근 가능한 권한 목록 */
+	private List<Integer> authNoList;
 	
 	/**
 	 * 리소스 일련 번호를 반환 합니다.
@@ -80,8 +83,25 @@ public class ResourceAuthDTO{
 		this.authNm = authNm;
 	}
 
+	/**
+	 * 권한 일련 번호 목록을 조회 합니다.
+	 * @return
+	 */
+	public List<Integer> getAuthNoList(){
+		return authNoList;
+	}
+
+	/**
+	 * 권한 일련 번호 목록을 저장/변경 합니다.
+	 * @param authNoList
+	 */
+	public void setAuthNoList(List<Integer> authNoList){
+		this.authNoList = authNoList;
+	}
+
 	@Override
 	public String toString(){
-		return "RoleVO [resourceNm=" + resourceNm + ", authNm=" + authNm + "]";
+		return "ResourceAuthDTO [resourceNo=" + resourceNo + ", resourceNm=" + resourceNm + ", authNo=" + authNo
+				+ ", authNm=" + authNm + ", authNoList=" + authNoList + "]";
 	}
 }
