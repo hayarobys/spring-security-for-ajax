@@ -15,7 +15,7 @@ import com.suph.security.core.dao.MemberAuthDAO;
 import com.suph.security.core.dto.AuthDTO;
 import com.suph.security.core.service.MemberAuthService;
 
-@Service
+@Service("memberAuthService")
 public class MemberAuthServiceImpl implements MemberAuthService{
 	protected Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
 	

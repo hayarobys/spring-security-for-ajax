@@ -12,16 +12,16 @@
 		</param-value>
 	</context-param>
 	
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
 	<session-config>
 		<cookie-config>
 			<http-only>true</http-only>	<!-- 쿠키호출 자바스크립트에 미응답 합니다. -->
 			<secure>true</secure>	<!-- 쿠키는 HTTPS통신으로만 전송됩니다. -->
 		</cookie-config>
 	</session-config>
-
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
 	
 	<!-- 클라이언트로부터 오는 모든 쿼리에 대한 한글 인코딩 처리 '필터' -->
 	<filter>

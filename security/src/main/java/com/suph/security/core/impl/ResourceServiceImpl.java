@@ -14,7 +14,7 @@ import com.suph.security.core.dto.AuthDTO;
 import com.suph.security.core.dto.ResourceDTO;
 import com.suph.security.core.service.ResourceService;
 
-@Service
+@Service("resourceService")
 public class ResourceServiceImpl implements ResourceService{
 	@Autowired
 	private ResourceDAO resourceDAO;

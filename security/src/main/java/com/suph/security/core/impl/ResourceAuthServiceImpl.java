@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -18,7 +19,7 @@ import com.suph.security.core.dao.ResourceAuthDAO;
 import com.suph.security.core.dto.ResourceAuthDTO;
 import com.suph.security.core.service.ResourceAuthService;
 
-@Service
+@Service("resourceAuthService")
 public class ResourceAuthServiceImpl implements ResourceAuthService{
 	private static final Logger logger = LoggerFactory.getLogger(ResourceAuthServiceImpl.class);
 	
@@ -26,13 +27,13 @@ public class ResourceAuthServiceImpl implements ResourceAuthService{
 	public static final String TYPE_METHOD = "method";
 	public static final String TYPE_POINTCUT = "pointcut";
 	
-	//@Autowired
+	@Autowired
 	private ResourceAuthDAO resourceAuthDAO;
-	
+	/*
 	public void setResourceAuthDAO(ResourceAuthDAO resourceAuthDAO){
 		this.resourceAuthDAO = resourceAuthDAO;
 	}
-
+	*/
 	/**
 	 * URL 형식의 리소스(자원)별 필요한 권한 정보를 조회합니다.
 	 * @return

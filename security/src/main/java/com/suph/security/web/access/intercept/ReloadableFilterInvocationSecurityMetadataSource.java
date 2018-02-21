@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
@@ -32,17 +33,17 @@ public class ReloadableFilterInvocationSecurityMetadataSource implements FilterI
 	/** 리소스 별 필요한 권한 목록을 담고있는 변수 */
 	private final Map<RequestMatcher, Collection<ConfigAttribute>> requestMap;
 	
-	//@Autowired
-	//@Qualifier("securedObjectServiceImpl")
 	/**
 	 * DB로부터 URL별 권한 목록을 불러오는데 사용할 멤버변수 
 	 */
+	@Autowired
+	//@Qualifier("securedObjectServiceImpl")
 	private ResourceAuthService resourceAuthService;
-	
+	/*
 	public void setResourceAuthService(ResourceAuthService resourceAuthService){
 		this.resourceAuthService = resourceAuthService;
 	}
-
+	*/
 	// 매개변수로 FactoryBean 타입의 객체를 넣어주면 해당 객체의 getObject()가 자동호출된다.
 	// 이 경우 UrlResourcesMapFactoryBean의 getObject()가 호출되어 LinkedHashMap<RequestMatcher, List<ConfigAttribute>> 타입이 반환되었다.
 	public ReloadableFilterInvocationSecurityMetadataSource(LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> requestMap){

@@ -7,6 +7,9 @@
 			    http://www.springframework.org/schema/security
 			    http://www.springframework.org/schema/security/spring-security.xsd">
 	
+	
+	<!-- Root Web Application Context 영역에 있는 bean만 사용할 수 있습니다. -->
+	
 	<!-- 확장자를 이용해 패턴을 걸때는 /**/*.해당 확장자 로 할 것(Ant Pattern 규칙) -->
 	<!-- 확장자가 .js인 것은 spring-security를 걸지 않는다는 설정 -->
 	<http pattern="/**/*.js" security="none" />
@@ -70,7 +73,7 @@
 		<!-- CSRF 방어 필터 추가. 단 필터만 선언하지 말고, 요청/응답 페이지 내에서도 해당 토큰을 주었다 받았다 해주어야 함 -->
 		<!-- Ajax, Multipart Form, GET 각각의 토큰 포함 방식이 다름에 주의 -->
 		<!-- 적절한 HTTP동사를 함께 사용할때 효과가 극대화 됨을 명심 -->
-		<csrf token-repository-ref="tokenRepository" />
+		<!-- <csrf token-repository-ref="tokenRepository" /> -->	<!-- 잠시 비활성화 -->
 		
 	<!--
 		auto-config를 사용함으로써 아래의  http 내부 태그들이 기본값으로 설정되었다.
@@ -214,8 +217,13 @@
 		<beans:property name="enableGroups" value="false"/>
 	</beans:bean>
 	 -->
-	<beans:bean id="memberService" class="com.suph.security.core.impl.MemberServiceImpl"/>
-	
+	 
+	<!-- <beans:bean id="memberAuthService" class="com.suph.security.core.impl.MemberAuthServiceImpl" /> -->
+	<!--  
+	<beans:bean id="memberService" class="com.suph.security.core.impl.MemberServiceImpl">
+		<beans:property name="memberAuthService" ref="memberAuthService" />
+	</beans:bean>
+	-->
 	<!-- <beans:bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/> -->
 	<beans:bean id="bcryptPasswordEncoder" class="com.suph.security.crypto.bcrypt.CustomBCryptPasswordEncoder"/>
 	
@@ -238,7 +246,7 @@
 		 <!-- password-encoder hash:사용할 알고리즘 지정. {sha}, {ssha}, bcrypt, md4, md5, plaintext, sha-256, sha 중 택 1 -->
 		 <!-- hash="bcrypt" 라고 적을 경우, 스프링은 PasswordEncoder를 구현한 객체중 BCryptPasswordEncoder를 내부에 생성한다. -->
 		 <!-- 다만 이럴 경우, 외부에서 해당 클래스를 참조할 방법이 없으므로 따로 선언해서 주입해주도록 합니다. -->
-		 <authentication-provider user-service-ref="memberService">
+		 <authentication-provider user-service-ref="memberService">	<!-- @Service("memberService") -->
 		 	<!-- <password-encoder hash="bcrypt"/> -->
 		 	<password-encoder ref="bcryptPasswordEncoder"/>
 		 </authentication-provider>
@@ -260,21 +268,21 @@
 	
 	<!-- <bean class="">속성에 인터페이스를 지정해선 안된다. -->
 	<!-- <beans:bean id="securedObjectDAO" class="com.suph.security.SecuredObjectDAO"/> -->
-	
+	<!-- 
 	<beans:bean id="resourceAuthService" class="com.suph.security.core.impl.ResourceAuthServiceImpl">
-		<beans:property name="resourceAuthDAO" ref="resourceAuthDAO"/>	<!-- @Repository("securedObjectDAO") -->
+		<beans:property name="resourceAuthDAO" ref="resourceAuthDAO"/>
 	</beans:bean>
-	
+	-->
 	<!-- URL별 권한 정보를 반환할 팩토리 빈 객체 --> 
-	<beans:bean id="requestMap" class="com.suph.security.factory.UrlResourcesMapFactoryBean" init-method="init">
-		<beans:property name="resourceAuthService" ref="resourecAuthService"/>	<!-- 어노테이션 주입으로 대체방법은? -->
+	<beans:bean id="requestMap" class="com.suph.security.factory.UrlResourcesMapFactoryBean" init-method="init" />
+	<!-- 	<beans:property name="resourceAuthService" ref="resourceAuthService"/>	어노테이션 주입으로 대체방법은?
 	</beans:bean>
-	
+	 -->
 	<!-- URL별 권한 정보를 메모리에 올려두고 관리하다가, 요청시 갱신 작업을 수행하는 객체 -->
 	<!-- FilterSecurityInterceptor에서 리소스에 대한 보안 설정(Configattribute) 정보를 확인하는데 사용된다. -->
 	<beans:bean id="reloadableFilterInvocationSecurityMetadataSource" class="com.suph.security.web.access.intercept.ReloadableFilterInvocationSecurityMetadataSource">
 		<beans:constructor-arg ref="requestMap"/>
-		<beans:property name="resourceAuthService" ref="resourceAuthService"/>	<!-- 어노테이션 주입으로 대체방법은? -->
+		<!-- <beans:property name="resourceAuthService" ref="resourceAuthService"/> -->	<!-- 어노테이션 주입으로 대체방법은? -->
 	</beans:bean>
 	
 	

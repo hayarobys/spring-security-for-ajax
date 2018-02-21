@@ -18,7 +18,7 @@ public class MainController{
 	 */
 	@RequestMapping(value="/main", method=RequestMethod.GET)
 	public String main() {
-		return "main";
+		return "main/main";
 	}
 	
 	/**
@@ -28,7 +28,7 @@ public class MainController{
 	 */
 	@RequestMapping(value="/rest-main", method=RequestMethod.GET)
 	public String restMain() {
-		return "rest-main";
+		return "main/rest-main";
 	}
 	
 	/**

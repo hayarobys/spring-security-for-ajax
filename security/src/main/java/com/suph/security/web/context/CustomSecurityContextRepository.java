@@ -222,35 +222,35 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			claims = JWTUtility.getClaims(jwt, SECURITY_SECRET);
 		}catch(Exception e){
 			e.printStackTrace();
-			logger.error("JWT파싱에 실패했습니다. {}", e.getMessage());
+			logger.debug("JWT파싱에 실패했습니다. {}");
 			return null;
 		}
 		
 		// 계정 일련 번호
 		String no = (String)JWTUtility.getClaim(claims, SECURITY_JWT_NO);
 		if( !StringUtils.hasText(no) ){
-			logger.error("JWT에 유효한 no이 없습니다.");
+			logger.debug("JWT에 유효한 no이 없습니다.");
 			return null;
 		}
 		
 		// 계정 아이디
 		String id = (String)JWTUtility.getClaim(claims, SECURITY_JWT_ID);
 		if( !StringUtils.hasText(id) ){
-			logger.error("JWT에 유효한  id가 없습니다.");
+			logger.debug("JWT에 유효한  id가 없습니다.");
 			return null;
 		}
 		
 		// 계정 닉네임
 		String name = (String)JWTUtility.getClaim(claims, SECURITY_JWT_NAME);
 		if( !StringUtils.hasText(name) ){
-			logger.error("JWT에 유효한 name이 없습니다.");
+			logger.debug("JWT에 유효한 name이 없습니다.");
 			return null;
 		}
 		
 		// 계정 보유 권한
 		String authorities = (String)JWTUtility.getClaim(claims, SECURITY_JWT_AUTHORITIES);
 		if( !StringUtils.hasText(authorities) ){
-			logger.error("JWT에 유효한 권한이 없습니다.");
+			logger.debug("JWT에 유효한 권한이 없습니다.");
 			return null;
 		}
 		

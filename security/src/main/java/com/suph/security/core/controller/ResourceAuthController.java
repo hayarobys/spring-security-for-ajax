@@ -20,9 +20,9 @@ public class ResourceAuthController{
 	 * URL 관리 화면으로 이동합니다.
 	 * @return
 	 */
-	@RequestMapping("/resource-auth/edit")
+	@RequestMapping(value={"/resource-auth/edit", "/url-controll"}, method=RequestMethod.GET)
 	public String urlControll(){
-		return "url-controll";
+		return "resource-auth/resource-auth";
 	}
 	
 	/**
@@ -31,16 +31,16 @@ public class ResourceAuthController{
 	 * @return
 	 */
 	@RequestMapping(value="/resource/{resourceNo}/auth", method=RequestMethod.GET)
-	public @ResponseBody Map<String, Object> authList(@PathVariable int authNo){
-		return resourceService.getAuthListByResourceNo(authNo);
+	public @ResponseBody Map<String, Object> authList(@PathVariable int resourceNo){
+		return resourceService.getAuthListByResourceNo(resourceNo);
 	}
 	
 	/**
 	 * 특정 리소스의 접근에 필요한 권한을 재지정 합니다.
 	 * @return
 	 */
-	@RequestMapping(value="/resource/{resourceNo}/auth", method=RequestMethod.PATCH) // CSRF필터로 인해 임시GET을 사용해서 테스트 할 예정
-	public @ResponseBody Map<String, Object> changeResourceAuth(){
+	@RequestMapping(value="/resource/{resourceNo}/auth", method=RequestMethod.PATCH)
+	public @ResponseBody Map<String, Object> changeResourceAuth(@PathVariable int resourceNo){
 		return null;
 	}
 }

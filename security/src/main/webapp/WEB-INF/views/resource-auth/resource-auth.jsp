@@ -9,13 +9,13 @@
 	
 	<title>제목</title>
 	
-	<link rel="shorcut icon" href="./resources/favicon.ico" type="image/x-icon" />
-	<link rel="stylesheet" href="./resources/scripts/jqwidgets/styles/jqx.base.css" />
-	<link rel="stylesheet" href="./resources/css/ui/url-controll.css" />
+	<link rel="shorcut icon" href="../resources/favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="../resources/scripts/jqwidgets/styles/jqx.base.css" />
+	<link rel="stylesheet" href="../resources/css/ui/resource-auth/resource-auth.css" />
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="./resources/scripts/jqwidgets/jqx-all.js"></script>
-	<script src="./resources/scripts/ui/url-controll.js"></script>
+	<script src="../resources/scripts/jqwidgets/jqx-all.js"></script>
+	<script src="../resources/scripts/ui/resource-auth/resource-auth.js"></script>
 </head>
 <body>
 	
@@ -47,10 +47,6 @@
 	
 </body>
 </html>
-
-
-
-
 
 
 

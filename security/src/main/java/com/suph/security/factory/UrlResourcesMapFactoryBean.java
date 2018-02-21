@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -12,7 +13,7 @@ import com.suph.security.core.service.ResourceAuthService;
 public class UrlResourcesMapFactoryBean
 	implements FactoryBean<LinkedHashMap<RequestMatcher, List<ConfigAttribute>>>{
 	
-	//@Autowired
+	@Autowired
 	//@Qualifier("securedObjectServiceImpl")
 	private ResourceAuthService resourceAuthService;
 	private LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap;

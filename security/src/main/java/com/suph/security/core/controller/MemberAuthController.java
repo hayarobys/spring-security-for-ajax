@@ -2,9 +2,11 @@ package com.suph.security.core.controller;
 
 import java.util.Map;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+@Controller
 public class MemberAuthController{
 	/**
 	 * 계정-권한 관리 페이지 이동

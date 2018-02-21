@@ -77,7 +77,7 @@ function getEveryAuthList(){
 	
 	$.ajax({
 		type: "GET",
-		url: "/security/auth-list",
+		url: "/security/auth",
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
@@ -106,7 +106,7 @@ function reloadResourceGrid(){
 	
 	$.ajax({
 		type: "GET",
-		url: "/security/resource-list",
+		url: "/security/resource",
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
@@ -137,7 +137,7 @@ function reloadAuthGridByNo(resourceNo){
 	
 	$.ajax({
 		type: "GET",
-		url: "/security/auth-list/" + resourceNo,
+		url: "/security/resource/" + resourceNo + "/auth",
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
@@ -260,11 +260,15 @@ function save(){
 	console.log('현재 선택한 RESOURCE 일련 번호',selectedResourceNoArray);
 	console.log('현재 선택한 AUTH 일련 번호',selectedAuthNoArray);
 	console.log('전송할 json 데이터', data);
+	console.log('JSON.parse(data).resourceNo 출력', JSON.parse(data).resourceNo);
 	
 	// 전송
+	var token = $("meta[name='_csrf']").attr("content");
+	var header = $("meta[name='_csrf_header']").attr("content");
+	
 	$.ajax({
 		type: "PATCH",
-		url: "/security/auth-list",
+		url: "/security/resource/" + selectedResourceNoArray[0] + "/auth",
 		data: data,
 		contentType: 'application/json',
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식

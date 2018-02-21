@@ -6,15 +6,15 @@
 	<typeAliases>
 		<!-- MyBatis Mapper의 parameterType에서 사용할 별명. parameterMap이 아님에 주의 -->
 		<!-- 계정 정보를 옮기는데 사용됩니다. -->
-		<typeAlias type="com.suph.security.core.userdetails.jdbc.vo.MemberVO" alias="MemberVO"/>
+		<typeAlias type="com.suph.security.core.dto.MemberDTO" alias="MemberDTO"/>
 		
 		<!-- 계정 보유 권한을 옮기는데 사용됩니다. -->
-		<typeAlias type="com.suph.security.core.userdetails.jdbc.vo.AuthVO" alias="AuthVO"/>
+		<typeAlias type="com.suph.security.core.dto.AuthDTO" alias="AuthDTO"/>
 		
 		<!-- 리소스 접근에 필요한 권한을 옮기는데 사용됩니다. -->
-		<typeAlias type="com.suph.security.core.resourcedetails.jdbc.vo.RoleVO" alias="RoleVO"/>
+		<typeAlias type="com.suph.security.core.dto.ResourceAuthDTO" alias="ResourceAuthDTO"/>
 		
 		<!-- 리소스 정보를 옮기는데 사용됩니다. -->
-		<typeAlias type="com.suph.security.core.resourcedetails.jdbc.vo.ResourceVO" alias="ResourceVO"/>
+		<typeAlias type="com.suph.security.core.dto.ResourceDTO" alias="ResourceDTO"/>
 	</typeAliases>
 </configuration>

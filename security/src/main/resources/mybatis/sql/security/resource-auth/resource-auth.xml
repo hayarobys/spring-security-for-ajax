@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.suph.security.core.resourcedetails.jdbc.dao.SecuredObjectDAO">
+<mapper namespace="com.suph.security.core.dao.ResourceAuthDAO">
 
-	<resultMap type="com.suph.security.core.resourcedetails.jdbc.vo.RoleVO" id="RoleVO">
-		<result column="RESOURCE_PATTERN" property="pattern" />
-		<result column="AUTH_NM" property="authority" />
+	<resultMap type="com.suph.security.core.dto.ResourceAuthDTO" id="ResourceAuthDTO">
+		<result column="RESOURCE_PATTERN" property="resourceNm" />
+		<result column="AUTH_NM" property="authNm" />
 	</resultMap>
 	
-	<resultMap type="com.suph.security.core.userdetails.jdbc.vo.AuthVO" id="AuthVO">
+	<resultMap type="com.suph.security.core.dto.AuthDTO" id="AuthDTO">
 		<result column="AUTH_NO" property="no" />
 		<result column="AUTH_NM" property="name" />
 		<result column="AUTH_EXPLANATION" property="explanation" />
 	</resultMap>
 
 	<!-- url/method/pointcut 형식인 리소스 패턴 - 권한 매핑 정보를 조회합니다 -->
-	<select id="getRolesAndResources" parameterType="String" resultMap="RoleVO">
+	<select id="getRolesAndResources" parameterType="String" resultMap="ResourceAuthDTO">
 		SELECT
 			R.RESOURCE_PATTERN,
 			A.AUTH_NM
@@ -31,7 +31,7 @@
 	</select>
 	
 	<!-- 특정 리소스 패턴에 매핑된 권한 정보를 조회합니다 -->
-	<select id="getAuthListByResourceNo" parameterType="HashMap" resultMap="AuthVO">
+	<select id="getAuthListByResourceNo" parameterType="HashMap" resultMap="AuthDTO">
 		SELECT
 			A.AUTH_NO,
 			A.AUTH_NM,

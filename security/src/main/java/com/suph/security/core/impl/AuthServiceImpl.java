@@ -12,7 +12,7 @@ import com.suph.security.core.dao.AuthDAO;
 import com.suph.security.core.dto.AuthDTO;
 import com.suph.security.core.service.AuthService;
 
-@Service
+@Service("authService")
 public class AuthServiceImpl implements AuthService{
 	@Autowired
 	private AuthDAO dao;

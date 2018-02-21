@@ -21,7 +21,7 @@ import com.suph.security.core.service.MemberAuthService;
 import com.suph.security.core.service.MemberService;
 import com.suph.security.core.userdetails.MemberInfo;
 
-@Service
+@Service("memberService")
 public class MemberServiceImpl implements MemberService{
 	@Autowired
 	private MemberAuthService memberAuthService;
@@ -31,7 +31,11 @@ public class MemberServiceImpl implements MemberService{
 		
 	protected final MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
 	protected Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
-	
+	/*
+	public void setMemberAuthService(MemberAuthService memberAuthService){
+		this.memberAuthService = memberAuthService;
+	}
+	*/
 	@Override
 	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException{
 		// DB로부터 해당 ID의 계정 정보 조회

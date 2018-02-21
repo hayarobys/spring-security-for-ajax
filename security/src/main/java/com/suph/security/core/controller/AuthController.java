@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,7 +37,7 @@ public class AuthController{
 	 * 특정 권한을 삭제 합니다.
 	 */
 	@RequestMapping(value="/auth/{authNo}", method=RequestMethod.DELETE)
-	public @ResponseBody Map<String, Object> deleteAuthByAuthNo(){
+	public @ResponseBody Map<String, Object> deleteAuthByAuthNo(@PathVariable int authNo){
 		return null;
 	}
 	
