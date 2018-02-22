@@ -2,6 +2,8 @@ package com.suph.security.core.service;
 
 import java.util.Map;
 
+import com.suph.security.core.dto.ResourceDTO;
+
 public interface ResourceService{
 	/**
 	 * 리소스 목록을 조회합니다.
@@ -15,4 +17,11 @@ public interface ResourceService{
 	 * @return
 	 */
 	public abstract Map<String, Object> getAuthListByResourceNo(int resourceNo);
+	
+	/**
+	 * 리소스를 등록합니다.
+	 * @param resourceDTO
+	 * @return
+	 */
+	public abstract Map<String, Object> insertResource(ResourceDTO resourceDTO);
 }

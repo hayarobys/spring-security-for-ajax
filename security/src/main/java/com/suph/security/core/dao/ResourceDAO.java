@@ -14,4 +14,9 @@ public interface ResourceDAO{
 	 * @return
 	 */
 	public abstract List<ResourceDTO> getResourceList() throws SQLException;
+	
+	/**
+	 * 리소스를 등록합니다.
+	 */
+	public abstract void insertResource(ResourceDTO resourceDTO);
 }

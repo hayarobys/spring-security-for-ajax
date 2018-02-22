@@ -4,10 +4,12 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.suph.security.core.dto.ResourceDTO;
 import com.suph.security.core.service.ResourceService;
 
 @Controller
@@ -20,7 +22,7 @@ public class ResourceController{
 	 */
 	@RequestMapping(value="/resource/edit", method=RequestMethod.GET)
 	public String getResourceEdit(){
-		return "";
+		return "resource/resource";
 	}
 	
 	/**
@@ -45,8 +47,8 @@ public class ResourceController{
 	 * 리소스 추가
 	 */
 	@RequestMapping(value="/resource", method=RequestMethod.POST)
-	public Map<String, Object> postResource(){
-		return null;
+	public @ResponseBody Map<String, Object> postResource(@RequestBody ResourceDTO resourceDTO){
+		return resourceService.insertResource(resourceDTO);
 	}
 	
 	/**

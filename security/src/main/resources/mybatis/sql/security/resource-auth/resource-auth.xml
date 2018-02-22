@@ -59,7 +59,9 @@
 	<!-- 특정 리소스에 새 권한들을 부여합니다. -->
 	<insert id="insertAuthListByResourceNo" parameterType="ResourceAuthDTO">
 		INSERT INTO
-			TB_RESOURCE_AUTH
+			TB_RESOURCE_AUTH(
+				RESOURCE_NO, AUTH_NO
+			)
 		VALUES
 		<foreach collection="authNoList" item="authNo" separator=",">
 			(#{resourceNo}, #{authNo})

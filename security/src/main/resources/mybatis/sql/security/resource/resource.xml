@@ -24,4 +24,21 @@
 		ORDER BY
 			SORT_ORDER ASC
 	</select>
+	
+	<!-- 리소스를 등록합니다. 리소스 일련 번호(RESOURCE_NO)는 자동 증가 -->
+	<insert id="insertResource" parameterType="ResourceDTO">
+		INSERT INTO
+			TB_RESOURCE(
+				RESOURCE_NM,
+				RESOURCE_PATTERN,
+				RESOURCE_TYPE,
+				SORT_ORDER
+			)
+		VALUES(
+			#{resourceNm},
+			#{resourcePattern},
+			#{resourceType},
+			#{sortOrder}
+		)	
+	</insert>
 </mapper>

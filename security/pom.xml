@@ -24,7 +24,7 @@
 		
 		<jackson.version>2.5.0</jackson.version>
 		<jackson.mapper.version>1.9.13</jackson.mapper.version>
-
+		
 		<org.aspectj-version>1.6.10</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>

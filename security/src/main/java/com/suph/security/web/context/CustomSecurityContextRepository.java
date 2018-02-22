@@ -221,7 +221,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 		try{
 			claims = JWTUtility.getClaims(jwt, SECURITY_SECRET);
 		}catch(Exception e){
-			e.printStackTrace();
+			//e.printStackTrace();
 			logger.debug("JWT파싱에 실패했습니다. {}");
 			return null;
 		}

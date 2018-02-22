@@ -7,7 +7,7 @@
 	<meta name="_csrf_header" content="${_csrf.headerName}" />
 	<meta name="_csrf" content="${_csrf.token}" />
 	
-	<title>제목</title>
+	<title>RESOURCE-AUTH 관리</title>
 	
 	<link rel="shorcut icon" href="../resources/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="../resources/scripts/jqwidgets/styles/jqx.base.css" />

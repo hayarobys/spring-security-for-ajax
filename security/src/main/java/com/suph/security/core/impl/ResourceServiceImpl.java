@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.suph.security.core.dao.ResourceAuthDAO;
@@ -55,6 +56,20 @@ public class ResourceServiceImpl implements ResourceService{
 		result.put("list", list);
 		
 		return result;
+	}
+
+	@Override
+	public Map<String, Object> insertResource(ResourceDTO resourceDTO){
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		String result = "";
+		try{ 
+			resourceDAO.insertResource(resourceDTO);
+			result = "success";
+		}catch(DataAccessException e){
+			result = "fail";
+		}
+		returnMap.put("result", result);
+		return returnMap;
 	}
 
 }
