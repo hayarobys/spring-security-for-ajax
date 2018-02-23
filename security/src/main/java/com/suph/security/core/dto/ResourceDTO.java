@@ -68,4 +68,10 @@ public class ResourceDTO{
 	public void setList(List<ResourceDTO> list){
 		this.list = list;
 	}
+
+	@Override
+	public String toString(){
+		return "ResourceDTO [resourceNo=" + resourceNo + ", sortOrder=" + sortOrder + ", resourceType=" + resourceType
+				+ ", resourcePattern=" + resourcePattern + ", resourceNm=" + resourceNm + ", list=" + list + "]";
+	}
 }

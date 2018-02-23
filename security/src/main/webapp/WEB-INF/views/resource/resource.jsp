@@ -30,7 +30,7 @@
 			</section>
 			
 			<input type="button" value="새로고침" onclick="javascript:reloadResourceGrid();" />
-			<input type="button" value="선택 항목 제거" onclick="javascript:deleteSelectResources();" />
+			<input type="button" value="선택 항목 제거" onclick="javascript:deleteSelectedResources();" />
 		</div>
 		
 		<div class="data_box">

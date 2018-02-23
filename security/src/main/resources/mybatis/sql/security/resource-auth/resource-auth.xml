@@ -26,8 +26,8 @@
 		WHERE
 			R.RESOURCE_TYPE = #{type}
 		ORDER BY
-			R.SORT_ORDER ASC,
-			A.AUTH_NO
+			R.SORT_ORDER DESC,
+			A.AUTH_NO DESC
 	</select>
 	
 	<!-- 특정 리소스 패턴에 매핑된 권한 정보를 조회합니다 -->

@@ -11,6 +11,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -163,10 +164,28 @@ public class ResourceAuthServiceImpl implements ResourceAuthService{
 
 	@Override
 	public Map<String, Object> changeResourceAuth(ResourceAuthDTO resourceAuthDTO){
-		Map<String, Object> result = new HashMap<String, Object>();
-		resourceAuthDAO.deleteAuthListByResourceNo(resourceAuthDTO.getResourceNo());
-		resourceAuthDAO.insertAuthListByResourceNo(resourceAuthDTO);
-		result.put("result", "success");
-		return result;
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		String result = "";
+		try{
+			resourceAuthDAO.deleteAuthListByResourceNo(resourceAuthDTO.getResourceNo());
+			result += "delete success\n";
+		}catch(DataAccessException e){
+			result += "delete fail\n";
+			e.printStackTrace();
+		}
+		
+		if(resourceAuthDTO.getAuthNoList().size() != 0){
+			try{
+				resourceAuthDAO.insertAuthListByResourceNo(resourceAuthDTO);
+				result += "insert success\n";
+			}catch(DataAccessException e){
+				result += "insert fail\n";
+				e.printStackTrace();
+			}
+		}
+		
+		returnMap.put("result", result);
+		return returnMap;
 	}
 }

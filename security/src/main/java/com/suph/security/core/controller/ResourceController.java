@@ -1,9 +1,13 @@
 package com.suph.security.core.controller;
 
+import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +18,8 @@ import com.suph.security.core.service.ResourceService;
 
 @Controller
 public class ResourceController{
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
 	@Autowired
 	private ResourceService resourceService;
 	
@@ -48,22 +54,24 @@ public class ResourceController{
 	 */
 	@RequestMapping(value="/resource", method=RequestMethod.POST)
 	public @ResponseBody Map<String, Object> postResource(@RequestBody ResourceDTO resourceDTO){
-		return resourceService.insertResource(resourceDTO);
+		return resourceService.postResource(resourceDTO);
 	}
 	
 	/**
 	 * 리소스 수정
 	 */
 	@RequestMapping(value="/resource/{resourceNo}", method=RequestMethod.PATCH)
-	public Map<String, Object> patchResourceByResourceNo(){
-		return null;
+	public @ResponseBody Map<String, Object> patchResourceByResourceNo(@PathVariable int resourceNo, @RequestBody ResourceDTO resourceDTO){
+		resourceDTO.setResourceNo(resourceNo);
+		return resourceService.patchResourceByResourceNo(resourceDTO);
 	}
 	
 	/**
-	 * 리소스 삭제
+	 * 요청받은 리소스를 삭제 합니다.
+	 * https://localhost:8443/security/resource/2,4,6
 	 */
-	@RequestMapping(value="/resource/{resourceNo}", method=RequestMethod.DELETE)
-	public Map<String, Object> deleteResourceByResourceNo(){
-		return null;
+	@RequestMapping(value="/resource/{resourceNoList}", method=RequestMethod.DELETE)
+	public @ResponseBody Map<String, Object> deleteResourceByResourceNoList(@PathVariable List<Integer> resourceNoList){
+		return resourceService.deleteResourceNoList(resourceNoList);
 	}
 }

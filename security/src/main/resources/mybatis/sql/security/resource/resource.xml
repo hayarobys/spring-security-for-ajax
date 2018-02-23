@@ -22,7 +22,8 @@
 		FROM
 			TB_RESOURCE
 		ORDER BY
-			SORT_ORDER ASC
+			SORT_ORDER DESC,
+			RESOURCE_NO DESC
 	</select>
 	
 	<!-- 리소스를 등록합니다. 리소스 일련 번호(RESOURCE_NO)는 자동 증가 -->
@@ -41,4 +42,33 @@
 			#{sortOrder}
 		)	
 	</insert>
+	
+	<update id="insertResourceByResourceNo" parameterType="ResourceDTO">
+		UPDATE
+			TB_RESOURCE
+		<set>
+			<if test="resourceNm != null and !''.equals(resourceNm)">
+				RESOURCE_NM = #{resourceNm},
+			</if>
+			<if test="resourcePattern != null and !''.equals(resourcePattern)">
+				RESOURCE_PATTERN = #{resourcePattern},
+			</if>
+			<if test="resourceType != null and !''.equals(resourceType)">
+				RESOURCE_TYPE = #{resourceType},
+			</if>
+			<if test="sortOrder != null and !''.equals(sortOrder)">
+				SORT_ORDER = #{sortOrder}
+			</if>
+		</set>
+		WHERE
+			RESOURCE_NO = #{resourceNo}
+	</update>
+	
+	<!-- 특정 리소스를 제거합니다. -->
+	<delete id="deleteResource" parameterType="int">
+		DELETE FROM
+			TB_RESOURCE
+		WHERE
+			RESOURCE_NO = #{resourceNo}
+	</delete>
 </mapper>

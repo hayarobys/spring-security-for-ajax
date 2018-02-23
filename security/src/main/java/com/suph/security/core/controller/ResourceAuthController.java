@@ -52,7 +52,8 @@ public class ResourceAuthController{
 	 * @return
 	 */
 	@RequestMapping(value="/resource/{resourceNo}/auth", method=RequestMethod.PATCH)
-	public @ResponseBody Map<String, Object> changeResourceAuth(@RequestBody ResourceAuthDTO resourceAuthDTO, HttpServletResponse response){
+	public @ResponseBody Map<String, Object> changeResourceAuth(@PathVariable int resourceNo, @RequestBody ResourceAuthDTO resourceAuthDTO){
+		resourceAuthDTO.setResourceNo(resourceNo);
 		return resourceAuthService.changeResourceAuth(resourceAuthDTO);
 	}
 }

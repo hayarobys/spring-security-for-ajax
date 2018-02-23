@@ -252,7 +252,7 @@ function save(){
 	
 	// 전송할 json 데이터 생성
 	var data = {};
-	data.resourceNo = Number(selectedResourceNoArray[0]);	// String to Number
+	//data.resourceNo = Number(selectedResourceNoArray[0]);	// String to Number
 	data.authNoList = selectedAuthNoArray;
 	data = JSON.stringify(data);
 	
@@ -265,7 +265,7 @@ function save(){
 	
 	$.ajax({
 		type: "PATCH",
-		url: "/security/resource/" + selectedResourceNoArray[0] + "/auth",
+		url: "/security/resource/" + Number(selectedResourceNoArray[0]) + "/auth",
 		data: data,
 		contentType: 'application/json',
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
@@ -274,12 +274,7 @@ function save(){
 			//xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
 		},
 		success: function(data, statusText, xhr){
-			if(data.result == 'success'){
-				//changeAuthGrid(data.list);
-				console.log("data", data);
-			}else{
-				console.log("해당 RESOURCE의 AUTH 변경을 실패했습니다.");
-			}
+			console.log("result", data.result);
 		},
 		error: function(xhr){
 			console.log("error", xhr);
@@ -289,6 +284,7 @@ function save(){
 
 /**
  * 특정 jqxGrid로부터 현재 선택된 행의 특정 column value 목록을 반환합니다.
+ * 이때 검색할 column의 value는 반드시 Number 타입이어야 합니다.
  * @param jqxGridId 검색할 jqxGrid 셀렉터
  * @param returnColumnStr 검색할 column 명
  * @returns 현재 선택 상태인 row의 column value 목록
