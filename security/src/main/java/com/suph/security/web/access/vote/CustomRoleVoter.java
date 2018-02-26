@@ -8,6 +8,7 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.util.StringUtils;
 
 public class CustomRoleVoter extends RoleVoter{
 	Logger logger = LoggerFactory.getLogger(getClass());
@@ -17,7 +18,7 @@ public class CustomRoleVoter extends RoleVoter{
 	 */
 	@Override
 	public boolean supports(ConfigAttribute attribute) {
-		if(		( attribute.getAttribute() != null )
+		if(		( StringUtils.hasText(attribute.getAttribute()) )
         	&&	  attribute.getAttribute().startsWith( getRolePrefix() )	// 약속된 접두어로 시작하고, null이 아니라면 true 반환
         ){
             return true;

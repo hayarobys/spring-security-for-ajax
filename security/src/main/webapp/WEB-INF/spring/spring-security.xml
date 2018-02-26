@@ -74,6 +74,7 @@
 		<!-- Ajax, Multipart Form, GET 각각의 토큰 포함 방식이 다름에 주의 -->
 		<!-- 적절한 HTTP동사를 함께 사용할때 효과가 극대화 됨을 명심 -->
 		<!-- <csrf token-repository-ref="tokenRepository" /> -->
+		<!-- Spring Security 4.X 부터 명시적으로 disabled을 써주지 않는 한 자동 활성화 됨에 주의 -->
 		<csrf disabled="true"/>	<!-- 잠시 비활성화 -->
 		
 	<!--
@@ -276,14 +277,14 @@
 	-->
 	<!-- URL별 권한 정보를 반환할 팩토리 빈 객체 --> 
 	<beans:bean id="requestMap" class="com.suph.security.factory.UrlResourcesMapFactoryBean" init-method="init" />
-	<!-- 	<beans:property name="resourceAuthService" ref="resourceAuthService"/>	어노테이션 주입으로 대체방법은?
+	<!-- 	<beans:property name="resourceAuthService" ref="resourceAuthService"/>	어노테이션 주입으로 대체
 	</beans:bean>
 	 -->
 	<!-- URL별 권한 정보를 메모리에 올려두고 관리하다가, 요청시 갱신 작업을 수행하는 객체 -->
 	<!-- FilterSecurityInterceptor에서 리소스에 대한 보안 설정(Configattribute) 정보를 확인하는데 사용된다. -->
 	<beans:bean id="reloadableFilterInvocationSecurityMetadataSource" class="com.suph.security.web.access.intercept.ReloadableFilterInvocationSecurityMetadataSource">
 		<beans:constructor-arg ref="requestMap"/>
-		<!-- <beans:property name="resourceAuthService" ref="resourceAuthService"/> -->	<!-- 어노테이션 주입으로 대체방법은? -->
+		<!-- <beans:property name="resourceAuthService" ref="resourceAuthService"/> -->	<!-- 어노테이션 주입으로 대체 -->
 	</beans:bean>
 	
 	

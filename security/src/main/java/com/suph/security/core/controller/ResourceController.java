@@ -74,4 +74,14 @@ public class ResourceController{
 	public @ResponseBody Map<String, Object> deleteResourceByResourceNoList(@PathVariable List<Integer> resourceNoList){
 		return resourceService.deleteResourceNoList(resourceNoList);
 	}
+	
+	/**
+	 * 모든 HTTP METHOD 목록을 JSON 형식으로 반환합니다.
+	 * @return
+	 */
+	@RequestMapping(value="/http-method", method=RequestMethod.GET)
+	public @ResponseBody Map<String, Object> getHttpMethodList(){
+		return resourceService.getHttpMethodList();
+	}
+	
 }

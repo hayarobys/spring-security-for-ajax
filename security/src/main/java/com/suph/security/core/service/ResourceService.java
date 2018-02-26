@@ -39,4 +39,10 @@ public interface ResourceService{
 	 * @return 제거에 성공시 {"result" : "success"}를 제거에 하나라도 실패시 관련 정보를 {"result" : errorInfoList} 형식으로 반환합니다.
 	 */
 	public abstract Map<String, Object> deleteResourceNoList(List<Integer> resourceNoList);
+	
+	/**
+	 * 모든 HTTP METHOD 목록을 반환합니다.
+	 * @return
+	 */
+	public abstract Map<String, Object> getHttpMethodList();
 }

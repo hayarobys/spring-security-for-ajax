@@ -7,23 +7,35 @@
 		<result column="RESOURCE_NO" property="resourceNo" />
 		<result column="SORT_ORDER" property="sortOrder" />
 		<result column="RESOURCE_TYPE" property="resourceType" />
+		<result column="HTTP_METHOD_NO" property="httpMethodNo" />
+		<result column="HTTP_METHOD_PATTERN" property="httpMethodPattern" />
 		<result column="RESOURCE_PATTERN" property="resourcePattern" />
 		<result column="RESOURCE_NM" property="resourceNm" />
+	</resultMap>
+	
+	<resultMap type="com.suph.security.core.dto.HttpMethodDTO" id="HttpMethodDTO">
+		<result column="HTTP_METHOD_NO" property="httpMethodNo" />
+		<result column="HTTP_METHOD_PATTERN" property="httpMethodPattern" />
+		<result column="HTTP_METHOD_EXPLANATION" property="httpMethodExplanation" />
 	</resultMap>
 
 	<!-- 리소스 목록을 조회합니다 -->
 	<select id="getResourceList" resultMap="ResourceDTO">
 		SELECT
-			RESOURCE_NO AS resourceNo,
-			SORT_ORDER AS sortOrder,
-			RESOURCE_TYPE AS resourceType,
-			RESOURCE_PATTERN AS resourcePattern,
-			RESOURCE_NM AS resourceNm
+			R.RESOURCE_NO AS resourceNo,
+			R.SORT_ORDER AS sortOrder,
+			R.RESOURCE_TYPE AS resourceType,
+			HM.HTTP_METHOD_NO AS httpMethodNo,
+			HM.HTTP_METHOD_PATTERN AS httpMethodPattern,
+			R.RESOURCE_PATTERN AS resourcePattern,
+			R.RESOURCE_NM AS resourceNm
 		FROM
-			TB_RESOURCE
+			TB_RESOURCE AS R
+			INNER JOIN TB_HTTP_METHOD AS HM ON (HM.HTTP_METHOD_NO = R.HTTP_METHOD_NO)
 		ORDER BY
-			SORT_ORDER DESC,
-			RESOURCE_NO DESC
+			R.SORT_ORDER DESC,
+			R.RESOURCE_NO DESC,
+			HM.HTTP_METHOD_NO ASC
 	</select>
 	
 	<!-- 리소스를 등록합니다. 리소스 일련 번호(RESOURCE_NO)는 자동 증가 -->
@@ -31,16 +43,18 @@
 		INSERT INTO
 			TB_RESOURCE(
 				RESOURCE_NM,
+				HTTP_METHOD_NO,
 				RESOURCE_PATTERN,
 				RESOURCE_TYPE,
 				SORT_ORDER
 			)
 		VALUES(
 			#{resourceNm},
+			#{httpMethodNo},
 			#{resourcePattern},
 			#{resourceType},
 			#{sortOrder}
-		)	
+		)
 	</insert>
 	
 	<update id="insertResourceByResourceNo" parameterType="ResourceDTO">
@@ -49,6 +63,9 @@
 		<set>
 			<if test="resourceNm != null and !''.equals(resourceNm)">
 				RESOURCE_NM = #{resourceNm},
+			</if>
+			<if test="httpMethodNo != null and !''.equals(httpMethodNo)">
+				HTTP_METHOD_NO = #{httpMethodNo},
 			</if>
 			<if test="resourcePattern != null and !''.equals(resourcePattern)">
 				RESOURCE_PATTERN = #{resourcePattern},
@@ -71,4 +88,11 @@
 		WHERE
 			RESOURCE_NO = #{resourceNo}
 	</delete>
+	
+	<select id="selectHttpMethodList" resultMap="HttpMethodDTO">
+		SELECT
+			*
+		FROM
+			TB_HTTP_METHOD
+	</select>
 </mapper>

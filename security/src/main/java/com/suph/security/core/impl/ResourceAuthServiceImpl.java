@@ -12,11 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.suph.security.core.dao.ResourceAuthDAO;
 import com.suph.security.core.dto.ResourceAuthDTO;
@@ -116,8 +118,13 @@ public class ResourceAuthServiceImpl implements ResourceAuthService{
 		
 		// 스프링 시큐리티가 읽어들일 수 있는 형태의 '각 URL별 접근 가능한 권한 목록' Map생성
 		LinkedHashMap<Object, List<ConfigAttribute>> returnMap = new LinkedHashMap<Object, List<ConfigAttribute>>();
+		
 		String pastResource = "";			// 이전 리소스 pattern(지난 루프에서 처리한 url패턴)
+		String pastHttpMethod = "";	// 이전 HTTP METHOD 패턴(지난 루프에서 처리한 HTTP 메소드 패턴)
+		
 		String presentResourceStr = "";		// 현재 리소스 pattern
+		String presentHttpMethod = "";	// 현재 HTTP 메소드 패턴
+		
 		Object presentResourceObj = null;	// 현재 리소스 pattern을 key에 넣을수 있는 상태로 만든 객체. AntPathRequestMatcher일 수도 있고, String 그대로일수도 있음.
 		boolean isResourcesUrl = true;		// url 리소스 인가?
 		
@@ -125,15 +132,18 @@ public class ResourceAuthServiceImpl implements ResourceAuthService{
 		for(ResourceAuthDTO vo : resultList){
 			// 리소스 패턴 얻기 (현재 작업중인 패턴에 저장)
 			presentResourceStr = vo.getResourceNm();
+			presentHttpMethod = vo.getHttpMethodPattern();
 			
 			// url 리소스라면 ANT타입 객체로 변환한다.
-			presentResourceObj = isResourcesUrl ? new AntPathRequestMatcher(presentResourceStr) : presentResourceStr;
+			presentResourceObj = (isResourcesUrl ? new AntPathRequestMatcher(presentResourceStr, presentHttpMethod) : presentResourceStr);
 			
 			// 현재 url패턴에 접근 가능한 권한 목록을 담을 List객체 생성
 			List<ConfigAttribute> configList = new LinkedList<ConfigAttribute>();	// 새로운 권한 목록
 			
 			// 처리해야할 URL패턴이 이전 URL패턴과 동일한 곳 을 가르키고 있다면
-			if(pastResource != null && presentResourceStr.equals(pastResource)){
+			if(		(StringUtils.hasText(pastResource) && presentResourceStr.equals(pastResource))
+				&&	(StringUtils.hasText(pastHttpMethod) && presentHttpMethod.equals(pastHttpMethod))
+			){
 				
 				// 최종적으로 반환할 Map객체로부터 지금까지 저장된 현재 URL패턴의 권한 목록 받아오기
 				List<ConfigAttribute> pastAuthList = returnMap.get(presentResourceObj);	// 이전 권한 목록
@@ -157,6 +167,7 @@ public class ResourceAuthServiceImpl implements ResourceAuthService{
 			
 			// 이전 리소스 정보 갱신. DB조회시 부터 리소스 패턴 순서에 따라 정확한 정렬이 되어있어야 올바르게 동작하는 코드. (세부적인 패턴 -> 포괄적인 패턴 순서로)
 			pastResource = presentResourceStr;
+			pastHttpMethod = presentHttpMethod;
 		}
 		
 		return returnMap;
@@ -170,22 +181,24 @@ public class ResourceAuthServiceImpl implements ResourceAuthService{
 		try{
 			resourceAuthDAO.deleteAuthListByResourceNo(resourceAuthDTO.getResourceNo());
 			result += "delete success\n";
+			
+			if(resourceAuthDTO.getAuthNoList().size() != 0){
+				try{
+					resourceAuthDAO.insertAuthListByResourceNo(resourceAuthDTO);
+					result += "insert success\n";
+				}catch(DataAccessException e){
+					result += "insert fail\n";
+					e.printStackTrace();
+				}
+			}
 		}catch(DataAccessException e){
 			result += "delete fail\n";
 			e.printStackTrace();
-		}
-		
-		if(resourceAuthDTO.getAuthNoList().size() != 0){
-			try{
-				resourceAuthDAO.insertAuthListByResourceNo(resourceAuthDTO);
-				result += "insert success\n";
-			}catch(DataAccessException e){
-				result += "insert fail\n";
-				e.printStackTrace();
-			}
 		}
 		
 		returnMap.put("result", result);
 		return returnMap;
 	}
 }
+
+

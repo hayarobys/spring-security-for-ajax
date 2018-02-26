@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.suph.security.core.dao.ResourceAuthDAO;
 import com.suph.security.core.dao.ResourceDAO;
 import com.suph.security.core.dto.AuthDTO;
+import com.suph.security.core.dto.HttpMethodDTO;
 import com.suph.security.core.dto.ResourceDTO;
 import com.suph.security.core.service.ResourceService;
 
@@ -141,6 +142,25 @@ public class ResourceServiceImpl implements ResourceService{
 		
 		returnMap.put("result", result);
 		
+		return returnMap;
+	}
+
+	@Override
+	public Map<String, Object> getHttpMethodList(){
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		String result = "";
+		
+		List<HttpMethodDTO> list = null;
+		try{
+			list = resourceDAO.selectHttpMethodList();
+			returnMap.put("list", list);
+			result = "success";
+		}catch(DataAccessException e){
+			result = "fail";
+			e.printStackTrace();
+		}
+		
+		returnMap.put("result", result);
 		return returnMap;
 	}
 }

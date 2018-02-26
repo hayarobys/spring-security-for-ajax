@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -42,6 +43,16 @@
 						</th>
 						<td>
 							<input id="resourceNm" name="resourceNm" type="text" placeholder="OO 게시판" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label for="httpMethodNo">HTTP METHOD</label>
+						</th>
+						<td>
+							<select id="httpMethodNo" name="httpMethodNo">
+								<option value="" label="선택" />
+							</select>
 						</td>
 					</tr>
 					<tr>

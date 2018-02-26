@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.suph.security.core.dto.HttpMethodDTO;
 import com.suph.security.core.dto.ResourceDTO;
 
 @Repository
@@ -32,4 +33,10 @@ public interface ResourceDAO{
 	 * @param resourceNo 제거할 리소스의 일련 번호를 입력합니다.
 	 */
 	public abstract void deleteResource(int resourceNo);
+	
+	/**
+	 * 모든 HTTP METHOD 목록을 조회합니다.
+	 * @return
+	 */
+	public abstract List<HttpMethodDTO> selectHttpMethodList();
 }

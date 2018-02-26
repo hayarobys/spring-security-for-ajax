@@ -2,14 +2,69 @@
 var resourceGridId = "#data_resource";
 /** 등록할 RESOURCE 정보가 있는 form id */
 var resourceFormId = "#resourceForm";
+/** 등록폼의 HTTP METHOD select 태그 ID */
+var httpMethodNoSelectTagId = "#httpMethodNo";
+/** 서버로부터 최초 한 번 받아올 전체 HTTP METHOD 목록. 등록폼의 select 태그를 생성하는데 사용 */
+var httpMethodList = null;
 
-$(document).ready(function(){
+$(document).ready(function(){	
 	// 그리드 생성
 	initResourceGrid();
 	
 	// RESOURCE 그리드 갱신
 	reloadResourceGrid();
+	
+	// HTTP METHOD select 태그 초기화
+	initHttpMethodSelectBox();
 });
+
+/**
+ * 서버로부터 HTTP METHOD 목록을 조회해 등록폼의 select 태그를 생성합니다.
+ * @returns
+ */
+function initHttpMethodSelectBox(){
+	var token = $("meta[name='_csrf']").attr("content");
+	var header = $("meta[name='_csrf_header']").attr("content");
+	
+	$.ajax({
+		type: "GET",
+		url: "/security/http-method",
+		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
+		beforeSend: function(xhr){
+			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
+			//xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
+		},
+		success: function(data, statusText, xhr){
+			console.log('data', data);	// response body
+			//console.log('statusText', statusText);	// "success" or ?
+			//console.log('xhr', xhr);	// header
+			if(data.result == "success"){
+				changeHttpMethodSelectBox(data.list)
+			}else{
+				console.log("HTTP METHOD 목록 조회를 실패했습니다.");
+			}
+		},
+		error: function(xhr){
+			console.log("error", xhr);
+		}
+	});
+}
+
+/**
+ * 등록 폼의 HTTP METHOD SELECT 태그를 주어진 데이터로 변경합니다.
+ * @param httpMethodList
+ * @returns
+ */
+function changeHttpMethodSelectBox(httpMethodList){
+	$(httpMethodNoSelectTagId).html('');
+	
+	$.each(httpMethodList, function(index, value){
+		$(httpMethodNoSelectTagId).append($('<option />',{
+			label: value.httpMethodPattern,
+			value: value.httpMethodNo
+		}));
+	})
+}
 
 /**
 * 리소스 그리드를 초기화 합니다.
