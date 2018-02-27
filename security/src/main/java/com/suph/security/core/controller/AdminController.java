@@ -6,17 +6,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class AdminController{
-	/**
-	 * 관리자 전용 화면으로 이동합니다.
-	 * @return
-	 */
-	@RequestMapping(value="/admin/hello", method=RequestMethod.GET)
-	public String hello(){
-		return "admin/hello";
-	}
 	
 	/**
-	 * 관리자 전용 hello 화면으로 이동합니다.
+	 * 관리자 전용 화면으로 이동합니다.
 	 * @return
 	 */
 	@RequestMapping(value="/admin", method=RequestMethod.GET)

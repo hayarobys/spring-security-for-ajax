@@ -12,8 +12,7 @@
 	
 	<!-- 확장자를 이용해 패턴을 걸때는 /**/*.해당 확장자 로 할 것(Ant Pattern 규칙) -->
 	<!-- 확장자가 .js인 것은 spring-security를 걸지 않는다는 설정 -->
-	<http pattern="/**/*.js" security="none" />
-	<http pattern="/**/*.css" security="none" />
+	<http pattern="/resources/**" security="none" />
 	<http pattern="/images/*" security="none" />
 	
 	

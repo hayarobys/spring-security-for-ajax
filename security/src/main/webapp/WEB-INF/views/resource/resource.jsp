@@ -10,13 +10,13 @@
 	
 	<title>RESOURCE 관리</title>
 	
-	<link rel="shorcut icon" href="../resources/favicon.ico" type="image/x-icon" />
-	<link rel="stylesheet" href="../resources/scripts/jqwidgets/styles/jqx.base.css" />
-	<link rel="stylesheet" href="../resources/css/ui/resource/resource.css" />
+	<link rel="shorcut icon" href="<c:url value='/resources/favicon.ico'/>" type="image/x-icon" />
+	<link rel="stylesheet" href="<c:url value='/resources/scripts/jqwidgets/styles/jqx.base.css'/>" />
+	<link rel="stylesheet" href="<c:url value='/resources/css/ui/resource/resource.css'/>" />
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="../resources/scripts/jqwidgets/jqx-all.js"></script>
-	<script src="../resources/scripts/ui/resource/resource.js"></script>
+	<script src="<c:url value='/resources/scripts/jqwidgets/jqx-all.js'/>"></script>
+	<script src="<c:url value='/resources/scripts/ui/resource/resource.js'/>"></script>
 </head>
 <body>
 	

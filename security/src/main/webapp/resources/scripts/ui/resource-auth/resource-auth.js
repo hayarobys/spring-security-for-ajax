@@ -32,13 +32,14 @@ function initResourceGrid(){
 		editable: false,
 		selectionmode: 'singlerow',
 		columns: [
-			{text: '일련 번호', dataField: 'resourceNo', cellsalign: 'left', align: 'center', editable: false, width: '15%'},
-			{text: '패턴', dataField: 'resourcePattern', cellsalign: 'left', align: 'center', editable: false, width: '60%'},
-			{text: '정렬 순서', dataField: 'sortOrder', cellsalign: 'left', align: 'center', editable: false, width: '25%'}
+			{text: '일련 번호', dataField: 'resourceNo', cellsalign: 'center', align: 'center', editable: false, width: '16%'},
+			{text: 'HTTP 메소드', dataField: 'httpMethodPattern', cellsalign: 'center', align: 'center', editable: false, width: '20%'},
+			{text: '패턴', dataField: 'resourcePattern', cellsalign: 'left', align: 'center', editable: false, width: '39%'},
+			{text: '이름', dataField: 'resourceNm', cellsalign: 'left', align: 'center', editable: false, width: '25%'}
 		]
 	});
 	
-	$("#data_resource").on("rowclick", function(event){
+	$("#data_resource").on("rowselect", function(event){
 		var row = event.args.rowindex;
 		var rowData = $("#data_resource").jqxGrid("getrowdata", row);
 		reloadAuthGridByNo(rowData.resourceNo);
@@ -61,7 +62,7 @@ function initAuthGrid(){
 		editable: false,
 		selectionmode: 'multiplerows',
 		columns: [
-			{text: '일련 번호', dataField: 'no', cellsalign: 'left', align: 'center', editable: false, width: '15%'},
+			{text: '일련 번호', dataField: 'no', cellsalign: 'center', align: 'center', editable: false, width: '15%'},
 			{text: '권한 명', dataField: 'name', cellsalign: 'left', align: 'center', editable: false, width: '30%'},
 			{text: '권한 설명', dataField: 'explanation', cellsalign: 'left', align: 'center', editable: false, width: '55%'}
 		]
@@ -170,10 +171,11 @@ function changeResourceGrid(listData){
 		datatype: "array",
 		datafields: [
 			{name: 'resourceNo', type: 'int'},
+			{name: 'httpMethodPattern', type: 'string'},
 			{name: 'sortOrder', type: 'int'},
-			{name: 'resourceType', type: 'String'},
-			{name: 'resourcePattern', type: 'String'},
-			{name: 'resourceNm', type: 'String'}
+			{name: 'resourceType', type: 'string'},
+			{name: 'resourcePattern', type: 'string'},
+			{name: 'resourceNm', type: 'string'}
 		]
 	};
 	
@@ -202,8 +204,8 @@ function changeAuthGrid(listData){
 		datatype: "array",
 		datafields: [
 			{name: 'no', type: 'int'},
-			{name: 'name', type: 'String'},
-			{name: 'explanation', type: 'String'}
+			{name: 'name', type: 'string'},
+			{name: 'explanation', type: 'string'}
 		]
 	};
 	
