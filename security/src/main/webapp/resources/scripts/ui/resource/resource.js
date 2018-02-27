@@ -8,13 +8,7 @@ var httpMethodNoSelectTagId = "#httpMethodNo";
 var httpMethodList = null;
 
 $(document).ready(function(){	
-	// 그리드 생성
-	initResourceGrid();
-	
-	// RESOURCE 그리드 갱신
-	reloadResourceGrid();
-	
-	// HTTP METHOD select 태그 초기화
+	// HTTP METHOD 등록 select 태그 초기화
 	initHttpMethodSelectBox();
 });
 
@@ -39,7 +33,14 @@ function initHttpMethodSelectBox(){
 			//console.log('statusText', statusText);	// "success" or ?
 			//console.log('xhr', xhr);	// header
 			if(data.result == "success"){
-				changeHttpMethodSelectBox(data.list)
+				httpMethodList = data.list;
+				replaceHttpMethodSelectBox(httpMethodList)
+				
+				// 그리드 생성
+				initResourceGrid();
+				
+				// RESOURCE 그리드 갱신
+				reloadResourceGrid();
 			}else{
 				console.log("HTTP METHOD 목록 조회를 실패했습니다.");
 			}
@@ -55,7 +56,7 @@ function initHttpMethodSelectBox(){
  * @param httpMethodList
  * @returns
  */
-function changeHttpMethodSelectBox(httpMethodList){
+function replaceHttpMethodSelectBox(httpMethodList){
 	$(httpMethodNoSelectTagId).html('');
 	
 	$.each(httpMethodList, function(index, value){
@@ -71,6 +72,38 @@ function changeHttpMethodSelectBox(httpMethodList){
 * (리소스 그리드를 생성)
 */
 function initResourceGrid(){
+	console.log('httpMethodList',httpMethodList);
+	var httpMethodSource = {
+			/*
+			localdata: [
+				{
+					"httpMethodNo":"1",
+					"httpMethodPattern":"GET"
+				},
+				{
+					"httpMethodNo":"2",
+					"httpMethodPattern":"POST"
+				}
+			],*/
+			localdata: httpMethodList,
+			datatype: "json",
+			datafields: [	// datafields는 localdata에 주어진 내용을 datatype으로 읽어들여 어떤 키값을 뽑아쓸지 정의합니다.
+				{name: 'httpMethodNo', type: 'int'},
+				{name: 'httpMethodPattern', type: 'string'}
+			]
+			
+	};
+	
+	var httpMethodAdapter = new $.jqx.dataAdapter(httpMethodSource);
+	
+	function cellValueChanging(row, column, columntype, oldvalue, newvalue){
+		// new value가 공백이라면 old value로 재설정
+		if(newvalue == ""){
+			console.log('공백이 입력되었으므로, 기존값으로 복원합니다.');
+			return oldvalue;
+		}
+	}
+	
 	$(resourceGridId).jqxGrid({
 		width: '100%',
 		height: '400px',              
@@ -89,8 +122,8 @@ function initResourceGrid(){
 				dataField: 'resourceNo',
 				cellsalign: 'center',
 				align: 'center',
-				editable: true,
-				width: '8%'/*,
+				editable: false,
+				width: '10%'/*,
 				createeditor: function(row, cellvalue, editor, cellText, width, height){
 					// 에디트 모드가 활성화 되면 해당 칸에 커스텀 에디터를 생성합니다.
 					editor.jqxNumberInput({
@@ -107,10 +140,43 @@ function initResourceGrid(){
 					return editor.val();
 				}*/
 			},
-			{text: '이름', dataField: 'resourceNm', cellsalign: 'center', align: 'center', editable: true, width: '30%'},
-			{text: '패턴', dataField: 'resourcePattern', cellsalign: 'left', align: 'center', editable: true, width: '40%'},
-			{text: '타입', dataField: 'resourceType', cellsalign: 'center', align: 'center', editable: true, width: '11%'},
-			{text: '순서', dataField: 'sortOrder', cellsalign: 'center', align: 'center', editable: true, width: '11%'}
+			{text: '이름', dataField: 'resourceNm', cellsalign: 'center', align: 'center', editable: true, cellvaluechanging: cellValueChanging, width: '33%'},
+			{
+				text: 'HTTP 메소드',	// 보여질 이름
+				dataField: 'httpMethodNo',	// 소스로부터 사용할 데이터의 키명
+				displayField: 'httpMethodPattern',
+				//columntype: 'custom',
+				columntype: 'dropdownlist',
+				cellsalign: 'center',
+				align: 'center',
+				editable: true,
+				cellvaluechanging: cellValueChanging,
+				width: '10%',
+				
+				createeditor: function(row, cellvalue, editor, cellText, width, height){
+					// 에디트 모드가 활성화 되면 해당 칸에 커스텀 에디터를 생성합니다.
+					editor.jqxDropDownList({
+						autoDropDownHeight: true,
+						width: width,
+						height: height,
+						source: httpMethodAdapter,
+						displayMember: "httpMethodPattern",
+						valueMember: "httpMethodNo"
+					});
+				}/*,
+				initeditor: function(row, cellValue, editor, celltext, pressedkey){
+					// 커스텀 에디터의 초기값을 설정합니다. 에디터가 보여질때마다 콜백함수가 호출됩니다.
+					editor.jqxDropDownList('selectItem', cellValue);
+				},
+				geteditorvalue: function(row, cellvalue, editor){
+					// 작성을 마친 후 커스텀 에디터의 값을 jqxGrid에게 반환 합니다.
+					console.log('editor', editor);
+					return editor.val();
+				}*/
+			},
+			{text: '패턴', dataField: 'resourcePattern', cellsalign: 'left', align: 'center', editable: true, cellvaluechanging: cellValueChanging, width: '27%'},
+			{text: '타입', dataField: 'resourceType', cellsalign: 'center', align: 'center', editable: true, cellvaluechanging: cellValueChanging, width: '10%'},
+			{text: '순서', dataField: 'sortOrder', cellsalign: 'center', align: 'center', editable: true, cellvaluechanging: cellValueChanging, width: '10%'}
 		]
 	});
 	
@@ -135,16 +201,28 @@ function initResourceGrid(){
 		var resourceNo = event.args.row.resourceNo;
 		/** 편집한 컬럼명 */
 		var dataField = event.args.datafield;
+		
 		/** 기존 값 */
-		var oldValue = event.args.oldvalue;
-		if((typeof oldValue) != "number"){
+		var oldValue = (dataField == "httpMethodNo") ? event.args.oldvalue.value : event.args.oldvalue;
+		if(		(typeof oldValue) != "number"
+			&&	(typeof oldValue) == "string"
+		){
 			oldValue = oldValue.trim();
 		}
+		
 		/** 변경 값 */
-		var newValue = event.args.value.trim();
-		if((typeof newValue) != "number"){
+		var newValue = (dataField == "httpMethodNo") ? event.args.value.value : event.args.value;
+		if(		(typeof newValue) != "number"
+			&&	(typeof newValue) == "string"
+		){
 			newValue = newValue.trim();
 		}
+		
+		//console.log('event.args', event.args);
+		//console.log('event.args.value', event.args.value);
+		//console.log('event.args.value.label', event.args.value.label);
+		//console.log('타입', typeof newValue);
+		//console.log('뉴밸류라벨', newValue);
 		
 		//console.log("End 정보 event.args: ", event.args);
 		//console.log("편집한 행 번호: ", event.args.rowindex);
@@ -164,7 +242,7 @@ function initResourceGrid(){
 		var jsonData = JSON.stringify(data);
 		
 		// 출력
-		console.log("전송할 json 데이터", jsonData);
+		console.log("전송할 json 데이터", resourceNo, jsonData);
 		
 		// 수정 요청 전송
 		var token = $("meta[name='_csrf']").attr("content");
@@ -242,9 +320,11 @@ function changeResourceGrid(listData){
 		datatype: "array",
 		datafields: [
 			{name: 'resourceNo', type: 'int'},
-			{name: 'resourceNm', type: 'String'},
-			{name: 'resourcePattern', type: 'String'},
-			{name: 'resourceType', type: 'String'},
+			{name: 'httpMethodNo', type: 'int'},
+			{name: 'httpMethodPattern', type: 'string'},
+			{name: 'resourceNm', type: 'string'},
+			{name: 'resourcePattern', type: 'string'},
+			{name: 'resourceType', type: 'string'},
 			{name: 'sortOrder', type: 'int'}
 		]
 	};

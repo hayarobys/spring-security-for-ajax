@@ -52,7 +52,7 @@
 			#{resourceNm},
 			#{httpMethodNo},
 			#{resourcePattern},
-			#{resourceType},
+			LCASE(#{resourceType}),
 			#{sortOrder}
 		)
 	</insert>
@@ -71,7 +71,7 @@
 				RESOURCE_PATTERN = #{resourcePattern},
 			</if>
 			<if test="resourceType != null and !''.equals(resourceType)">
-				RESOURCE_TYPE = #{resourceType},
+				RESOURCE_TYPE = LCASE(#{resourceType}),
 			</if>
 			<if test="sortOrder != null and !''.equals(sortOrder)">
 				SORT_ORDER = #{sortOrder}

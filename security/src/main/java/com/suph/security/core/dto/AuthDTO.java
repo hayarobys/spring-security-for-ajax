@@ -4,7 +4,7 @@ package com.suph.security.core.dto;
 //TB_AUTH 권한 테이블
 public class AuthDTO{
 	/** AUTH_NO 권한 일련 번호 */
-	private int no;		
+	private Integer no;		
 	/** AUTH_NM 권한 명 */
 	private String name;
 	/** AUTH_EXPLANATION 권한 설명 */
@@ -14,7 +14,7 @@ public class AuthDTO{
 	 * 권한 일련 번호를 반환합니다.
 	 * @return
 	 */
-	public int getNo(){
+	public Integer getNo(){
 		return no;
 	}
 	
@@ -22,7 +22,7 @@ public class AuthDTO{
 	 * 이 권한의 일련 번호를 저장/변경 합니다.
 	 * @param no
 	 */
-	public void setNo(int no){
+	public void setNo(Integer no){
 		this.no = no;
 	}
 	

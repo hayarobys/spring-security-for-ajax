@@ -7,7 +7,7 @@ public class MemberDTO{
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
 	/** MEM_NO 계정 일련 번호 PK */
-	private int no;
+	private Integer no;
 	/** MEM_ID 계정 아이디 */
 	private String id;
 	/** MEM_PASSWORD 계정 비밀번호 */
@@ -21,7 +21,7 @@ public class MemberDTO{
 	 * 계정 일련 번호를 반환합니다.
 	 * @return no 반환
 	 */
-	public int getNo(){
+	public Integer getNo(){
 		return no;
 	}
 	
@@ -29,7 +29,7 @@ public class MemberDTO{
 	 * 계정 일련 번호를 변경/저장 합니다.
 	 * @param no
 	 */
-	public void setNo(int no){
+	public void setNo(Integer no){
 		this.no = no;
 	}
 	

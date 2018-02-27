@@ -9,13 +9,13 @@ import java.util.List;
 // TB_RESOURCE 테이블
 public class ResourceDTO{
 	/** 리소스 일련 번호 */
-	private int resourceNo;
+	private Integer resourceNo;
 	/** 리소스 순서 */
-	private int sortOrder;
+	private Integer sortOrder;
 	/** 리소스 타입 */
 	private String resourceType;
 	/** HTTP METHOD 일련 번호 */
-	private int httpMethodNo;
+	private Integer httpMethodNo;
 	/** HTTP METHOD 패턴 */
 	private String httpMethodPattern;
 	/** 리소스 패턴 */
@@ -25,19 +25,19 @@ public class ResourceDTO{
 	
 	private List<ResourceDTO> list;
 	
-	public int getResourceNo(){
+	public Integer getResourceNo(){
 		return resourceNo;
 	}
 	
-	public void setResourceNo(int resourceNo){
+	public void setResourceNo(Integer resourceNo){
 		this.resourceNo = resourceNo;
 	}
 	
-	public int getSortOrder(){
+	public Integer getSortOrder(){
 		return sortOrder;
 	}
 	
-	public void setSortOrder(int sortOrder){
+	public void setSortOrder(Integer sortOrder){
 		this.sortOrder = sortOrder;
 	}
 	
@@ -49,11 +49,11 @@ public class ResourceDTO{
 		this.resourceType = resourceType;
 	}
 	
-	public int getHttpMethodNo(){
+	public Integer getHttpMethodNo(){
 		return httpMethodNo;
 	}
 
-	public void setHttpMethodNo(int httpMethodNo){
+	public void setHttpMethodNo(Integer httpMethodNo){
 		this.httpMethodNo = httpMethodNo;
 	}
 

@@ -11,13 +11,13 @@ import org.springframework.http.HttpMethod;
 // TB_RESOURCE_AUTH 테이블
 public class ResourceAuthDTO{
 	/** 리소스 일련 번호 */
-	private int resourceNo;
+	private Integer resourceNo;
 	/** HTTP Method 패턴 (GET / POST / PUT / PATCH / DELETE / ...) */
 	private String httpMethodPattern;
 	/** 리소스 이름, URL 패턴 */
 	private String resourceNm;	// pattern
 	/** 권한 일련 번호 */
-	private int authNo;
+	private Integer authNo;
 	/** 접근 가능한 권한(필요권한) */
 	private String authNm;	// authority
 	/** 접근 가능한 권한 목록 */
@@ -27,7 +27,7 @@ public class ResourceAuthDTO{
 	 * 리소스 일련 번호를 반환 합니다.
 	 * @return
 	 */
-	public int getResourceNo(){
+	public Integer getResourceNo(){
 		return resourceNo;
 	}
 
@@ -35,7 +35,7 @@ public class ResourceAuthDTO{
 	 * 리소스 일련 번호를 저장/변경 합니다.
 	 * @param resourceNo
 	 */
-	public void setResourceNo(int resourceNo){
+	public void setResourceNo(Integer resourceNo){
 		this.resourceNo = resourceNo;
 	}
 	
@@ -75,7 +75,7 @@ public class ResourceAuthDTO{
 	 * 권한 일련 번호를 반환 합니다.
 	 * @return
 	 */
-	public int getAuthNo(){
+	public Integer getAuthNo(){
 		return authNo;
 	}
 
@@ -83,7 +83,7 @@ public class ResourceAuthDTO{
 	 * 권한 일련 번호를 저장/변경 합니다.
 	 * @param authNo
 	 */
-	public void setAuthNo(int authNo){
+	public void setAuthNo(Integer authNo){
 		this.authNo = authNo;
 	}
 
