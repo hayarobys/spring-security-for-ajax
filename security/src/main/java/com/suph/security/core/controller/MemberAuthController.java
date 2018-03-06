@@ -13,7 +13,7 @@ public class MemberAuthController{
 	 */
 	@RequestMapping(value="/member-auth/edit", method=RequestMethod.GET)
 	public String getMemberAuthEdit(){
-		return "";
+		return "member-auth/member-auth";
 	}
 	
 	/**

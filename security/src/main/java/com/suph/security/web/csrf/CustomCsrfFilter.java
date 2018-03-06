@@ -117,7 +117,7 @@ public final class CustomCsrfFilter extends OncePerRequestFilter{
 		);
 		
 		/**
-		 * csrf보호가 필요합니까?
+		 * 이 요청에 대해 csrf보호(검사)가 필요합니까?
 		 * 요청의 HTTP Method가 GET, HEAD, TRACE, OPTIONS중 하나와 일치하는지 검사합니다.
 		 * 허용 목록과 하나라도 일치한다면 false,
 		 * 허용 목록에 없어서 csrf보호가 필요하다고 판단되었다면 true

@@ -21,7 +21,7 @@ public class AuthController{
 	 */
 	@RequestMapping(value="/auth/edit", method=RequestMethod.GET)
 	public String getAuthEdit(){
-		return "";
+		return "auth/auth";
 	}
 	
 	/**

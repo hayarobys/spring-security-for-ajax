@@ -50,10 +50,14 @@
 	<logger name="org.springframework.security.web.context">
 		<level value="error" />
 	</logger>
+	
+	<logger name="org.springframework.security.web.authentication">
+		<level value="error" />
+	</logger>
 
 	<!-- Root Logger -->
 	<root>
-		<priority value="warn" />
+		<priority value="error" />
 		<appender-ref ref="console" />
 	</root>
 	

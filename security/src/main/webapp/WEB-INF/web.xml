@@ -9,6 +9,7 @@
 	xmlns=A	// 기본 네임스페이스에 A를 지정하겠다. (A 속 태그는 별도의 접두사 없이 사용 가능)
 	xmlns:xsi=C	// C를 xsi라는 네임스페이스에 지정하겠다.
 	xsi:schemaLocation=A	B	// 네임스페이스 A속 태그는 B에 정의되어 있다. B는 C에서 정의한 포맷에 맞추어 작성했다. (이때 B를 XML Schema라 부른다)
+
 -->
 	<!-- HTTP Method중 TRACE, OPTIONS는 사용중지 -->
  	<security-constraint>
@@ -46,6 +47,11 @@
 			<http-only>true</http-only>	<!-- 쿠키호출 자바스크립트에 미응답 합니다. -->
 			<secure>true</secure>	<!-- 쿠키는 HTTPS통신으로만 전송됩니다. -->
 		</cookie-config>
+		
+		<!-- Disables URL based sessions (no more 'jsessionid' in the URL using Tomcat) -->
+		<!-- JSTL의 c:url 태그 사용시, 요청자의 쿠키에 JSESSIONID가 없는 경우 url에 세션아이디를 붙여주게 됩니다. -->
+		<!-- {pageContext.request.contextPath}를 사용하는게 깔끔하지만, 이번엔 쿠키만 사용하도록 제한하는 방법을 써보겠습니다. -->
+		<tracking-mode>COOKIE</tracking-mode>
 	</session-config>
 	
 	<!-- 클라이언트로부터 오는 리퀘스트 파라미터를 UTF-8로 처리하는 '필터' -->

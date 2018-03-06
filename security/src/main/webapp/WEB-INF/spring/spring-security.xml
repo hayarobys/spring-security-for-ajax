@@ -13,7 +13,6 @@
 	<!-- 확장자를 이용해 패턴을 걸때는 /**/*.해당 확장자 로 할 것(Ant Pattern 규칙) -->
 	<!-- 확장자가 .js인 것은 spring-security를 걸지 않는다는 설정 -->
 	<http pattern="/resources/**" security="none" />
-	<http pattern="/images/*" security="none" />
 	
 	
 	
@@ -42,7 +41,7 @@
 		<beans:property name="loginpasswdname" value="loginpw"/>
 		<!-- <beans:property name="loginredirectname" value="loginRedirect"/> -->
 		<beans:property name="exceptionmsgname" value="securityexceptionmsg"/>
-		<beans:property name="defaultFailureUrl" value="/login"/>	<!-- 로그인 실패시 보여줄 로그인 페이지 폼 -->
+		<beans:property name="defaultFailureUrl" value="/login/edit"/>	<!-- 로그인 실패시 보여줄 로그인 페이지 폼 -->
 	</beans:bean>
 
 	<beans:bean id="customSecurityContextRepository" class="com.suph.security.web.context.CustomSecurityContextRepository"/>
@@ -74,7 +73,7 @@
 		<!-- 적절한 HTTP동사를 함께 사용할때 효과가 극대화 됨을 명심 -->
 		<!-- <csrf token-repository-ref="tokenRepository" /> -->
 		<!-- Spring Security 4.X 부터 명시적으로 disabled을 써주지 않는 한 자동 활성화 됨에 주의 -->
-		<csrf disabled="true"/>	<!-- 잠시 비활성화 -->
+		<csrf disabled="true"/>	<!-- 잠시 비활성화. -->
 		
 	<!--
 		auto-config를 사용함으로써 아래의  http 내부 태그들이 기본값으로 설정되었다.

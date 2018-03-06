@@ -273,7 +273,7 @@ function save(){
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
-			//xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
+			xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
 		},
 		success: function(data, statusText, xhr){
 			console.log("result", data.result);

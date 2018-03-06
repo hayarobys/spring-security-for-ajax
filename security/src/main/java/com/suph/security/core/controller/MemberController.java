@@ -23,8 +23,8 @@ public class MemberController{
 	 * 계정 관리 페이지 이동
 	 */
 	@RequestMapping(value="/member/edit", method=RequestMethod.GET)
-	public Map<String, Object> getMemberEdit(){
-		return null;
+	public String getMemberEdit(){
+		return "member/member";
 	}
 	
 	/**

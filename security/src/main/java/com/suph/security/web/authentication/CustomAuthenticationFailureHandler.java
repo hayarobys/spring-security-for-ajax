@@ -156,6 +156,8 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 			request.getRequestDispatcher(defaultFailureUrl).forward(request, response);	// redirect하면 request영역을 공유할 수 없다. forward해주자.
 			// forward함으로써 클라이언트가 보낸 request에 담긴 객체를 defaultFailureUrl페이지에서 다시 불러쓸 수 있다.
 			// 다만 클라이언트의 주소창 값은 직전에 요청한 주소로 변경된다. 여기선 http://localhost:8443/security/login_check로 변경
+			// forward하면 요청당시의 HTTP Method를 그대로 가지고 가야하는 문제또한 생긴다. 로그인 페이지를 GET/POST/DELETE/PATCH 모두로 접근 가능하게 해줘야 하므로
+			// Restful에서 빗겨난다.
 		}
 	}
 }
