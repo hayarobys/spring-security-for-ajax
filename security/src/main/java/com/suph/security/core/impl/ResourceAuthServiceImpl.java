@@ -169,7 +169,7 @@ public class ResourceAuthServiceImpl implements ResourceAuthService{
 			pastResource = presentResourceStr;
 			pastHttpMethod = presentHttpMethod;
 		}
-		
+		//logger.debug("메모리에 다음의 리소스-권한 정보를 올립니다:\n{}", returnMap);
 		return returnMap;
 	}
 

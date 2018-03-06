@@ -173,6 +173,7 @@
 			예를 들어 UsernamePasswordAuthenticationFilter를 <custom-filter>에 지정했을 경우
 			다른곳에 <form-login>태그를 사용해선 안된다.
 		-->
+		<custom-filter position="CSRF_FILTER" ref="customCsrfFilter"/>
 		<custom-filter after="LOGOUT_FILTER" ref="tooLongLoginBlockFilter" />
 		<custom-filter before="FILTER_SECURITY_INTERCEPTOR" ref="filterSecurityInterceptor"/>
 		
@@ -181,6 +182,10 @@
 		<access-denied-handler ref="accessDenied"/>
 	</http>
 	
+	<beans:bean id="customCsrfFilter" class="com.suph.security.web.csrf.CustomCsrfFilter">
+		<beans:constructor-arg ref="tokenRepository" />
+		<beans:property name="accessDeniedHandler" ref="accessDenied"/>
+	</beans:bean>
 	
 	<!-- 너무 오랜시간 로그인한 유저를 재로그인 페이지로 유도하는 필터 -->
 	<beans:bean id="tooLongLoginBlockFilter" class="com.suph.security.web.toolonglogin.TooLongLoginBlockFilter">

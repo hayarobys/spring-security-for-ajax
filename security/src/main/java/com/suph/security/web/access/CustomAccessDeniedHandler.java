@@ -91,7 +91,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler{
 			
 		}else{
 		// 그외 요청(Ajax라거나...)에서 권한이 불충분 한 것이라면
-			LOGGER.debug("이 Ajax요청에 필요한 권한이 불충분 합니다");
+			LOGGER.debug("이 Ajax요청이 거부되었습니다. 권한이 불충분 하거나, 올바른 CSRF토큰이 없을 수 있습니다.\n메시지: {}", accessDeniedException.getMessage());
 			if(SPRING_AJAX_HEADER_VALUE.equals(ajaxHeader)){	// true로 값을 받았다는 것은 ajax로 접근했음을 의미한다.
 				result = "{\"result\":\"fail\",\"message\":\"" + accessDeniedException.getMessage() + "\"}";
 				

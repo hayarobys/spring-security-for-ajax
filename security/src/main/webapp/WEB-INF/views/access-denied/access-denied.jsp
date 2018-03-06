@@ -10,8 +10,7 @@
 <html>
 <head>
 	
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link rel="shorcut icon" href="<c:url value='/resources/favicon.ico'/>" type="image/x-icon" />
+	<jsp:include page="/WEB-INF/views/common/common-head.jsp" flush="false"/>
 	<title>오류 페이지</title>
 	
 	<style type="text/css">
@@ -25,8 +24,6 @@
 		}
 	</style>
 	
-	<%-- <jsp:include page="/WEB-INF/views/jsInclude.jsp"></jsp:include> --%>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script type="text/javascript">
 		$(function(){
 			

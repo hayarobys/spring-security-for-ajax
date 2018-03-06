@@ -7,6 +7,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
@@ -23,6 +25,8 @@ public class CustomCookieCsrfTokenRepository implements CsrfTokenRepository{
 
 	static final String DEFAULT_CSRF_HEADER_NAME = "X-XSRF-TOKEN";
 
+	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+	
 	private String parameterName = DEFAULT_CSRF_PARAMETER_NAME;
 
 	private String headerName = DEFAULT_CSRF_HEADER_NAME;
@@ -44,8 +48,8 @@ public class CustomCookieCsrfTokenRepository implements CsrfTokenRepository{
 	
 	@Override
 	public CsrfToken generateToken(HttpServletRequest request){
-		return new DefaultCsrfToken(this.headerName, this.parameterName,
-				createNewToken());
+		LOGGER.debug("CSRF 토큰을 생성합니다.");
+		return new DefaultCsrfToken( this.headerName, this.parameterName, createNewToken() );
 	}
 
 	@Override

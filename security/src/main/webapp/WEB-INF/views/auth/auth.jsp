@@ -4,11 +4,11 @@
 <head>
 	
 	<jsp:include page="/WEB-INF/views/common/common-head.jsp" flush="false"/>
-	<title>ADMIN!</title>
+	<title>AUTH 관리</title>
 	
 </head>
 <body>
-	<h1>관리자 페이지~</h1>
+	
 	
 </body>
 </html>

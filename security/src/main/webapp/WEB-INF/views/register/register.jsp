@@ -5,11 +5,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link rel="shorcut icon" href="<c:url value='/resources/favicon.ico'/>" type="image/x-icon" />
-	<sec:csrfMetaTags />
-	<title>회원 등록</title>
-	
+	<jsp:include page="/WEB-INF/views/common/common-head.jsp" flush="false"/>
+	<title>회원 등록</title>	
 </head>
 <body>
 	<form action="./register" method="post">

@@ -4,8 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<link rel="shorcut icon" href="<c:url value='/resources/favicon.ico'/>" type="image/x-icon" />
+	<jsp:include page="/WEB-INF/views/common/common-head.jsp" flush="false"/>
 	<title>로그인 화면</title>
 </head>
 <body>
