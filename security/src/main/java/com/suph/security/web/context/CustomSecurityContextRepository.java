@@ -329,7 +329,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	 * 스프링 시큐리티에서 최종적으로 생성한 SecurityContext를 JWT Cookie로 변환하는데 사용됩니다.
 	 * 단 JWT생성일은 요청당시 JWT의 내용을 그대로 유지합니다. 요청당시 토큰이나 생성일이 없었다면 현재시간으로 생성 합니다.
 	 * 이는 로그인 유효 시간을 검사하는데 사용됩니다.
-	 * 클라이언트에서 변조는 못해서 그 내용을 볼 수는 있으므로 절대로 패스워드, 주민번호 등의 민감한 정보를 담아선 안됩니다.
+	 * 클라이언트에서 변조는 못해도, 그 내용을 볼 수는 있으므로 절대로 패스워드, 주민번호 등의 민감한 정보를 담아선 안됩니다.
 	 * @param context
 	 * @return
 	 */

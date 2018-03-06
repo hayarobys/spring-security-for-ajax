@@ -1,9 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee" 
-         xmlns:web="http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-         version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee">
-         
+<web-app
+	version="3.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+>
+<!--
+	xmlns=A	// 기본 네임스페이스에 A를 지정하겠다. (A 속 태그는 별도의 접두사 없이 사용 가능)
+	xmlns:xsi=C	// C를 xsi라는 네임스페이스에 지정하겠다.
+	xsi:schemaLocation=A	B	// 네임스페이스 A속 태그는 B에 정의되어 있다. B는 C에서 정의한 포맷에 맞추어 작성했다. (이때 B를 XML Schema라 부른다)
+-->
+	<!-- HTTP Method중 TRACE, OPTIONS는 사용중지 -->
+ 	<security-constraint>
+ 		<display-name>Forbidden</display-name>
+ 		
+ 		<web-resource-collection>
+ 			<!-- 모든 요청경로에 대해 HTTP 메서드(TRACE, OPTIONS) 제약 -->
+ 			<web-resource-name>Http Method Contraint</web-resource-name>
+ 			<url-pattern>/*</url-pattern>
+ 			<http-method>TRACE</http-method>
+ 			<http-method>OPTIONS</http-method>
+ 		</web-resource-collection>
+ 		
+ 		<!-- <auth-constraint> -->
+	 		<!-- 위 /*라는 경로에 지정한 TRACE, OPTIONS로 접근할 수 있는 권한(<role-name>)은 없다. 즉, 접근을 금지한다. -->
+ 			<!-- <role-name></role-name> -->
+ 		<!-- </auth-constraint> -->
+ 		<auth-constraint/>
+ 	</security-constraint>
+ 	
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
@@ -23,7 +48,7 @@
 		</cookie-config>
 	</session-config>
 	
-	<!-- 클라이언트로부터 오는 모든 쿼리에 대한 한글 인코딩 처리 '필터' -->
+	<!-- 클라이언트로부터 오는 리퀘스트 파라미터를 UTF-8로 처리하는 '필터' -->
 	<filter>
 		<filter-name>encodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>

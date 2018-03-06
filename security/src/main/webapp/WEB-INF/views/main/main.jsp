@@ -53,7 +53,7 @@
 	<link rel="shorcut icon" href="<c:url value='/resources/favicon.ico'/>" type="image/x-icon" />
 	<link rel="stylesheet" href="<c:url value='/resources/css/ui/main/main.css'/>" />
 	
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'/>"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="<c:url value='/resources/scripts/ui/main/main.js'/>"></script>
 </head>
 <body>
