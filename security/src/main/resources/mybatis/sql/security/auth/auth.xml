@@ -4,13 +4,50 @@
 
 <mapper namespace="com.suph.security.core.dao.AuthDAO">
 	<resultMap type="com.suph.security.core.dto.AuthDTO" id="AuthDTO">
-		<result column="AUTH_NO" property="no"/>	<!-- 권한 일련 번호 -->
-		<result column="AUTH_NM" property="name"/>	<!-- 권한명 -->
-		<result column="AUTH_EXPLANATION" property="explanation"/>	<!-- 권한 설명 -->
+		<result column="AUTH_NO" property="authNo"/>	<!-- 권한 일련 번호 -->
+		<result column="AUTH_NM" property="authNm"/>	<!-- 권한명 -->
+		<result column="AUTH_EXPLANATION" property="authExplanation"/>	<!-- 권한 설명 -->
 	</resultMap>
 	
 	<!-- 모든 권한 목록 조회 -->
 	<select id="getAuthList" resultMap="AuthDTO">
 		SELECT * FROM TB_AUTH
 	</select>
+	
+	<!-- 권한 등록 -->
+	<insert id="insertAuth" parameterType="AuthDTO">
+		INSERT INTO
+			TB_AUTH(
+				AUTH_NM,
+				AUTH_EXPLANATION
+			)
+			VALUES(
+				#{authNm},
+				#{authExplanation}
+			)
+	</insert>
+	
+	<!-- 특정 권한 수정 -->
+	<update id="updateAuthByAuthNo" parameterType="AuthDTO">
+		UPDATE
+			TB_AUTH
+		<set>
+			<if test="authNm != null and !''.equals(authNm)">
+				AUTH_NM = #{authNm},
+			</if>
+			<if test="authExplanation != null and !''.equals(authExplanation)">
+				AUTH_EXPLANATION = #{authExplanation}
+			</if>
+		</set>
+		WHERE
+			AUTH_NO = #{authNo}
+	</update>
+	
+	<!-- 특정 권한 삭제 -->
+	<delete id="deleteAuthByAuthNo" parameterType="int">
+		DELETE FROM
+			TB_AUTH
+		WHERE
+			AUTH_NO = #{authNo}
+	</delete>
 </mapper>

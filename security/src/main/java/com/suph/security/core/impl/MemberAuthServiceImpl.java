@@ -42,7 +42,7 @@ public class MemberAuthServiceImpl implements MemberAuthService{
 		
 		List<GrantedAuthority> resultList = new ArrayList<GrantedAuthority>();
 		for(AuthDTO vo : list){
-			resultList.add( new SimpleGrantedAuthority(vo.getName()) );
+			resultList.add( new SimpleGrantedAuthority(vo.getAuthNm()) );
 		}
 		
 		return resultList;

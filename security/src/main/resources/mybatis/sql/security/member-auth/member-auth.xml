@@ -5,9 +5,9 @@
 <mapper namespace="com.suph.security.core.dao.MemberAuthDAO">
 
 	<resultMap type="com.suph.security.core.dto.AuthDTO" id="AuthDTO">
-		<result column="AUTH_NO" property="no"/>	<!-- 권한 일련 번호 -->
-		<result column="AUTH_NM" property="name"/>	<!-- 권한명 -->
-		<result column="AUTH_EXPLANATION" property="explanation"/>	<!-- 권한 설명 -->
+		<result column="AUTH_NO" property="authNo"/>	<!-- 권한 일련 번호 -->
+		<result column="AUTH_NM" property="authNm"/>	<!-- 권한명 -->
+		<result column="AUTH_EXPLANATION" property="authExplanation"/>	<!-- 권한 설명 -->
 	</resultMap>
 	
 	<!-- 특정 계정이 보유한 권한 목록 조회 -->

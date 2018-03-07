@@ -272,6 +272,9 @@ function initResourceGrid(){
 			},
 			error: function(xhr){
 				console.log("error", xhr);
+				
+				// 수정 전 값으로 복원
+				$(resourceGridId).jqxGrid('setcellvalue', rowIndex, dataField, oldValue);
 			}
 		});
 	});

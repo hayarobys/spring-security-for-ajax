@@ -5,10 +5,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.suph.security.core.dto.AuthDTO;
 import com.suph.security.core.service.AuthService;
 
 @Controller
@@ -34,11 +36,30 @@ public class AuthController{
 	}
 	
 	/**
-	 * 특정 권한을 삭제 합니다.
+	 * 권한을 등록합니다.
+	 * @return
 	 */
-	@RequestMapping(value="/auth/{authNo}", method=RequestMethod.DELETE)
-	public @ResponseBody Map<String, Object> deleteAuthByAuthNo(@PathVariable int authNo){
-		return null;
+	@RequestMapping(value="/auth", method=RequestMethod.POST)
+	public @ResponseBody Map<String, Object> postAuth(@RequestBody AuthDTO authDTO){
+		return authService.postAuth(authDTO);
 	}
 	
+	/**
+	 * 특정 권한을 수정합니다.
+	 * @param authNo
+	 * @param authDTO
+	 * @return
+	 */
+	@RequestMapping(value="/auth/{authNo}", method=RequestMethod.PATCH)
+	public @ResponseBody Map<String, Object> patchAuthByAuthNo(@PathVariable Integer authNo, @RequestBody AuthDTO authDTO){
+		return authService.patchAuthByAuthNo(authNo, authDTO);
+	}
+	
+	/**
+	 * 요청받은 특정 권한을 삭제 합니다.
+	 */
+	@RequestMapping(value="/auth/{authNo}", method=RequestMethod.DELETE)
+	public @ResponseBody Map<String, Object> deleteAuthByAuthNo(@PathVariable Integer authNo){
+		return authService.deleteAuthByAuthNo(authNo);
+	}
 }

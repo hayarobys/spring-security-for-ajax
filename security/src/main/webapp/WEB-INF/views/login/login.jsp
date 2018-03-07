@@ -8,7 +8,7 @@
 	<title>로그인 화면</title>
 </head>
 <body>
-	<form id="loginfrm" name="loginfrm" method="POST" action="./login_check">
+	<form id="loginfrm" name="loginfrm" method="POST" action="${pageContext.request.contextPath}/login_check">
 		<table>
 			<tr>
 				<td style="width:50px;">id</td>

@@ -24,7 +24,7 @@
 		<beans:property name="loginredirectname" value="loginRedirect"/>
 		
 		<!-- 리디렉트 시킬 로그인 폼 요청 경로 지정 -->
-		<beans:property name="loginFormPath" value="/login"/>
+		<beans:property name="loginFormPath" value="/login/edit"/>
 	</beans:bean>
 	
 	<!-- 따라서 RequestCache를 커스터마이징 하여 Session에 요청 경로를 저장하는 코드를 제거합니다. -->
@@ -87,7 +87,7 @@
 			그냥 통과 할 수 있도록 <intercept-url>부를 지워주도록 하자.
 		-->
 		<!-- <intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" /> -->
-		<!-- <intercept-url pattern="/login" access="isAnonymous()" /> -->
+		<!-- <intercept-url pattern="/login/edit" access="isAnonymous()" /> -->
 		<!-- <intercept-url pattern="/main" access="permitAll" /> -->
 		<!-- <intercept-url pattern="/**" access="permitAll" /> -->
 		
@@ -136,14 +136,14 @@
 		<form-login
 			username-parameter="loginid"
 			password-parameter="loginpwd"
-			login-page="/login"
+			login-page="/login/edit"
 			default-target-url="/main"
 		/>
 		-->
 		<form-login
 			username-parameter="loginid"
 			password-parameter="loginpwd"
-			login-page="/login"
+			login-page="/login/edit"
 			login-processing-url="/login_check"
 			authentication-success-handler-ref="customAuthenticationSuccessHandler"
 			authentication-failure-handler-ref="customAuthenticationFailureHandler"
@@ -194,7 +194,7 @@
 	<beans:bean id="tooLongLoginBlockHandler" class="com.suph.security.web.toolonglogin.SimpleTooLongLoginBlockHandler">
 		<beans:property name="loginidname" value="loginid"/>
 		<beans:property name="exceptionmsgname" value="securityexceptionmsg"/>
-		<beans:property name="defaultFailureUrl" value="/login"/>
+		<beans:property name="defaultFailureUrl" value="/login/edit"/>
 	</beans:bean>
 	
 	<!--====================================== 권한 필터(권한을 총괄하는 필터) - 인증 정보/ 권한 정보/ 판단 주체로 구성 ======================================-->

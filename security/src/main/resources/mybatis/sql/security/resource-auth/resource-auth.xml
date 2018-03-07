@@ -10,9 +10,9 @@
 	</resultMap>
 	
 	<resultMap type="com.suph.security.core.dto.AuthDTO" id="AuthDTO">
-		<result column="AUTH_NO" property="no" />
-		<result column="AUTH_NM" property="name" />
-		<result column="AUTH_EXPLANATION" property="explanation" />
+		<result column="AUTH_NO" property="authNo" />
+		<result column="AUTH_NM" property="authNm" />
+		<result column="AUTH_EXPLANATION" property="authExplanation" />
 	</resultMap>
 
 	<!-- url/method/pointcut 형식인 리소스 패턴 - 권한 매핑 정보를 조회합니다 -->

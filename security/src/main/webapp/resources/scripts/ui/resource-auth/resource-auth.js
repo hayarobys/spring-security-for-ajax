@@ -62,9 +62,9 @@ function initAuthGrid(){
 		editable: false,
 		selectionmode: 'multiplerows',
 		columns: [
-			{text: '일련 번호', dataField: 'no', cellsalign: 'center', align: 'center', editable: false, width: '15%'},
-			{text: '권한 명', dataField: 'name', cellsalign: 'left', align: 'center', editable: false, width: '30%'},
-			{text: '권한 설명', dataField: 'explanation', cellsalign: 'left', align: 'center', editable: false, width: '55%'}
+			{text: '일련 번호', dataField: 'authNo', cellsalign: 'center', align: 'center', editable: false, width: '15%'},
+			{text: '권한 명', dataField: 'authNm', cellsalign: 'left', align: 'center', editable: false, width: '30%'},
+			{text: '권한 설명', dataField: 'authExplanation', cellsalign: 'left', align: 'center', editable: false, width: '55%'}
 		]
 	});
 }
@@ -203,9 +203,9 @@ function changeAuthGrid(listData){
 		localdata: everyAuthList,
 		datatype: "array",
 		datafields: [
-			{name: 'no', type: 'int'},
-			{name: 'name', type: 'string'},
-			{name: 'explanation', type: 'string'}
+			{name: 'authNo', type: 'int'},
+			{name: 'authNm', type: 'string'},
+			{name: 'authExplanation', type: 'string'}
 		]
 	};
 	
