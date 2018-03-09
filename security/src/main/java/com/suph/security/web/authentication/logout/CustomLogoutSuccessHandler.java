@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.util.StringUtils;
 
 /**
  * 로그아웃 요청시 처리동작을 정의한 클래스 입니다.

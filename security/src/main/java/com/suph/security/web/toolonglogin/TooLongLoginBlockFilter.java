@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.suph.security.core.userdetails.MemberInfo;
 

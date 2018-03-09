@@ -3,7 +3,7 @@ var resourceGridId = "#data_resource";
 /** 등록할 RESOURCE 정보가 있는 form id */
 var resourceFormId = "#resourceForm";
 /** 등록폼의 HTTP METHOD select 태그 ID */
-var httpMethodNoSelectTagId = "#httpMethodNo";
+var httpMethodSelectTagId = "#httpMethod";
 /** 서버로부터 최초 한 번 받아올 전체 HTTP METHOD 목록. 등록폼의 select 태그를 생성하는데 사용 */
 var httpMethodList = null;
 
@@ -57,12 +57,12 @@ function initHttpMethodSelectBox(){
  * @returns
  */
 function replaceHttpMethodSelectBox(httpMethodList){
-	$(httpMethodNoSelectTagId).html('');
+	$(httpMethodSelectTagId).html('');
 	
 	$.each(httpMethodList, function(index, value){
-		$(httpMethodNoSelectTagId).append($('<option />',{
-			label: value.httpMethodPattern,
-			value: value.httpMethodNo
+		$(httpMethodSelectTagId).append($('<option />',{
+			label: value,	// 사용자에게 보여줄 값
+			value: value	// 서버 전송에 사용할 값
 		}));
 	})
 }
@@ -74,24 +74,8 @@ function replaceHttpMethodSelectBox(httpMethodList){
 function initResourceGrid(){
 	//console.log('httpMethodList',httpMethodList);
 	var httpMethodSource = {
-			/*
-			localdata: [
-				{
-					"httpMethodNo":"1",
-					"httpMethodPattern":"GET"
-				},
-				{
-					"httpMethodNo":"2",
-					"httpMethodPattern":"POST"
-				}
-			],*/
 			localdata: httpMethodList,
-			datatype: "json",
-			datafields: [	// datafields는 localdata에 주어진 내용을 datatype으로 읽어들여 어떤 키값을 뽑아쓸지 정의합니다.
-				{name: 'httpMethodNo', type: 'int'},
-				{name: 'httpMethodPattern', type: 'string'}
-			]
-			
+			datatype: "array"
 	};
 	
 	var httpMethodAdapter = new $.jqx.dataAdapter(httpMethodSource);
@@ -123,29 +107,13 @@ function initResourceGrid(){
 				cellsalign: 'center',
 				align: 'center',
 				editable: false,
-				width: '10%'/*,
-				createeditor: function(row, cellvalue, editor, cellText, width, height){
-					// 에디트 모드가 활성화 되면 해당 칸에 커스텀 에디터를 생성합니다.
-					editor.jqxNumberInput({
-						width: width,
-						height: height
-					});
-				},
-				initeditor: function(row, cellvalue, editor, celltext, pressedkey){
-					// 커스텀 에디터의 초기값을 설정합니다. 에디터가 보여질때마다 콜백함수가 호출됩니다.
-					editor.jqxInput('val', cellvalue);
-				},
-				geteditorvalue: function(row, cellvalue, editor){
-					// 작성을 마친 후 커스텀 에디터의 값을 jqxGrid에게 반환 합니다.
-					return editor.val();
-				}*/
+				width: '10%'
 			},
 			{text: '이름', dataField: 'resourceNm', cellsalign: 'center', align: 'center', editable: true, cellvaluechanging: cellValueChanging, width: '33%'},
 			{
 				text: 'HTTP 메소드',	// 보여질 이름
-				dataField: 'httpMethodNo',	// 소스로부터 사용할 데이터의 키명
-				displayField: 'httpMethodPattern',
-				//columntype: 'custom',
+				dataField: 'httpMethod',	// 소스로부터 사용할 데이터의 키명
+				displayField: 'httpMethod',	// 해당 컬럼의 내부 명칭?
 				columntype: 'dropdownlist',
 				cellsalign: 'center',
 				align: 'center',
@@ -160,19 +128,10 @@ function initResourceGrid(){
 						width: width,
 						height: height,
 						source: httpMethodAdapter,
-						displayMember: "httpMethodPattern",
-						valueMember: "httpMethodNo"
+						displayMember: "httpMethod",	// 사용자에게 보여줄 값
+						valueMember: "httpMethod"	// 서버 전송에 사용할 값
 					});
-				}/*,
-				initeditor: function(row, cellValue, editor, celltext, pressedkey){
-					// 커스텀 에디터의 초기값을 설정합니다. 에디터가 보여질때마다 콜백함수가 호출됩니다.
-					editor.jqxDropDownList('selectItem', cellValue);
-				},
-				geteditorvalue: function(row, cellvalue, editor){
-					// 작성을 마친 후 커스텀 에디터의 값을 jqxGrid에게 반환 합니다.
-					console.log('editor', editor);
-					return editor.val();
-				}*/
+				}
 			},
 			{text: '패턴', dataField: 'resourcePattern', cellsalign: 'left', align: 'center', editable: true, cellvaluechanging: cellValueChanging, width: '27%'},
 			{text: '타입', dataField: 'resourceType', cellsalign: 'center', align: 'center', editable: true, cellvaluechanging: cellValueChanging, width: '10%'},
@@ -182,11 +141,6 @@ function initResourceGrid(){
 	
 	// Cell Begin Edit
 	$(resourceGridId).on('cellbeginedit', function(event){
-		
-		//console.log("Begin 정보 event.args: ", event.args);
-		//console.log("Begin 정보 args.row: ", args.row);
-		//console.log("Begin 정보 args.value: ", args.value);
-		
 		$(resourceGridId).jqxGrid("clearselection"); // RESOURCE 그리드의 선택 효과 제거
 		$(resourceGridId).jqxGrid('selectrow', event.args.rowindex);	// 편집에 들어간 행에 선택 효과 부여
 		
@@ -203,7 +157,7 @@ function initResourceGrid(){
 		var dataField = event.args.datafield;
 		
 		/** 기존 값 */
-		var oldValue = (dataField == "httpMethodNo") ? event.args.oldvalue.value : event.args.oldvalue;
+		var oldValue = event.args.oldvalue;
 		if(		(typeof oldValue) != "number"
 			&&	(typeof oldValue) == "string"
 		){
@@ -211,25 +165,12 @@ function initResourceGrid(){
 		}
 		
 		/** 변경 값 */
-		var newValue = (dataField == "httpMethodNo") ? event.args.value.value : event.args.value;
+		var newValue = event.args.value;
 		if(		(typeof newValue) != "number"
 			&&	(typeof newValue) == "string"
 		){
 			newValue = newValue.trim();
 		}
-		
-		//console.log('event.args', event.args);
-		//console.log('event.args.value', event.args.value);
-		//console.log('event.args.value.label', event.args.value.label);
-		//console.log('타입', typeof newValue);
-		//console.log('뉴밸류라벨', newValue);
-		
-		//console.log("End 정보 event.args: ", event.args);
-		//console.log("편집한 행 번호: ", event.args.rowindex);
-		//console.log("편집한 리소스 일련 번호: ", event.args.row.resourceNo);
-		//console.log("편집한 컬럼 명: ", event.args.datafield);
-		//console.log("이전 값: ", event.args.oldvalue);
-		//console.log("현재 값: ", event.args.value);
 		
 		// 변경되지 않았다면 이벤트 종료
 		if(oldValue == newValue){
@@ -317,14 +258,13 @@ function reloadResourceGrid(){
 function changeResourceGrid(listData){
 	$(resourceGridId).jqxGrid("clearselection"); // RESOURCE 그리드의 선택 효과 제거
 	$(resourceGridId).jqxGrid("clear"); // RESOURCE 그리드의 데이터 제거
-	
+	console.log('리소스 그리드', listData);
 	var source = {
 		localdata: listData,
 		datatype: "array",
 		datafields: [
 			{name: 'resourceNo', type: 'int'},
-			{name: 'httpMethodNo', type: 'int'},
-			{name: 'httpMethodPattern', type: 'string'},
+			{name: 'httpMethod', type: 'string'},
 			{name: 'resourceNm', type: 'string'},
 			{name: 'resourcePattern', type: 'string'},
 			{name: 'resourceType', type: 'string'},

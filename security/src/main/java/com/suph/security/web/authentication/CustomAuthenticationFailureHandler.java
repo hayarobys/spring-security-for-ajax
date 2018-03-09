@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.savedrequest.SavedRequest;
 
 /**
  * 인증 실패시(로그인 실패시의) 동작을 정의한 클래스 입니다.

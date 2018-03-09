@@ -5,14 +5,20 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.suph.security.core.dao.MemberDAO;
 import com.suph.security.core.dto.MemberDTO;
+import com.suph.security.core.service.MemberService;
 
 @Controller
 public class MemberController{
+	@Autowired
+	private MemberService memberService;
+	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	
@@ -31,8 +37,8 @@ public class MemberController{
 	 * 모든 계정 목록 반환
 	 */
 	@RequestMapping(value="/member", method=RequestMethod.GET)
-	public Map<String, Object> getMember(){
-		return null;
+	public @ResponseBody Map<String, Object> getMember(){
+		return memberService.getMember();
 	}
 	
 	/**
@@ -53,11 +59,11 @@ public class MemberController{
 	}
 	
 	/**
-	 * 계정 아이디 반환 / 계정 중복 검사에 사용
+	 * 계정 아이디 중복 검사
 	 */
-	@RequestMapping(value="/check/member/id/{id}", method=RequestMethod.GET)
-	public Map<String, Object> getCheckMemberById(){
-		return null;
+	@RequestMapping(value="/check/member/id", method=RequestMethod.POST)
+	public @ResponseBody Map<String, Object> postMemberIdDuplicateCheck(@RequestBody MemberDTO memberDTO){
+		return memberService.postMemberIdDuplicateCheck(memberDTO.getMemId());
 	}
 	
 	/**
@@ -68,8 +74,8 @@ public class MemberController{
 	@RequestMapping(value="/member", method=RequestMethod.POST)	// rest로 변경 예정
 	public String register(MemberDTO vo){
 		
-		vo.setPassword(
-				passwordEncoder.encode( vo.getPassword() )
+		vo.setMemPassword(
+				passwordEncoder.encode( vo.getMemPassword() )
 		);
 		
 		int result = memberDAO.insertMemberVO(vo);

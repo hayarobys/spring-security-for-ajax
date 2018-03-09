@@ -2,6 +2,7 @@ package com.suph.security.core.impl;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,8 @@ import org.springframework.stereotype.Service;
 import com.suph.security.core.dao.ResourceAuthDAO;
 import com.suph.security.core.dao.ResourceDAO;
 import com.suph.security.core.dto.AuthDTO;
-import com.suph.security.core.dto.HttpMethodDTO;
 import com.suph.security.core.dto.ResourceDTO;
+import com.suph.security.core.enums.HttpMethod;
 import com.suph.security.core.service.ResourceService;
 
 @Service("resourceService")
@@ -150,12 +151,11 @@ public class ResourceServiceImpl implements ResourceService{
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		String result = "";
 		
-		List<HttpMethodDTO> list = null;
 		try{
-			list = resourceDAO.selectHttpMethodList();
+			List<HttpMethod> list = Arrays.asList(HttpMethod.values());
 			returnMap.put("list", list);
 			result = "success";
-		}catch(DataAccessException e){
+		}catch(Exception e){
 			result = "fail";
 			e.printStackTrace();
 		}

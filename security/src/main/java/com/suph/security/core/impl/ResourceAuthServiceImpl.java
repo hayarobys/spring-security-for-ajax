@@ -8,11 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -26,7 +23,7 @@ import com.suph.security.core.service.ResourceAuthService;
 
 @Service("resourceAuthService")
 public class ResourceAuthServiceImpl implements ResourceAuthService{
-	private static final Logger logger = LoggerFactory.getLogger(ResourceAuthServiceImpl.class);
+	//private static final Logger logger = LoggerFactory.getLogger(ResourceAuthServiceImpl.class);
 	
 	public static final String TYPE_URL = "url";
 	public static final String TYPE_METHOD = "method";
@@ -132,7 +129,7 @@ public class ResourceAuthServiceImpl implements ResourceAuthService{
 		for(ResourceAuthDTO vo : resultList){
 			// 리소스 패턴 얻기 (현재 작업중인 패턴에 저장)
 			presentResourceStr = vo.getResourceNm();
-			presentHttpMethod = vo.getHttpMethodPattern();
+			presentHttpMethod = vo.getHttpMethod();
 			
 			// url 리소스라면 ANT타입 객체로 변환한다.
 			presentResourceObj = (isResourcesUrl ? new AntPathRequestMatcher(presentResourceStr, presentHttpMethod) : presentResourceStr);

@@ -41,10 +41,10 @@
 					</tr>
 					<tr>
 						<th>
-							<label for="httpMethodNo">HTTP METHOD</label>
+							<label for="httpMethod">HTTP METHOD</label>
 						</th>
 						<td>
-							<select id="httpMethodNo" name="httpMethodNo">
+							<select id="httpMethod" name="httpMethod">
 								<option value="" label="선택" />
 							</select>
 						</td>

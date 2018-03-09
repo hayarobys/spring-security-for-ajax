@@ -4,7 +4,7 @@
 <mapper namespace="com.suph.security.core.dao.ResourceAuthDAO">
 
 	<resultMap type="com.suph.security.core.dto.ResourceAuthDTO" id="ResourceAuthDTO">
-		<result column="HTTP_METHOD_PATTERN" property="httpMethodPattern" />
+		<result column="HTTP_METHOD" property="httpMethod" />
 		<result column="RESOURCE_PATTERN" property="resourceNm" />
 		<result column="AUTH_NM" property="authNm" />
 	</resultMap>
@@ -18,12 +18,11 @@
 	<!-- url/method/pointcut 형식인 리소스 패턴 - 권한 매핑 정보를 조회합니다 -->
 	<select id="getRolesAndResources" parameterType="String" resultMap="ResourceAuthDTO">
 		SELECT
-			HM.HTTP_METHOD_PATTERN,
+			R.HTTP_METHOD,
 			R.RESOURCE_PATTERN,
 			A.AUTH_NM
 		FROM
 			TB_RESOURCE AS R
-			INNER JOIN TB_HTTP_METHOD AS HM ON (HM.HTTP_METHOD_NO = R.HTTP_METHOD_NO)
 			INNER JOIN TB_RESOURCE_AUTH AS RA ON (RA.RESOURCE_NO = R.RESOURCE_NO)
 			INNER JOIN TB_AUTH AS A ON (RA.AUTH_NO = A.AUTH_NO)
 		WHERE

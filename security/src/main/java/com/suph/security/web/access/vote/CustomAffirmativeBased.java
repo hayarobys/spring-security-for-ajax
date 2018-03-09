@@ -7,9 +7,7 @@ import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.vote.AffirmativeBased;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 public class CustomAffirmativeBased extends AffirmativeBased{
 	/**

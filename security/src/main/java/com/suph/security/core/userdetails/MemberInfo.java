@@ -22,6 +22,8 @@ import org.springframework.util.Assert;
 
 public class MemberInfo implements UserDetails{
 	
+	private static final long serialVersionUID = 1L;
+
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
 	/** MEM_NO 계정 일련 번호 PK */

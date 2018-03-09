@@ -5,11 +5,12 @@
 <mapper namespace="com.suph.security.core.dao.MemberDAO">
 
 	<resultMap type="com.suph.security.core.dto.MemberDTO" id="MemberDTO">
-		<result column="MEM_NO" property="no"/>
-		<result column="MEM_ID" property="id"/>
-		<result column="MEM_PASSWORD" property="password"/>
-		<result column="MEM_NICKNM" property="name"/>
-		<result column="MEM_ENABLE" property="enable"/>		
+		<result column="MEM_NO" property="memNo"/>
+		<result column="MEM_ID" property="memId"/>
+		<result column="MEM_PASSWORD" property="memPassword"/>
+		<result column="MEM_NICKNM" property="memNicknm"/>
+		<result column="MEM_STATE" property="memState"/>
+		<result column="LAST_LOGIN_DATE" property="lastLoginDate"/>
 	</resultMap>
 	
 	<insert id="insertMemberVO" parameterType="MemberDTO">
@@ -18,13 +19,15 @@
 				MEM_ID,
 				MEM_PASSWORD,
 				MEM_NICKNM,
-				MEM_ENABLE
+				MEM_STATE,
+				LAST_LOGIN_DATE
 			)
 		VALUES(
-			#{id},
-			#{password},
-			#{name},
-			'Y'
+			#{memId},
+			#{memPassword},
+			#{memNicknm},
+			#{memState},
+			#{lastLoginDate}
 		)
 	</insert>
 	
@@ -34,13 +37,14 @@
 			MEM_ID,
 			MEM_PASSWORD,
 			MEM_NICKNM,
-			MEM_ENABLE
+			MEM_STATE,
+			LAST_LOGIN_DATE
 		FROM
 			TB_MEMBER
 		WHERE
-				MEM_ID = #{id}
+				MEM_ID = #{memId}
 			AND
-				MEM_ENABLE = 'Y'
+				MEM_STATE = 'ACTIVE'
 	</select>
 	
 	<select id="getMemberInfoByNo" parameterType="int" resultMap="MemberDTO">
@@ -49,11 +53,35 @@
 			MEM_ID,
 			MEM_PASSWORD,
 			MEM_NICKNM,
-			MEM_ENABLE
+			MEM_STATE,
+			LAST_LOGIN_DATE
 		FROM
 			TB_MEMBER
 		WHERE
 				MEM_NO = #{value}
+	</select>
+	
+	<select id="selectMember" resultMap="MemberDTO">
+		SELECT
+			MEM_NO,
+			MEM_ID,
+			MEM_NICKNM,
+			LAST_LOGIN_DATE
+		FROM
+			TB_MEMBER
+		WHERE
+			MEM_STATE = 'ACTIVE'
+		ORDER BY
+			MEM_NO ASC
+	</select>
+	
+	<select id="selectMemId" parameterType="String" resultType="String">
+		SELECT
+			MEM_ID
+		FROM
+			TB_MEMBER
+		WHERE
+			MEM_ID = #{value}
 	</select>
 	
 </mapper>

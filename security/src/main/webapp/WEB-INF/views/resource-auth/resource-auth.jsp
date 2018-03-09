@@ -36,6 +36,10 @@
 			</section>
 			
 			<input type="button" value="save" onclick="javascipt:save();">
+			<br/>
+			<span>
+				※ 권한 미 선택시, 해당 URL은 패턴 "/**"의 권한 설정을 참조합니다.
+			</span>
 		</div>
 	</section>
 	

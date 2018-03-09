@@ -3,8 +3,6 @@ package com.suph.security.core.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +16,7 @@ import com.suph.security.core.service.ResourceService;
 
 @Controller
 public class ResourceController{
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	//private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
 	private ResourceService resourceService;

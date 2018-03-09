@@ -1,104 +1,106 @@
 package com.suph.security.core.dto;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Date;
 
 public class MemberDTO{
-	protected Logger logger = LoggerFactory.getLogger(getClass());
+	//protected Logger logger = LoggerFactory.getLogger(getClass());
 	
 	/** MEM_NO 계정 일련 번호 PK */
-	private Integer no;
+	private Integer memNo;
 	/** MEM_ID 계정 아이디 */
-	private String id;
+	private String memId;
 	/** MEM_PASSWORD 계정 비밀번호 */
-	private transient String password;
+	private transient String memPassword;
 	/** MEM_NICKNM 계정 사용자의 이름 또는 별명 */
-	private String name;
-	/** MEM_ENABLE 계정 사용 여부(탈퇴 여부). Y는 사용 중, N은 탈퇴 혹은 휴면 계정. */
-	private char enable; 
+	private String memNicknm;
+	/** 계정 상태 (활성, 휴면, 차단, 탈퇴, ...) */
+	private String memState;
+	/** LAST_LOGIN_DATE 마지막 로그인 일자 */
+	private Date lastLoginDate;
 	
 	/**
 	 * 계정 일련 번호를 반환합니다.
-	 * @return no 반환
+	 * @return memNo 반환
 	 */
-	public Integer getNo(){
-		return no;
+	public Integer getMemNo(){
+		return memNo;
 	}
 	
 	/**
 	 * 계정 일련 번호를 변경/저장 합니다.
-	 * @param no
+	 * @param memNo
 	 */
-	public void setNo(Integer no){
-		this.no = no;
+	public void setMemNo(Integer memNo){
+		this.memNo = memNo;
 	}
 	
 	/**
 	 * 계정 ID를 반환합니다.
-	 * @return id 반환
+	 * @return memId 반환
 	 */
-	public String getId(){
-		return id;
+	public String getMemId(){
+		return memId;
 	}
 	
 	/**
 	 * 계정 ID를 변경/저장 합니다.
 	 * @param id
 	 */
-	public void setId(String id){
-		this.id = id;
+	public void setMemId(String memId){
+		this.memId = memId;
 	}
 	
 	/**
 	 * 계정의 비밀번호를 반환합니다.
-	 * @return password 반환
+	 * @return memPassword 반환
 	 */
-	public String getPassword(){
-		return password;
+	public String getMemPassword(){
+		return memPassword;
 	}
 	
 	/**
 	 * 계정 비밀번호를 변경/저장 합니다.
-	 * @param password
+	 * @param memPassword
 	 */
-	public void setPassword(String password){
-		this.password = password;
+	public void setMemPassword(String memPassword){
+		this.memPassword = memPassword;
 	}
 	
 	/**
 	 * 계정 사용자의 이름을 반환합니다.
-	 * @return name 반환
+	 * @return memNicknm 반환
 	 */
-	public String getName(){
-		return name;
+	public String getMemNicknm(){
+		return memNicknm;
 	}
 	
 	/**
 	 * 계정 사용자의 이름을 변경/저장 합니다.
-	 * @param name
+	 * @param memNicknm
 	 */
-	public void setName(String name){
-		this.name = name;
+	public void setMemNicknm(String memNicknm){
+		this.memNicknm = memNicknm;
 	}
 	
-	/**
-	 * 계정 사용 여부를 반환 합니다.
-	 * @return enable 반환
-	 */
-	public char getEnable(){
-		return enable;
+	public String getMemState(){
+		return memState;
 	}
 	
-	/**
-	 * 계정 사용 여부를 변경/저장 합니다.
-	 * @param enable 사용시 Y, 탈퇴 혹은 휴면 계정일 경우 N
-	 */
-	public void setEnable(char enable){
-		this.enable = enable;
+	public void setMemState(String memState){
+		this.memState = memState;
 	}
-	
+
+	public Date getLastLoginDate(){
+		return lastLoginDate;
+	}
+
+	public void setLastLoginDate(Date lastLoginDate){
+		this.lastLoginDate = lastLoginDate;
+	}
+
 	@Override
 	public String toString(){
-		return "MemberVO [no=" + no + ", id=" + id + ", name=" + name + ", enable=" + enable + "]";
+		return "MemberDTO [memNo=" + memNo + ", memId=" + memId + ", memPassword=[PROTECT], memNicknm="
+				+ memNicknm + ", memState=" + memState + ", lastLoginDate=" + lastLoginDate + "]";
 	}
 }

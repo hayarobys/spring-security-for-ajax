@@ -1,5 +1,7 @@
 package com.suph.security.core.service;
 
+import java.util.Map;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,4 +18,17 @@ public interface MemberService extends UserDetailsService{
 	 */
 	@Override
 	public abstract UserDetails loadUserByUsername(String id) throws UsernameNotFoundException;
+	
+	/**
+	 * 모든 계정의 패스워드를 제외한 정보들을 조회합니다.
+	 * @return
+	 */
+	public abstract Map<String, Object> getMember();
+	
+	/**
+	 * 이 아이디가 다른 계정과 중복없이 사용 가능한지 검사합니다.
+	 * @param memId
+	 * @return
+	 */
+	public abstract Map<String, Object> postMemberIdDuplicateCheck(String memId);
 }

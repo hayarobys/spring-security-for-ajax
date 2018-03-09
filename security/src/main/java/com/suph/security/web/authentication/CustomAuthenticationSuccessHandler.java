@@ -26,8 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -43,7 +41,7 @@ import org.springframework.util.StringUtils;
  * 인증 성공 시의 동작을 정의한 클래스 입니다. 로그인 성공시 단 한 번만 호출됩니다.
  */
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler{
-	private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
+	//private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
 	
 	/** Ajax 구분을 위해 헤더에서 검색할 키 명 입니다. */
 	@Value("#{security['spring.ajax_header_key']}")
@@ -220,7 +218,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	 * @throws IOException
 	 */
 	private void useTargetUrl(HttpServletRequest request, HttpServletResponse response) throws IOException{
-		SavedRequest savedRequest = requestCache.getRequest(request, response);
+		//SavedRequest savedRequest = requestCache.getRequest(request, response);
 		
 		//if(savedRequest != null){
 		//	requestCache.removeRequest(request, response);

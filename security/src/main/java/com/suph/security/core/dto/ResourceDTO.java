@@ -14,10 +14,8 @@ public class ResourceDTO{
 	private Integer sortOrder;
 	/** 리소스 타입 */
 	private String resourceType;
-	/** HTTP METHOD 일련 번호 */
-	private Integer httpMethodNo;
-	/** HTTP METHOD 패턴 */
-	private String httpMethodPattern;
+	/** HTTP METHOD */
+	private String httpMethod;
 	/** 리소스 패턴 */
 	private String resourcePattern;
 	/** 리소스 이름 */
@@ -49,20 +47,12 @@ public class ResourceDTO{
 		this.resourceType = resourceType;
 	}
 	
-	public Integer getHttpMethodNo(){
-		return httpMethodNo;
+	public String getHttpMethod(){
+		return httpMethod;
 	}
 
-	public void setHttpMethodNo(Integer httpMethodNo){
-		this.httpMethodNo = httpMethodNo;
-	}
-
-	public String getHttpMethodPattern(){
-		return httpMethodPattern;
-	}
-
-	public void setHttpMethodPattern(String httpMethodPattern){
-		this.httpMethodPattern = httpMethodPattern;
+	public void setHttpMethod(String httpMethod){
+		this.httpMethod = httpMethod;
 	}
 
 	public String getResourcePattern(){
@@ -92,7 +82,7 @@ public class ResourceDTO{
 	@Override
 	public String toString(){
 		return "ResourceDTO [resourceNo=" + resourceNo + ", sortOrder=" + sortOrder + ", resourceType=" + resourceType
-				+ ", httpMethodNo=" + httpMethodNo + ", httpMethodPattern=" + httpMethodPattern + ", resourcePattern="
-				+ resourcePattern + ", resourceNm=" + resourceNm + ", list=" + list + "]";
+				+ ", httpMethod=" + httpMethod + ", resourcePattern=" + resourcePattern + ", resourceNm=" + resourceNm
+				+ ", list=" + list + "]";
 	}
 }

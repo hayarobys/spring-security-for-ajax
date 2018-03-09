@@ -1,22 +1,29 @@
 package com.suph.security.core.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.catalina.webresources.EmptyResource;
+import org.omg.PortableInterceptor.ORBInitInfoPackage.DuplicateName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.suph.security.core.dao.MemberDAO;
 import com.suph.security.core.dto.MemberDTO;
+import com.suph.security.core.enums.MemberState;
 import com.suph.security.core.service.MemberAuthService;
 import com.suph.security.core.service.MemberService;
 import com.suph.security.core.userdetails.MemberInfo;
@@ -55,7 +62,7 @@ public class MemberServiceImpl implements MemberService{
 		Set<GrantedAuthority> dbAuthsSet = new HashSet<GrantedAuthority>();
 		
 		// 이 계정의 권한 목록 반환
-		dbAuthsSet.addAll( memberAuthService.loadUserAuthorities(user.getNo()) );
+		dbAuthsSet.addAll( memberAuthService.loadUserAuthorities(user.getMemNo()) );
 		
 		// 계정은 있지만 어떠한 권한도 조회되지 않았다면 예외 발생.
 		if(dbAuthsSet.size() == 0){
@@ -76,14 +83,78 @@ public class MemberServiceImpl implements MemberService{
 		List<GrantedAuthority> dbAuths = new ArrayList<GrantedAuthority>(dbAuthsSet);
 		
 		MemberInfo result = new MemberInfo(
-				user.getNo(),
-				user.getId(),
-				user.getPassword(),
-				user.getName(),
-				user.getEnable() == 'Y' ? true : false,
+				user.getMemNo(),
+				user.getMemId(),
+				user.getMemPassword(),
+				user.getMemNicknm(),
+				MemberState.ACTIVE.toString().equals( user.getMemState() ),
 				dbAuths
 		);
 		
 		return result;
 	}
+	
+	@Override
+	public Map<String, Object> getMember(){
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		List<MemberDTO> list = null;
+		try{
+			list = memberDAO.selectMember();
+			returnMap.put("list", list);
+			returnMap.put("result", "success");
+		}catch(DataAccessException de){
+			returnMap.put("result", "fail");
+			de.printStackTrace();
+		}
+		
+		return returnMap;
+	}
+
+	@Override
+	public Map<String, Object> postMemberIdDuplicateCheck(String memId){
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		try{	
+			if(StringUtils.hasText(memId) == false){
+				// 비어있는 문자열일 시 NullPointerException 발생
+				throw new NullPointerException();
+			}
+			
+			memId = memId.trim();
+			String dbId = memberDAO.selectMemId(memId);
+			
+			if(memId.equals(dbId) == true){
+				// 아이디 중복시 DupicateName 예외 발생
+				throw new DuplicateName();
+			}
+			
+			returnMap.put("result", "success");
+			returnMap.put("message", memId + "는 사용 가능 합니다.");
+			
+		}catch(NullPointerException npe){
+			returnMap.put("result", "empty");
+			returnMap.put("message", "아이디를 입력해 주세요.");
+			//npe.printStackTrace();
+		}catch(DuplicateName dn){
+			returnMap.put("result", "duplicate");
+			returnMap.put("message", memId + "는 이미 사용 중 입니다.");
+			//dn.printStackTrace();
+		}catch(DataAccessException de){
+			returnMap.put("result", "fail");
+			returnMap.put("message", "중복 검사에 실패했습니다.\n잠시 후 다시 시도해 주세요.");
+			//de.printStackTrace();
+		}
+		
+		return returnMap;
+	}
 }
+
+
+
+
+
+
+
+
+

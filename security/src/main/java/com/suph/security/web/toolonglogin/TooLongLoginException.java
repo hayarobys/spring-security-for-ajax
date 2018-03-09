@@ -9,6 +9,7 @@ import com.suph.security.core.userdetails.MemberInfo;
  *
  */
 public class TooLongLoginException extends RuntimeException{
+	private static final long serialVersionUID = 1L;
 	/** 장시간 로그인 한 계정의 정보를 담는 멤버 변수 입니다. */
 	private MemberInfo memberInfo;
 	
