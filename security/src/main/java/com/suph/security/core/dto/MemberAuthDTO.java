@@ -14,7 +14,7 @@ public class MemberAuthDTO{
 	}
 	
 	public void setNo(String no){
-		this.no = no;
+		this.no = no.trim();
 	}
 	
 	public String getAuth(){
@@ -22,6 +22,6 @@ public class MemberAuthDTO{
 	}
 	
 	public void setAuth(String auth){
-		this.auth = auth;
+		this.auth = auth.trim();
 	}
 }

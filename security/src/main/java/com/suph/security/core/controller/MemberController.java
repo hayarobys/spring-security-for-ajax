@@ -3,14 +3,13 @@ package com.suph.security.core.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.suph.security.core.dao.MemberDAO;
 import com.suph.security.core.dto.MemberDTO;
 import com.suph.security.core.service.MemberService;
 
@@ -18,13 +17,7 @@ import com.suph.security.core.service.MemberService;
 public class MemberController{
 	@Autowired
 	private MemberService memberService;
-	
-	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
-	
-	@Autowired
-	private MemberDAO memberDAO;
-	
+		
 	/**
 	 * 계정 관리 페이지 이동
 	 */
@@ -67,28 +60,31 @@ public class MemberController{
 	}
 	
 	/**
-	 * 회원가입 동작을 수행하고 메인페이지로 이동합니다.
+	 * 계정을 등록합니다
 	 * @param vo
 	 * @return
 	 */
-	@RequestMapping(value="/member", method=RequestMethod.POST)	// rest로 변경 예정
-	public String register(MemberDTO vo){
-		
-		vo.setMemPassword(
-				passwordEncoder.encode( vo.getMemPassword() )
-		);
-		
-		int result = memberDAO.insertMemberVO(vo);
-		System.out.println(result > 0 ? "등록 성공" : "등록 실패");
-		
-		return "redirect:/main";
+	@RequestMapping(value="/member", method=RequestMethod.POST)
+	public @ResponseBody Map<String, Object> postMember(@RequestBody MemberDTO memberDTO){
+		return memberService.postMember(memberDTO);
+	}
+	
+	/**
+	 * 특정 계정을 수정합니다
+	 * @param memNo 수정할 계정의 일련 번호
+	 * @param memberDTO 수정할 정보
+	 * @return
+	 */
+	@RequestMapping(value="/member/{memNo}", method=RequestMethod.PATCH)
+	public @ResponseBody Map<String, Object> patchMember(@PathVariable int memNo, @RequestBody MemberDTO memberDTO){
+		return memberService.patchMember(memNo, memberDTO);
 	}
 	
 	/**
 	 * 특정 계정 삭제 / 회원 탈퇴
 	 */
-	@RequestMapping(value="/member/{memberNo}", method=RequestMethod.DELETE)
-	public Map<String, Object> deleteMember(){
-		return null;
+	@RequestMapping(value="/member/{memNo}", method=RequestMethod.DELETE)
+	public @ResponseBody Map<String, Object> deleteMember(@PathVariable int memNo){
+		return memberService.deleteMember(memNo);
 	}
 }

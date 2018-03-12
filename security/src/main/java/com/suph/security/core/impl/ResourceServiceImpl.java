@@ -129,12 +129,13 @@ public class ResourceServiceImpl implements ResourceService{
 	}
 
 	@Override
-	public Map<String, Object> patchResourceByResourceNo(ResourceDTO resourceDTO){
+	public Map<String, Object> patchResourceByResourceNo(int resourceNo, ResourceDTO resourceDTO){
 		Map<String, Object> returnMap = new HashMap<String, Object>();
+		resourceDTO.setResourceNo(resourceNo);
 		
 		String result = "";
 		try{
-			resourceDAO.insertResourceByResourceNo(resourceDTO);
+			resourceDAO.updateResourceByResourceNo(resourceDTO);
 			result = "success";
 		}catch(DataAccessException e){
 			result = "fail";

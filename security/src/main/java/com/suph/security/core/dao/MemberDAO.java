@@ -11,10 +11,10 @@ import com.suph.security.core.dto.MemberDTO;
 public interface MemberDAO{
 	/**
 	 * 계정을 등록합니다.
-	 * @param vo
+	 * @param memberDTO
 	 * @return
 	 */
-	public abstract int insertMemberVO(MemberDTO vo);
+	public abstract int insertMember(MemberDTO memberDTO);
 	
 	/**
 	 * DB로부터 해당 ID를 가진 계정의 정보를 조회하는 메서드
@@ -38,4 +38,16 @@ public interface MemberDAO{
 	 * @return memId 동일한 ID가 있다면 해당 ID를 그대로 반환합니다. 없다면 null값이 반환 됩니다.
 	 */
 	public abstract String selectMemId(String memId);
+	
+	/**
+	 * DB의 특정 계정을 수정합니다.
+	 * @param memberDTO
+	 */
+	public abstract void updateMember(MemberDTO memberDTO);
+	
+	/**
+	 * 특정 계정을 삭제합니다.
+	 * @param memNo 삭제할 계정의 일련 번호
+	 */
+	public abstract void deleteMember(int memNo);
 }

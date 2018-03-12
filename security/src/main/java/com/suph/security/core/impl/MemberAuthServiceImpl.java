@@ -1,12 +1,12 @@
 package com.suph.security.core.impl;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -34,9 +34,9 @@ public class MemberAuthServiceImpl implements MemberAuthService{
 		List<AuthDTO> list = null;
 		try{
 			list = memberAuthDAO.getAuthListByNo(memNo);
-		}catch(SQLException sqle){
+		}catch(DataAccessException dae){
 			logger.error("유저번호 {}의 권한 목록 조회를 실패했습니다.", memNo);
-			sqle.printStackTrace();
+			dae.printStackTrace();
 			return null;
 		}
 		

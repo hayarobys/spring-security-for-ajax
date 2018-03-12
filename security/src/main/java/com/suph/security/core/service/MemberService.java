@@ -6,6 +6,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import com.suph.security.core.dto.MemberDTO;
+
 public interface MemberService extends UserDetailsService{
 	/**
 	 * ID와 일치하는 계정의 정보를 조회하는 메서드 입니다.
@@ -31,4 +33,26 @@ public interface MemberService extends UserDetailsService{
 	 * @return
 	 */
 	public abstract Map<String, Object> postMemberIdDuplicateCheck(String memId);
+	
+	/**
+	 * 계정을 등록합니다.
+	 * @param memberDTO
+	 * @return
+	 */
+	public abstract Map<String, Object> postMember(MemberDTO memberDTO);
+	
+	/**
+	 * 특정 계정 정보를 수정합니다.
+	 * @param memNo
+	 * @param memberDTO
+	 * @return
+	 */
+	public abstract Map<String, Object> patchMember(int memNo, MemberDTO memberDTO);
+	
+	/**
+	 * 특정 계정을 삭제합니다.
+	 * @param memNo 삭제할 계정의 일련 번호
+	 * @return
+	 */
+	public abstract Map<String, Object> deleteMember(int memNo);
 }

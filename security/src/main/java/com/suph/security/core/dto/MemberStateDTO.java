@@ -26,7 +26,7 @@ public class MemberStateDTO{
 	}
 
 	public void setStateNm(String stateNm){
-		this.stateNm = stateNm;
+		this.stateNm = stateNm.trim();
 	}
 
 	public String getStateExplanation(){
@@ -34,7 +34,7 @@ public class MemberStateDTO{
 	}
 
 	public void setStateExplanation(String stateExplanation){
-		this.stateExplanation = stateExplanation;
+		this.stateExplanation = stateExplanation.trim();
 	}
 
 	@Override

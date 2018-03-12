@@ -50,7 +50,7 @@ public class ResourceAuthDTO{
 	 * @param httpMethod
 	 */
 	public void setHttpMethod(String httpMethod){
-		this.httpMethod = httpMethod;
+		this.httpMethod = httpMethod.trim();
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class ResourceAuthDTO{
 	 * @param pattern
 	 */
 	public void setResourceNm(String resourceNm){
-		this.resourceNm = resourceNm;
+		this.resourceNm = resourceNm.trim();
 	}
 	
 	/**
@@ -98,7 +98,7 @@ public class ResourceAuthDTO{
 	 * @param authority
 	 */
 	public void setAuthNm(String authNm){
-		this.authNm = authNm;
+		this.authNm = authNm.trim();
 	}
 
 	/**

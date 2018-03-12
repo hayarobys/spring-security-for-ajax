@@ -27,11 +27,12 @@ public interface ResourceService{
 	public abstract Map<String, Object> postResource(ResourceDTO resourceDTO);
 	
 	/**
-	 * 리소스를 수정합니다.
-	 * @param resourceDTO 변경할 resourceNo값이 필수로 담겨 있어야 합니다.
+	 * 특정 리소스를 수정합니다.
+	 * @param resourceNo
+	 * @param resourceDTO
 	 * @return
 	 */
-	public abstract Map<String, Object> patchResourceByResourceNo(ResourceDTO resourceDTO);
+	public abstract Map<String, Object> patchResourceByResourceNo(int resourceNo, ResourceDTO resourceDTO);
 	
 	/**
 	 * 하나 혹은 여러개의 리소스를 제거합니다.

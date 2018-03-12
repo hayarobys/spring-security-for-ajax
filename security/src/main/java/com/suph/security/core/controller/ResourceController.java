@@ -60,8 +60,7 @@ public class ResourceController{
 	 */
 	@RequestMapping(value="/resource/{resourceNo}", method=RequestMethod.PATCH)
 	public @ResponseBody Map<String, Object> patchResourceByResourceNo(@PathVariable int resourceNo, @RequestBody ResourceDTO resourceDTO){
-		resourceDTO.setResourceNo(resourceNo);
-		return resourceService.patchResourceByResourceNo(resourceDTO);
+		return resourceService.patchResourceByResourceNo(resourceNo, resourceDTO);
 	}
 	
 	/**

@@ -10,10 +10,10 @@
 		<result column="MEM_PASSWORD" property="memPassword"/>
 		<result column="MEM_NICKNM" property="memNicknm"/>
 		<result column="MEM_STATE" property="memState"/>
-		<result column="LAST_LOGIN_DATE" property="lastLoginDate"/>
+		<result column="LAST_LOGIN_DATE" property="lastLoginDateAsJavaUtilDate" jdbcType="TIMESTAMP"/>
 	</resultMap>
 	
-	<insert id="insertMemberVO" parameterType="MemberDTO">
+	<insert id="insertMember" parameterType="MemberDTO">
 		INSERT INTO
 			TB_MEMBER(
 				MEM_ID,
@@ -22,13 +22,13 @@
 				MEM_STATE,
 				LAST_LOGIN_DATE
 			)
-		VALUES(
-			#{memId},
-			#{memPassword},
-			#{memNicknm},
-			#{memState},
-			#{lastLoginDate}
-		)
+			VALUES(
+				#{memId},
+				#{memPassword},
+				#{memNicknm},
+				IFNULL(#{memState}, 'ACTIVE'),
+				IFNULL(#{lastLoginDateAsJavaUtilDate}, current_timestamp())
+			)
 	</insert>
 	
 	<select id="getMemberInfoById" parameterType="String" resultMap="MemberDTO">
@@ -66,6 +66,7 @@
 			MEM_NO,
 			MEM_ID,
 			MEM_NICKNM,
+			MEM_STATE,
 			LAST_LOGIN_DATE
 		FROM
 			TB_MEMBER
@@ -84,4 +85,34 @@
 			MEM_ID = #{value}
 	</select>
 	
+	<update id="updateMember" parameterType="MemberDTO">
+		UPDATE
+			TB_MEMBER
+		<set>
+			<if test="memId != null and !''.equals(memId)">
+				MEM_ID = #{memId},
+			</if>
+			<if test="memPassword != null and !''.equals(memPassword)">
+				MEM_PASSWORD = #{memPassword},
+			</if>
+			<if test="memNicknm != null and !''.equals(memNicknm)">
+				MEM_NICKNM = #{memNicknm},
+			</if>
+			<if test="memState != null and !''.equals(memState)">
+				MEM_STATE = #{memState},
+			</if>
+			<if test="lastLoginDate != null and !''.equals(lastLoginDate)">
+				LAST_LOGIN_DATE = #{lastLoginDateAsJavaUtilDate}
+			</if>
+		</set>
+		WHERE
+			MEM_NO = #{memNo}
+	</update>
+	
+	<delete id="deleteMember" parameterType="Integer">
+		DELETE FROM
+			TB_MEMBER
+		WHERE
+			MEM_NO = #{memNo}
+	</delete>
 </mapper>

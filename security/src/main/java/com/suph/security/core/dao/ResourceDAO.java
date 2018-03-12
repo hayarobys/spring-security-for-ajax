@@ -25,7 +25,7 @@ public interface ResourceDAO{
 	 * 리소스를 수정합니다.
 	 * @param resourceDTO 수정할 리소스 정보. resourceNo는 필수 값 입니다.
 	 */
-	public abstract void insertResourceByResourceNo(ResourceDTO resourceDTO);
+	public abstract void updateResourceByResourceNo(ResourceDTO resourceDTO);
 	
 	/**
 	 * 특정 리소스를 제거합니다.

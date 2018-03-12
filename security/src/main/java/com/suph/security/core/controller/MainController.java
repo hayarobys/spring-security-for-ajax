@@ -22,16 +22,6 @@ public class MainController{
 	}
 	
 	/**
-	 * Ajax 로그인 예제가 있는
-	 * Rest 메인 페이지로 이동합니다.
-	 * @return
-	 */
-	@RequestMapping(value="/rest-main", method=RequestMethod.GET)
-	public String restMain() {
-		return "main/rest-main";
-	}
-	
-	/**
 	 * Json 응답을 전송합니다.
 	 * @param request
 	 * @return

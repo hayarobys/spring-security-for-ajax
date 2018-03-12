@@ -48,7 +48,7 @@
 		)
 	</insert>
 	
-	<update id="insertResourceByResourceNo" parameterType="ResourceDTO">
+	<update id="updateResourceByResourceNo" parameterType="ResourceDTO">
 		UPDATE
 			TB_RESOURCE
 		<set>

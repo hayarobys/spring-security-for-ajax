@@ -1,5 +1,6 @@
 package com.suph.security.core.impl;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,17 +8,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.catalina.webresources.EmptyResource;
 import org.omg.PortableInterceptor.ORBInitInfoPackage.DuplicateName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -30,6 +32,9 @@ import com.suph.security.core.userdetails.MemberInfo;
 
 @Service("memberService")
 public class MemberServiceImpl implements MemberService{
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+	
 	@Autowired
 	private MemberAuthService memberAuthService;
 	
@@ -144,6 +149,65 @@ public class MemberServiceImpl implements MemberService{
 			returnMap.put("result", "fail");
 			returnMap.put("message", "중복 검사에 실패했습니다.\n잠시 후 다시 시도해 주세요.");
 			//de.printStackTrace();
+		}
+		
+		return returnMap;
+	}
+	
+	@Override
+	public Map<String, Object> postMember(MemberDTO memberDTO){
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		memberDTO.setMemPassword(
+				passwordEncoder.encode( memberDTO.getMemPassword() )
+		);
+		
+		// 마지막 로그인 날짜(여기선 생성일 개념으로 사용)에 현재 시간 입력
+		memberDTO.setLastLoginDateAsJavaTimeZonedDateTime(ZonedDateTime.now());
+		logger.debug("memberDTO {}", memberDTO);
+		try{
+			memberDAO.insertMember(memberDTO);
+			returnMap.put("result", "success");
+		}catch(DataAccessException dae){
+			returnMap.put("result", "fail");
+			returnMap.put("message", "등록에 실패했습니다.");
+			dae.printStackTrace();
+		}
+		
+		return returnMap;
+	}
+
+	@Override
+	public Map<String, Object> patchMember(int memNo, MemberDTO memberDTO){
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		memberDTO.setMemNo(memNo);
+		
+		try{
+			memberDAO.updateMember(memberDTO);
+			returnMap.put("result", "success");
+		}catch(DataAccessException dae){
+			returnMap.put("result", "fail");
+			dae.printStackTrace();
+		}
+		
+		return returnMap;
+	}
+
+	@Override
+	public Map<String, Object> deleteMember(int memNo){
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		try{
+			memberDAO.deleteMember(memNo);
+			returnMap.put("result", "success");
+		}catch(DataIntegrityViolationException dive){
+			returnMap.put("result", "fail");
+			returnMap.put("message", "제약 조건에 걸려 삭제할 수 없습니다. 연결된 권한이 없는지 확인해주세요.");
+			dive.printStackTrace();
+		}catch(DataAccessException dae){
+			returnMap.put("result", "fail");
+			returnMap.put("message", "삭제에 실패했습니다.");
+			dae.printStackTrace();
 		}
 		
 		return returnMap;

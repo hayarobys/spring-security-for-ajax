@@ -67,7 +67,17 @@ function initMemberGrid(){
 			},
 			{text: '아이디', dataField: 'memId', cellsalign: 'center', align: 'center', editable: true, cellvaluechanging: cellValueChanging, width: '30%'},
 			{text: '이름', dataField: 'memNicknm', cellsalign: 'center', align: 'center', editable: true, cellvaluechanging: cellValueChanging, width: '20%'},
-			{text: '마지막 로그인 일자', dataField: 'lastLoginDate', cellsalign: 'center', align: 'center', editable: true, cellvaluechanging: cellValueChanging, width: '40%'}
+			{
+				text: '마지막 로그인 일자',
+				dataField: 'lastLoginDateAsMillis',
+				columntype: 'datetimeinput',
+				cellsformat: 'yyyy/MM/dd HH:mm:ss',
+				cellsalign: 'center',
+				align: 'center',
+				editable: true,
+				cellvaluechanging: cellValueChanging,
+				width: '40%'
+			}
 		]
 	});
 	
@@ -105,19 +115,38 @@ function initMemberGrid(){
 			newValue = newValue.trim();
 		}
 		
+		console.log("oldValue", oldValue);
+		console.log("newValue", newValue);
+		
 		// 변경되지 않았다면 이벤트 종료
-		if(oldValue == newValue){
-			return;
+		var isOldDateType = (typeof oldValue === "object") && (oldValue instanceof Date);
+		var isNewDateType = (typeof newValue === "object") && (newValue instanceof Date);
+		if(		isOldDateType == true
+			&&	isNewDateType == true
+		){
+			if(oldValue.getTime() == newValue.getTime()){
+				return;
+			}
+		}else{
+			if(oldValue == newValue){
+				return;
+			}
 		}
 		
 		// 전송할 json 데이터 생성
+		var isDateType = (typeof newValue === "object") && (newValue instanceof Date);
 		var data = {};
-		eval("data." + dataField + " = '" + newValue + "'");
+		eval(
+				"data."
+				+ dataField
+				+ " = "
+				+ ( isDateType ? newValue.getTime() : "'" + newValue + "'" )
+		);
 		var jsonData = JSON.stringify(data);
 		
 		// 출력
 		console.log("전송할 json 데이터", memNo, jsonData);
-		
+				
 		// 수정 요청 전송
 		var token = $("meta[name='_csrf']").attr("content");
 		var header = $("meta[name='_csrf_header']").attr("content");
@@ -169,7 +198,7 @@ function reloadMemberGrid(){
 			xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
 		},
 		success: function(data, statusText, xhr){
-			if(data.result == "success"){
+			if(data.result == "success"){console.log("멤버: ", data.list);
 				changeMemberGrid(data.list)
 			}else{
 				console.log("MEMBER 목록 조회를 실패했습니다.");
@@ -196,7 +225,7 @@ function changeMemberGrid(listData){
 			{name: 'memNo', type: 'int'},
 			{name: 'memId', type: 'string'},
 			{name: 'memNicknm', type: 'string'},
-			{name: 'lastLoginDate', type: 'date'}
+			{name: 'lastLoginDateAsMillis', type: 'date'}
 		]
 	};
 	
@@ -236,7 +265,7 @@ function getSelectedNoArray(jqxGridId, returnColumnStr){
  */
 function insertMember(){
 	// 전송할 json 데이터 생성
-	var serializeArrayForm = $(authFormId).serializeArray();
+	var serializeArrayForm = $(memberFormId).serializeArray();
 	var objectForm = objectifyForm(serializeArrayForm);
 	var jsonForm = JSON.stringify(objectForm);
 	
@@ -261,7 +290,7 @@ function insertMember(){
 			if(data.result == 'success'){
 				console.log("data", data);
 				reloadMemberGrid();
-				$(authFormId)[0].reset();
+				$(memberFormId)[0].reset();
 			}else{
 				console.log("MEMBER 등록에 실패했습니다.");
 				console.log("message", data.message);
@@ -289,9 +318,9 @@ function objectifyForm(formArray){
  * MEMBER jqxGrid에서 선택된 항목을 제거합니다.
  * @returns
  */
-function deleteSelectedAuth(){
+function deleteSelectedMember(){
 	// 현재 선택한 권한의 일련 번호 구하기
-	var selectedMemberNoArray = String(getSelectedNoArray(authGridId, 'authNo'));
+	var selectedMemberNoArray = String(getSelectedNoArray(memberGridId, 'memNo'));
 	
 	// 선택한 행이 없으면 이벤트 취소
 	if(selectedMemberNoArray.length <= 0){

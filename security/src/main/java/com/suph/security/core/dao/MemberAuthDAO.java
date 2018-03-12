@@ -14,6 +14,6 @@ public interface MemberAuthDAO{
 	 * @param memNo
 	 * @return
 	 */
-	public abstract List<AuthDTO> getAuthListByNo(int memNo) throws SQLException;
+	public abstract List<AuthDTO> getAuthListByNo(int memNo);
 	
 }

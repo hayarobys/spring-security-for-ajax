@@ -39,7 +39,7 @@ public class AuthDTO{
 	 * @param authNm
 	 */
 	public void setAuthNm(String authNm){
-		this.authNm = authNm;
+		this.authNm = authNm.trim();
 	}
 	
 	/**
@@ -55,7 +55,7 @@ public class AuthDTO{
 	 * @param authExplanation
 	 */
 	public void setAuthExplanation(String authExplanation){
-		this.authExplanation = authExplanation;
+		this.authExplanation = authExplanation.trim();
 	}
 
 	@Override

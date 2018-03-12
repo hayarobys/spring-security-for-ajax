@@ -44,7 +44,7 @@ public class ResourceDTO{
 	}
 	
 	public void setResourceType(String resourceType){
-		this.resourceType = resourceType;
+		this.resourceType = resourceType.trim();
 	}
 	
 	public String getHttpMethod(){
@@ -52,7 +52,7 @@ public class ResourceDTO{
 	}
 
 	public void setHttpMethod(String httpMethod){
-		this.httpMethod = httpMethod;
+		this.httpMethod = httpMethod.trim();
 	}
 
 	public String getResourcePattern(){
@@ -60,7 +60,7 @@ public class ResourceDTO{
 	}
 	
 	public void setResourcePattern(String resourcePattern){
-		this.resourcePattern = resourcePattern;
+		this.resourcePattern = resourcePattern.trim();
 	}
 	
 	public String getResourceNm(){
@@ -68,7 +68,7 @@ public class ResourceDTO{
 	}
 	
 	public void setResourceNm(String resourceNm){
-		this.resourceNm = resourceNm;
+		this.resourceNm = resourceNm.trim();
 	}
 
 	public List<ResourceDTO> getList(){
