@@ -32,6 +32,10 @@ function getCookie(cname){
 */
 function getNickname(){
 	var jwtNameToken = getCookie("info");
+	if(jwtNameToken === undefined){
+		$("#nickname").append("미로그인 상태 입니다.<br />");
+		return;
+	}
 	var payload = parseJwt(jwtNameToken);
 	$("#nickname").append(decodeURI(payload.name) + "<br />");
 	console.log("쿠키내용",payload);
