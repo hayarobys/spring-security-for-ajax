@@ -11,13 +11,13 @@
 	</resultMap>
 	
 	<!-- 특정 계정이 보유한 권한 목록 조회 -->
-	<select id="getAuthListByNo" parameterType="int" resultMap="AuthDTO">
+	<select id="selectAuthOfMemberByMemNo" parameterType="int" resultMap="AuthDTO">
 		SELECT
 			A.AUTH_NO,
 			A.AUTH_NM,
 			A.AUTH_EXPLANATION
 		FROM
-				TB_AUTH AS A
+			TB_AUTH AS A
 			INNER JOIN TB_MEMBER_AUTH AS MO ON (A.AUTH_NO = MO.AUTH_NO)
 			INNER JOIN TB_MEMBER AS MT ON (MO.MEM_NO = MT.MEM_NO)
 		WHERE
@@ -26,5 +26,23 @@
 				MT.MEM_NO = #{value};
 	</select>
 	
+	<!-- 특정 계정에 새 권한들을 부여합니다. -->
+	<insert id="insertAuthOfMemberByMemNo" parameterType="MemberAuthDTO">
+		INSERT INTO
+			TB_MEMBER_AUTH(
+				MEM_NO, AUTH_NO
+			)
+		VALUES
+		<foreach collection="authNoList" item="authNo" separator=",">
+			(#{memNo}, #{authNo})
+		</foreach>
+	</insert>
 	
+	<!-- 특정 계정에 부여된 권한들을 삭제합니다. -->
+	<delete id="deleteAuthOfMemberByMemNo" parameterType="int">
+		DELETE FROM
+			TB_MEMBER_AUTH
+		WHERE
+			MEM_NO = #{memNo}
+	</delete>
 </mapper>

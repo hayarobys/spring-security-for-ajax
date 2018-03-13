@@ -105,7 +105,7 @@ public class MemberServiceImpl implements MemberService{
 		
 		List<MemberDTO> list = null;
 		try{
-			list = memberDAO.selectMember();
+			list = memberDAO.selectActiveMember();
 			returnMap.put("list", list);
 			returnMap.put("result", "success");
 		}catch(DataAccessException de){

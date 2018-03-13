@@ -1,3 +1,4 @@
+Select MEM_NO, AUTH_NO from security.tb_member_auth
 USE security;
 
 CREATE TABLE `tb_member_auth` (
@@ -10,6 +11,6 @@ CREATE TABLE `tb_member_auth` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='계정-권한 테이블';
 
 
-INSERT INTO `tb_member_auth`(`MEM_NO`,`AUTH_NO`) VALUES (3,1);
-INSERT INTO `tb_member_auth`(`MEM_NO`,`AUTH_NO`) VALUES (2,2);
-INSERT INTO `tb_member_auth`(`MEM_NO`,`AUTH_NO`) VALUES (1,3);
+INSERT INTO tb_member_auth(MEM_NO,AUTH_NO) VALUES (3,1);
+INSERT INTO tb_member_auth(MEM_NO,AUTH_NO) VALUES (2,2);
+INSERT INTO tb_member_auth(MEM_NO,AUTH_NO) VALUES (1,3);

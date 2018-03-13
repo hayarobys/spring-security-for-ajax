@@ -47,21 +47,7 @@
 				MEM_STATE = 'ACTIVE'
 	</select>
 	
-	<select id="getMemberInfoByNo" parameterType="int" resultMap="MemberDTO">
-		SELECT
-			MEM_NO,
-			MEM_ID,
-			MEM_PASSWORD,
-			MEM_NICKNM,
-			MEM_STATE,
-			LAST_LOGIN_DATE
-		FROM
-			TB_MEMBER
-		WHERE
-				MEM_NO = #{value}
-	</select>
-	
-	<select id="selectMember" resultMap="MemberDTO">
+	<select id="selectActiveMember" resultMap="MemberDTO">
 		SELECT
 			MEM_NO,
 			MEM_ID,

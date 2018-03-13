@@ -39,7 +39,7 @@ public class ResourceAuthController{
 	 * @return
 	 */
 	@RequestMapping(value="/resource/{resourceNo}/auth", method=RequestMethod.GET)
-	public @ResponseBody Map<String, Object> authList(@PathVariable int resourceNo){
+	public @ResponseBody Map<String, Object> authList(@PathVariable(required=true) Integer resourceNo){
 		return resourceService.getAuthListByResourceNo(resourceNo);
 	}
 	
@@ -48,7 +48,10 @@ public class ResourceAuthController{
 	 * @return
 	 */
 	@RequestMapping(value="/resource/{resourceNo}/auth", method=RequestMethod.PATCH)
-	public @ResponseBody Map<String, Object> changeResourceAuth(@PathVariable int resourceNo, @RequestBody ResourceAuthDTO resourceAuthDTO){
+	public @ResponseBody Map<String, Object> changeResourceAuth(
+			@PathVariable(required=true) Integer resourceNo,
+			@RequestBody ResourceAuthDTO resourceAuthDTO
+	){
 		resourceAuthDTO.setResourceNo(resourceNo);
 		return resourceAuthService.changeResourceAuth(resourceAuthDTO);
 	}

@@ -115,8 +115,8 @@ function initMemberGrid(){
 			newValue = newValue.trim();
 		}
 		
-		console.log("oldValue", oldValue);
-		console.log("newValue", newValue);
+		//console.log("oldValue", oldValue);
+		//console.log("newValue", newValue);
 		
 		// 변경되지 않았다면 이벤트 종료
 		var isOldDateType = (typeof oldValue === "object") && (oldValue instanceof Date);
@@ -264,6 +264,11 @@ function getSelectedNoArray(jqxGridId, returnColumnStr){
  * @returns
  */
 function insertMember(){
+	if(isPassedMemIdDuplicateCheck == false){
+		alert(memIdDuplicateCheckMessage.before + '를 수행해 주세요.');
+		return;
+	}
+	
 	// 전송할 json 데이터 생성
 	var serializeArrayForm = $(memberFormId).serializeArray();
 	var objectForm = objectifyForm(serializeArrayForm);

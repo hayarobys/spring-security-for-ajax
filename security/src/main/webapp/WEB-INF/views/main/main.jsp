@@ -129,14 +129,7 @@
 		<section>
 			<article>
 				<p>
-					메인 컨텐츠1
-					<input type="button" value="ajax요청(반가워! 전송)" onclick="javascript:getHelloMessage()"/>
-					<article id="message">
-					
-					</article>
-				</p>
-				<p>
-					메인 컨텐츠2
+					메인 컨텐츠<br />
 					<input type="button" value="현재 닉네임 읽기" onclick="javascript:getNickname()"/>
 					<article id="nickname">
 					

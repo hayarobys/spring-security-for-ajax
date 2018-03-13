@@ -15,6 +15,8 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
 import com.suph.security.core.dao.ResourceAuthDAO;
@@ -171,29 +173,24 @@ public class ResourceAuthServiceImpl implements ResourceAuthService{
 	}
 
 	@Override
+	@Transactional
 	public Map<String, Object> changeResourceAuth(ResourceAuthDTO resourceAuthDTO){
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
-		String result = "";
 		try{
 			resourceAuthDAO.deleteAuthListByResourceNo(resourceAuthDTO.getResourceNo());
-			result += "delete success\n";
-			
-			if(resourceAuthDTO.getAuthNoList().size() != 0){
-				try{
-					resourceAuthDAO.insertAuthListByResourceNo(resourceAuthDTO);
-					result += "insert success\n";
-				}catch(DataAccessException e){
-					result += "insert fail\n";
-					e.printStackTrace();
-				}
+			if(		resourceAuthDTO.getAuthNoList() != null
+				&&	resourceAuthDTO.getAuthNoList().size() > 0
+			){
+				resourceAuthDAO.insertAuthListByResourceNo(resourceAuthDTO);
 			}
+			returnMap.put("result", "success");
 		}catch(DataAccessException e){
-			result += "delete fail\n";
+			returnMap.put("result", "fail");
 			e.printStackTrace();
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		
-		returnMap.put("result", result);
 		return returnMap;
 	}
 }

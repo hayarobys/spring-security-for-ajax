@@ -1,27 +1,34 @@
 package com.suph.security.core.dto;
 
+import java.util.List;
+
 /**
  * 계정-권한 정보를 담는데 사용합니다.
  */
 public class MemberAuthDTO{
 	/** MEM_NO: 계정 일련 번호 */
-	private String no;
-	/** AUTH_NM: 부여할 권한 */
-	private String auth;
+	private Integer memNo;
+	/** 보유 권한 목록 */
+	private List<Integer> authNoList;
 	
-	public String getNo(){
-		return no;
+	public Integer getMemNo(){
+		return memNo;
 	}
 	
-	public void setNo(String no){
-		this.no = no.trim();
+	public void setMemNo(Integer memNo){
+		this.memNo = memNo;
 	}
-	
-	public String getAuth(){
-		return auth;
+
+	public List<Integer> getAuthNoList(){
+		return authNoList;
 	}
-	
-	public void setAuth(String auth){
-		this.auth = auth.trim();
+
+	public void setAuthNoList(List<Integer> authNoList){
+		this.authNoList = authNoList;
+	}
+
+	@Override
+	public String toString(){
+		return "MemberAuthDTO [memNo=" + memNo + ", authNoList=" + authNoList + "]";
 	}
 }

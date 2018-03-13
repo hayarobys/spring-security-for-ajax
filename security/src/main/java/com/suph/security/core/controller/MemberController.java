@@ -76,7 +76,10 @@ public class MemberController{
 	 * @return
 	 */
 	@RequestMapping(value="/member/{memNo}", method=RequestMethod.PATCH)
-	public @ResponseBody Map<String, Object> patchMember(@PathVariable int memNo, @RequestBody MemberDTO memberDTO){
+	public @ResponseBody Map<String, Object> patchMember(
+			@PathVariable(required=true) Integer memNo,
+			@RequestBody MemberDTO memberDTO
+	){
 		return memberService.patchMember(memNo, memberDTO);
 	}
 	
@@ -84,7 +87,7 @@ public class MemberController{
 	 * 특정 계정 삭제 / 회원 탈퇴
 	 */
 	@RequestMapping(value="/member/{memNo}", method=RequestMethod.DELETE)
-	public @ResponseBody Map<String, Object> deleteMember(@PathVariable int memNo){
+	public @ResponseBody Map<String, Object> deleteMember(@PathVariable(required=true) Integer memNo){
 		return memberService.deleteMember(memNo);
 	}
 }

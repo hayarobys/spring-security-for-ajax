@@ -29,7 +29,7 @@ public interface MemberDAO{
 	 * 단, 패스워드는 조회하지 않습니다.
 	 * @return
 	 */
-	public abstract List<MemberDTO> selectMember();
+	public abstract List<MemberDTO> selectActiveMember();
 	
 	/**
 	 * DB에 입력 ID와 일치하는 값이 있는지 조회합니다.

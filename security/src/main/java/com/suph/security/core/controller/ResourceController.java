@@ -59,7 +59,10 @@ public class ResourceController{
 	 * 리소스 수정
 	 */
 	@RequestMapping(value="/resource/{resourceNo}", method=RequestMethod.PATCH)
-	public @ResponseBody Map<String, Object> patchResourceByResourceNo(@PathVariable int resourceNo, @RequestBody ResourceDTO resourceDTO){
+	public @ResponseBody Map<String, Object> patchResourceByResourceNo(
+			@PathVariable(required=true) Integer resourceNo,
+			@RequestBody ResourceDTO resourceDTO
+	){
 		return resourceService.patchResourceByResourceNo(resourceNo, resourceDTO);
 	}
 	
@@ -68,7 +71,7 @@ public class ResourceController{
 	 * https://localhost:8443/security/resource/2,4,6
 	 */
 	@RequestMapping(value="/resource/{resourceNoList}", method=RequestMethod.DELETE)
-	public @ResponseBody Map<String, Object> deleteResourceByResourceNoList(@PathVariable List<Integer> resourceNoList){
+	public @ResponseBody Map<String, Object> deleteResourceByResourceNoList(@PathVariable(required=true) List<Integer> resourceNoList){
 		return resourceService.deleteResourceNoList(resourceNoList);
 	}
 	

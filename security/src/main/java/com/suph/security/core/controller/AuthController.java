@@ -51,7 +51,10 @@ public class AuthController{
 	 * @return
 	 */
 	@RequestMapping(value="/auth/{authNo}", method=RequestMethod.PATCH)
-	public @ResponseBody Map<String, Object> patchAuthByAuthNo(@PathVariable Integer authNo, @RequestBody AuthDTO authDTO){
+	public @ResponseBody Map<String, Object> patchAuthByAuthNo(
+			@PathVariable(required=true) Integer authNo,
+			@RequestBody AuthDTO authDTO
+	){
 		return authService.patchAuthByAuthNo(authNo, authDTO);
 	}
 	
@@ -59,7 +62,7 @@ public class AuthController{
 	 * 요청받은 특정 권한을 삭제 합니다.
 	 */
 	@RequestMapping(value="/auth/{authNo}", method=RequestMethod.DELETE)
-	public @ResponseBody Map<String, Object> deleteAuthByAuthNo(@PathVariable Integer authNo){
+	public @ResponseBody Map<String, Object> deleteAuthByAuthNo(@PathVariable(required=true) Integer authNo){
 		return authService.deleteAuthByAuthNo(authNo);
 	}
 }
