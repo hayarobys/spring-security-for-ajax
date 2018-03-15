@@ -31,6 +31,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
+import com.suph.security.core.dto.BlockMemberDTO;
 import com.suph.security.core.userdetails.MemberInfo;
 import com.suph.security.crypto.jwt.JWTUtility;
 
@@ -86,6 +87,18 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	/** JWT 인증토큰의 payload에 저장할 권한 Claim명 입니다. */
 	@Value("#{security['jwt.claim.authorities']}")
 	private String SECURITY_JWT_AUTHORITIES;
+	
+	/** JWT 인증토큰의 payload에 저장할 차단 시작 일자 Claim명 입니다. */
+	@Value("#{security['jwt.claim.block_start_date']}")
+	private String SECURITY_JWT_BLOCK_START_DATE;
+	
+	/** JWT 인증토큰의 payload에 저장할 차단 만료 일자 Claim명 입니다. */
+	@Value("#{security['jwt.claim.block_expire_date']}")
+	private String SECURITY_JWT_BLOCK_EXPIRE_DATE;
+	
+	/** JWT 인증토큰의 payload에 저장할 차단 사유 Claim명 입니다. */
+	@Value("#{security['jwt.claim.block_cause']}")
+	private String SECURITY_JWT_BLOCK_CAUSE;
 	
 	/** JWT 닉네임 토큰의 payload에 저장할 닉네임 Claim명 입니다. */
 	@Value("#{security['client.jwt.claim.name']}")
@@ -261,10 +274,23 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			roleList.add(grantedAuthority);
 		}
 		
+		// 차단 계정 정보
+		Long blockStartDate = (Long)JWTUtility.getClaim(claims, SECURITY_JWT_BLOCK_START_DATE);
+		Long blockExpireDate = (Long)JWTUtility.getClaim(claims, SECURITY_JWT_BLOCK_EXPIRE_DATE);
+		String blockCause = (String)JWTUtility.getClaim(claims, SECURITY_JWT_BLOCK_CAUSE);
+		//logger.debug("차단 시작 일: {}, 차단 만료 일: {}, 차단 사유: {}", new Object[]{blockStartDate, blockExpireDate, blockCause});
+		BlockMemberDTO blockInfo = null;
+		if(	blockExpireDate != null ){
+			blockInfo = new BlockMemberDTO();
+			blockInfo.setBlockStartDate( new Date(blockStartDate) );
+			blockInfo.setBlockExpireDate( new Date(blockExpireDate) );
+			blockInfo.setBlockCause( blockCause );
+		}
+		
 		// JWT 생성일 (이 계정의 마지막 로그인 날짜. 정상적인 로그인 화면을 통과하면서 만들어진 토큰의 생성 일 을 의미)
 		Date issuedAt = claims.getIssuedAt();
 				
-		MemberInfo memberInfo = new MemberInfo(Integer.parseInt(no), id, "[PROTECTED]", name, roleList, issuedAt);
+		MemberInfo memberInfo = new MemberInfo(Integer.parseInt(no), id, "[PROTECTED]", name, roleList, blockInfo, issuedAt);
 		
 		// MemberInfo -> (Authentication)UsernamePasswordAuthenticationToken
 		Authentication authentication = new UsernamePasswordAuthenticationToken(memberInfo, "[PROTECTED]", roleList);
@@ -345,6 +371,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			String id = memberInfo.getId();
 			String name = memberInfo.getName();
 			issuedAt = memberInfo.getIssuedAt();
+			BlockMemberDTO blockInfo = memberInfo.getBlockInfo();
 			
 			Collection<? extends GrantedAuthority> authorityList = memberInfo.getAuthorities();
 			StringBuilder authBuilder = new StringBuilder();
@@ -361,6 +388,11 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			contextClaims.put(SECURITY_JWT_NAME, name);
 			contextClaims.put(SECURITY_JWT_AUTHORITIES, authorities);
 			
+			if( blockInfo != null ){
+				contextClaims.put(SECURITY_JWT_BLOCK_START_DATE, blockInfo.getBlockStartDate());
+				contextClaims.put(SECURITY_JWT_BLOCK_EXPIRE_DATE, blockInfo.getBlockExpireDate());
+				contextClaims.put(SECURITY_JWT_BLOCK_CAUSE, blockInfo.getBlockCause());
+			}
 		}else if(principal instanceof String){
 			contextClaims.put(SECURITY_JWT_NAME, (String)principal);
 		}

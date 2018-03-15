@@ -1,6 +1,5 @@
 package com.suph.security.core.impl;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +22,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.suph.security.core.dao.BlockMemberDAO;
 import com.suph.security.core.dao.MemberDAO;
+import com.suph.security.core.dto.BlockMemberDTO;
 import com.suph.security.core.dto.MemberDTO;
 import com.suph.security.core.enums.MemberState;
 import com.suph.security.core.service.MemberAuthService;
@@ -40,6 +41,9 @@ public class MemberServiceImpl implements MemberService{
 	
 	@Autowired
 	private MemberDAO memberDAO;
+	
+	@Autowired
+	private BlockMemberDAO blockMemberDAO;
 		
 	protected final MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
 	protected Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
@@ -87,13 +91,16 @@ public class MemberServiceImpl implements MemberService{
 		// 이 계정의 권한들을 Set -> List로 변환하여 계정 객체에 저장.
 		List<GrantedAuthority> dbAuths = new ArrayList<GrantedAuthority>(dbAuthsSet);
 		
+		BlockMemberDTO blockInfo = blockMemberDAO.selectBlockMemberByMemNoAndAfterCurrentDate(user.getMemNo());
+		
 		MemberInfo result = new MemberInfo(
 				user.getMemNo(),
 				user.getMemId(),
 				user.getMemPassword(),
 				user.getMemNicknm(),
 				MemberState.ACTIVE.toString().equals( user.getMemState() ),
-				dbAuths
+				dbAuths,
+				blockInfo
 		);
 		
 		return result;
@@ -163,7 +170,7 @@ public class MemberServiceImpl implements MemberService{
 		);
 		
 		// 마지막 로그인 날짜(여기선 생성일 개념으로 사용)에 현재 시간 입력
-		memberDTO.setLastLoginDateAsJavaTimeZonedDateTime(ZonedDateTime.now());
+		memberDTO.setLastLoginDate(new java.util.Date());
 		logger.debug("memberDTO {}", memberDTO);
 		try{
 			memberDAO.insertMember(memberDTO);

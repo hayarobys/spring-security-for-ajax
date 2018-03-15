@@ -13,4 +13,5 @@ CREATE TABLE `tb_member_auth` (
 
 INSERT INTO tb_member_auth(MEM_NO,AUTH_NO) VALUES (3,1);
 INSERT INTO tb_member_auth(MEM_NO,AUTH_NO) VALUES (2,2);
+INSERT INTO tb_member_auth(MEM_NO,AUTH_NO) VALUES (11,2);
 INSERT INTO tb_member_auth(MEM_NO,AUTH_NO) VALUES (1,3);

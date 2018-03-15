@@ -69,7 +69,7 @@ function initMemberGrid(){
 			{text: '이름', dataField: 'memNicknm', cellsalign: 'center', align: 'center', editable: true, cellvaluechanging: cellValueChanging, width: '20%'},
 			{
 				text: '마지막 로그인 일자',
-				dataField: 'lastLoginDateAsMillis',
+				dataField: 'lastLoginDate',
 				columntype: 'datetimeinput',
 				cellsformat: 'yyyy/MM/dd HH:mm:ss',
 				cellsalign: 'center',
@@ -225,7 +225,7 @@ function changeMemberGrid(listData){
 			{name: 'memNo', type: 'int'},
 			{name: 'memId', type: 'string'},
 			{name: 'memNicknm', type: 'string'},
-			{name: 'lastLoginDateAsMillis', type: 'date'}
+			{name: 'lastLoginDate', type: 'date'}
 		]
 	};
 	

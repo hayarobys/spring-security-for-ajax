@@ -13,6 +13,9 @@ public interface TooLongLoginBlockHandler{
 	 * 
 	 * @param response
 	 * @param request
+	 * @param exception
+	 * @throws IOException
+	 * @throws ServletException
 	 */
 	public abstract void onTooLongLoginBlock(HttpServletResponse response, HttpServletRequest request, TooLongLoginException exception)
 			throws IOException, ServletException;

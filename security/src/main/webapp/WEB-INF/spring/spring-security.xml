@@ -174,6 +174,7 @@
 		-->
 		<custom-filter position="CSRF_FILTER" ref="customCsrfFilter"/>
 		<custom-filter after="LOGOUT_FILTER" ref="tooLongLoginBlockFilter" />
+		<custom-filter before="ANONYMOUS_FILTER" ref="blockMemberFilter"/>
 		<custom-filter before="FILTER_SECURITY_INTERCEPTOR" ref="filterSecurityInterceptor"/>
 		
 		
@@ -195,6 +196,18 @@
 		<beans:property name="loginidname" value="loginid"/>
 		<beans:property name="exceptionmsgname" value="securityexceptionmsg"/>
 		<beans:property name="defaultFailureUrl" value="/login/edit"/>
+	</beans:bean>
+	
+	<!-- 차단 계정의 접근을 차단하는 필터 -->
+	<beans:bean id="blockMemberFilter" class="com.suph.security.web.blockmember.BlockMemberFilter">
+		<beans:property name="blockMemberHandler" ref="blockMemberHandler" />
+	</beans:bean>
+	
+	<beans:bean id="blockMemberHandler" class="com.suph.security.web.blockmember.SimpleBlockMemberHandler">
+		<beans:property name="loginidname" value="loginid" />
+		<beans:property name="exceptionmsgname" value="securityexceptionmsg" />
+		<beans:property name="blockinfoname" value="blockinfo" />
+		<beans:property name="defaultFailureUrl" value="/block-info" />
 	</beans:bean>
 	
 	<!--====================================== 권한 필터(권한을 총괄하는 필터) - 인증 정보/ 권한 정보/ 판단 주체로 구성 ======================================-->
@@ -245,16 +258,16 @@
 				<user name="admin1" password="admin1password" authorities="ROLE_ADMIN" />
 			</user-service>
 		</authentication-provider>
-		 -->
+		-->
 		 
-		 <!-- base64: true로 세팅하면 암호화 후 base64로 인코딩 하는 것으로 추측 -->
-		 <!-- password-encoder hash:사용할 알고리즘 지정. {sha}, {ssha}, bcrypt, md4, md5, plaintext, sha-256, sha 중 택 1 -->
-		 <!-- hash="bcrypt" 라고 적을 경우, 스프링은 PasswordEncoder를 구현한 객체중 BCryptPasswordEncoder를 내부에 생성한다. -->
-		 <!-- 다만 이럴 경우, 외부에서 해당 클래스를 참조할 방법이 없으므로 따로 선언해서 주입해주도록 합니다. -->
-		 <authentication-provider user-service-ref="memberService">	<!-- @Service("memberService") -->
-		 	<!-- <password-encoder hash="bcrypt"/> -->
-		 	<password-encoder ref="bcryptPasswordEncoder"/>
-		 </authentication-provider>
+		<!-- base64: true로 세팅하면 암호화 후 base64로 인코딩 하는 것으로 추측 -->
+		<!-- password-encoder hash:사용할 알고리즘 지정. {sha}, {ssha}, bcrypt, md4, md5, plaintext, sha-256, sha 중 택 1 -->
+		<!-- hash="bcrypt" 라고 적을 경우, 스프링은 PasswordEncoder를 구현한 객체중 BCryptPasswordEncoder를 내부에 생성한다. -->
+		<!-- 다만 이럴 경우, 외부에서 해당 클래스를 참조할 방법이 없으므로 따로 선언해서 주입해주도록 합니다. -->
+		<authentication-provider user-service-ref="memberService">	<!-- @Service("memberService") -->
+			<!-- <password-encoder hash="bcrypt"/> -->
+			<password-encoder ref="bcryptPasswordEncoder"/>
+		</authentication-provider>
 	</authentication-manager>
 	
 	

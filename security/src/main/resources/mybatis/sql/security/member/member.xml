@@ -10,7 +10,8 @@
 		<result column="MEM_PASSWORD" property="memPassword"/>
 		<result column="MEM_NICKNM" property="memNicknm"/>
 		<result column="MEM_STATE" property="memState"/>
-		<result column="LAST_LOGIN_DATE" property="lastLoginDateAsJavaUtilDate" jdbcType="TIMESTAMP"/>
+		<result column="LAST_LOGIN_DATE" property="lastLoginDate" jdbcType="TIMESTAMP"/>
+		<!-- mybatis-config.xml에 typeHandler를 등록하였기에 TIMESTAMP <-> java.util.Date의 변환이 가능 -->
 	</resultMap>
 	
 	<insert id="insertMember" parameterType="MemberDTO">
@@ -27,7 +28,7 @@
 				#{memPassword},
 				#{memNicknm},
 				IFNULL(#{memState}, 'ACTIVE'),
-				IFNULL(#{lastLoginDateAsJavaUtilDate}, current_timestamp())
+				IFNULL(#{lastLoginDate}, current_timestamp())
 			)
 	</insert>
 	
@@ -88,7 +89,7 @@
 				MEM_STATE = #{memState},
 			</if>
 			<if test="lastLoginDate != null and !''.equals(lastLoginDate)">
-				LAST_LOGIN_DATE = #{lastLoginDateAsJavaUtilDate}
+				LAST_LOGIN_DATE = #{lastLoginDate}
 			</if>
 		</set>
 		WHERE

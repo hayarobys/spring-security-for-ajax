@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.suph.security.core.dao.BlockMemberDAO">
+
+	<resultMap type="com.suph.security.core.dto.BlockMemberDTO" id="BlockMemberDTO">
+		<result column="MEM_NO" property="memNo"/>
+		<result column="BLOCK_START_DATE" property="blockStartDate" jdbcType="TIMESTAMP"/>
+		<result column="BLOCK_EXPIRE_DATE" property="blockExpireDate" jdbcType="TIMESTAMP"/>
+		<result column="BLOCK_CAUSE" property="blockCause"/>
+	</resultMap>
+	
+	<select id="selectBlockMemberByMemNo" parameterType="Integer" resultMap="BlockMemberDTO">
+		SELECT
+			BLOCK_START_DATE,
+			BLOCK_EXPIRE_DATE,
+			BLOCK_CAUSE
+		FROM
+			TB_BLOCK_MEMBER
+		WHERE
+			MEM_NO = #{memNo}
+	</select>
+	
+	<select id="selectBlockMemberByMemNoAndAfterCurrentDate" parameterType="Integer" resultMap="BlockMemberDTO">
+		SELECT
+			BLOCK_START_DATE,
+			BLOCK_EXPIRE_DATE,
+			BLOCK_CAUSE
+		FROM
+			TB_BLOCK_MEMBER
+		WHERE
+				MEM_NO = #{memNo}
+			AND
+				BLOCK_EXPIRE_DATE > CURRENT_TIMESTAMP()
+			
+	</select>
+</mapper>
