@@ -112,7 +112,12 @@
 						</li>
 					</sec:authorize>
 					<sec:authorize access="hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')">
-						<li>매니저 게시판</li>
+						<li>매니저 게시판
+							<ul>
+								<li><a href="./block-member/edit">계정 차단 관리</a></li>
+							</ul>
+						</li>
+						
 					</sec:authorize>
 					<sec:authorize access="permitAll">
 						<li>비회원 게시판</li>

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.suph.security.core.dto.ResourceAuthDTO;
+import com.suph.security.core.service.RealTimeReflectableService;
 import com.suph.security.core.service.ResourceAuthService;
 import com.suph.security.core.service.ResourceService;
 
@@ -23,6 +24,9 @@ public class ResourceAuthController{
 	
 	@Autowired
 	private ResourceAuthService resourceAuthService;
+	
+	@Autowired
+	private RealTimeReflectableService realTimeReflectable;
 	
 	/**
 	 * URL 관리 화면으로 이동합니다.
@@ -54,5 +58,14 @@ public class ResourceAuthController{
 	){
 		resourceAuthDTO.setResourceNo(resourceNo);
 		return resourceAuthService.changeResourceAuth(resourceAuthDTO);
+	}
+	
+	/**
+	 * 서버 재구동 없이 DB 정보로 서버 메모리를 실시간 갱신 합니다.
+	 * @return
+	 */
+	@RequestMapping(value="/resource-auth", method=RequestMethod.PATCH)
+	public @ResponseBody Map<String, Object> realTimeReflection(){
+		return realTimeReflectable.reload();
 	}
 }

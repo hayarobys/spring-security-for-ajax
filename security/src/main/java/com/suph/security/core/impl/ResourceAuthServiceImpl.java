@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 
 import com.suph.security.core.dao.ResourceAuthDAO;
 import com.suph.security.core.dto.ResourceAuthDTO;
+import com.suph.security.core.service.RealTimeReflectableService;
 import com.suph.security.core.service.ResourceAuthService;
 
 @Service("resourceAuthService")
@@ -33,7 +34,7 @@ public class ResourceAuthServiceImpl implements ResourceAuthService{
 	
 	@Autowired
 	private ResourceAuthDAO resourceAuthDAO;
-	
+		
 	/*
 	public void setResourceAuthDAO(ResourceAuthDAO resourceAuthDAO){
 		this.resourceAuthDAO = resourceAuthDAO;
@@ -193,6 +194,7 @@ public class ResourceAuthServiceImpl implements ResourceAuthService{
 		
 		return returnMap;
 	}
+
 }
 
 

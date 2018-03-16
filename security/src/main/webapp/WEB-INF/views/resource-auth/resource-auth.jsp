@@ -24,6 +24,7 @@
 			</section>
 			
 			<input type="button" value="reload" onclick="javascript:reloadResourceGrid();" />
+			<input type="button" id="real_time_reflection" value="realtime reflection" onclick="javascript:realTimeReflection();" />
 		</div>
 		
 		<div class="data_box">

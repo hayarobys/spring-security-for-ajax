@@ -40,11 +40,9 @@ public class ResourceServiceImpl implements ResourceService{
 			 list = resourceDAO.getResourceList();
 			 result.put("result", "success");
 			 result.put("list", list);
-			 
-		}catch(SQLException sqle){
-			sqle.printStackTrace();
+		}catch(DataAccessException dae){
 			result.put("result", "fail");
-			
+			dae.printStackTrace();			
 		}
 				
 		return result;

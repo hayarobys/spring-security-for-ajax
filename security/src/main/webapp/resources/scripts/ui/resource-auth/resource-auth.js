@@ -310,3 +310,40 @@ function getSelectedNoArray(jqxGridId, returnColumnStr){
 	
 	return selectedRowData;
 }
+
+/**
+ * DB에만 적용된 상태인 변경사항을 서버 메모리에 재부팅없이 즉시 반영합니다.
+ * @returns
+ */
+function realTimeReflection(){
+	// 전송
+	var token = $("meta[name='_csrf']").attr("content");
+	var header = $("meta[name='_csrf_header']").attr("content");
+	
+	$.ajax({
+		type: "PATCH",
+		url: "/security/resource-auth",
+		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
+		beforeSend: function(xhr){
+			$("#real_time_reflection").attr("disabled", "disabled").text("적용중...");
+			
+			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
+			xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
+		},
+		success: function(data, statusText, xhr){
+			console.log("result", data.result);
+			if(data.result == "success"){
+				console.log('DB정보가 서버 메모리에 실시간 반영되었습니다.');
+			}else{
+				console.log('DB정보를 서버 메모리에 반영하는 도중 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.');
+			}
+		},
+		error: function(xhr){
+			console.log("error", xhr);
+			console.log('오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+		},
+		complete: function(){
+			$("#real_time_reflection").removeAttr("disabled").text("realtime reflection");
+		}
+	});
+}

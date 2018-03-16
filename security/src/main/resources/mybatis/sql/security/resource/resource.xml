@@ -15,12 +15,12 @@
 	<!-- 리소스 목록을 조회합니다 -->
 	<select id="getResourceList" resultMap="ResourceDTO">
 		SELECT
-			RESOURCE_NO AS resourceNo,
-			SORT_ORDER AS sortOrder,
-			RESOURCE_TYPE AS resourceType,
-			HTTP_METHOD AS httpMethod,
-			RESOURCE_PATTERN AS resourcePattern,
-			RESOURCE_NM AS resourceNm
+			RESOURCE_NO,
+			SORT_ORDER,
+			RESOURCE_TYPE,
+			HTTP_METHOD,
+			RESOURCE_PATTERN,
+			RESOURCE_NM
 		FROM
 			TB_RESOURCE
 		ORDER BY

@@ -62,7 +62,7 @@
 							<label for="resourceType">타입</label>
 						</th>
 						<td>
-							<input id="resourceType" name="resourceType" type="text" placeholder="url, method, class..." />
+							<input id="resourceType" name="resourceType" type="text" placeholder="url, method, class..." value="url" />
 						</td>
 					</tr>
 					<tr>

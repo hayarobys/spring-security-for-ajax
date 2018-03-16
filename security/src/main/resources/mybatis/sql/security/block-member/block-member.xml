@@ -35,4 +35,53 @@
 				BLOCK_EXPIRE_DATE > CURRENT_TIMESTAMP()
 			
 	</select>
+	
+	<select id="selectBlockMember" resultMap="BlockMemberDTO">
+		SELECT
+			MEM_NO,
+			BLOCK_START_DATE,
+			BLOCK_EXPIRE_DATE,
+			BLOCK_CAUSE
+		FROM
+			TB_BLOCK_MEMBER
+	</select>
+	
+	<insert id="insertBlockMember" parameterType="BlockMemberDTO">
+		INSERT INTO
+			TB_BLOCK_MEMBER(
+				/* MEM_NO, auto_increase */
+				BLOCK_START_DATE,
+				BLOC_EXPIRE_DATE,
+				BLOCK_CAUSE
+			)VALUES(
+				#{blockStartDate},
+				#{blockExpireDate},
+				#{blockCause}
+			)
+	</insert>
+	
+	<update id="updateBlockMember" parameterType="BlockMemberDTO">
+		UPDATE FROM
+			TB_BLOCK_MEMBER
+		<set>
+			<if test="blockStartDate != null and !''.equals(blockStartDate)">
+				BLOCK_START_DATE = #{blockStartDate},
+			</if>
+			<if test="blockExpireDate != null and !''blockExpireDate">
+				BLOC_EXPIRE_DATE = #{blockExpireDate},
+			</if>
+			<if test="blockCause != null and !''blockCause">
+				BLOCK_CAUSE = #{blockCause}
+			</if>
+		</set>
+		WHERE
+			MEM_NO = #{memNo}
+	</update>
+	
+	<delete id="deleteBlockMember" parameterType="Integer">
+		DELETE FROM
+			TB_BLOCK_MEMBER
+		WHERE
+			MEM_NO = #{memNo}
+	</delete>
 </mapper>

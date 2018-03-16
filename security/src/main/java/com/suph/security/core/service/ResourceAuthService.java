@@ -37,4 +37,5 @@ public interface ResourceAuthService{
 	 * @return
 	 */
 	public abstract Map<String, Object> changeResourceAuth(ResourceAuthDTO resourceAuthDTO);
+	
 }
