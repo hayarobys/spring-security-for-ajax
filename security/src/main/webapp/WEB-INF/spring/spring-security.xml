@@ -65,8 +65,11 @@
 		use-expressions="true"
 		security-context-repository-ref="customSecurityContextRepository"
 		entry-point-ref="customAuthenticationEntryPoint"
+		create-session="never"
 	>
-		<request-cache ref="nullRequestCache"/>
+		<!-- 세션고정공격 방어를 위해, 로그인시 JSESSIONID 변경 -->
+		<session-management session-fixation-protection="changeSessionId">
+		</session-management>
 		
 		<!-- CSRF 방어 필터 추가. 단 필터만 선언하지 말고, 요청/응답 페이지 내에서도 해당 토큰을 주었다 받았다 해주어야 함 -->
 		<!-- Ajax, Multipart Form, GET 각각의 토큰 포함 방식이 다름에 주의 -->

@@ -91,7 +91,7 @@ public class MemberServiceImpl implements MemberService{
 		// 이 계정의 권한들을 Set -> List로 변환하여 계정 객체에 저장.
 		List<GrantedAuthority> dbAuths = new ArrayList<GrantedAuthority>(dbAuthsSet);
 		
-		BlockMemberDTO blockInfo = blockMemberDAO.selectBlockMemberByMemNoAndAfterCurrentDate(user.getMemNo());
+		BlockMemberDTO blockInfo = blockMemberDAO.selectBlockMemberByMemNoAndExpireDateIsAfterTheCurrentDate(user.getMemNo());
 		
 		MemberInfo result = new MemberInfo(
 				user.getMemNo(),

@@ -1,5 +1,8 @@
 package com.suph.security.core.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -10,9 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.suph.security.core.dao.ResourceDAO;
 import com.suph.security.core.dto.BlockMemberDTO;
 import com.suph.security.core.service.BlockMemberService;
 
@@ -33,22 +36,38 @@ public class BlockMemberController{
 	}
 	
 	/**
-	 * 특정 계정의 차단 이력을 조회합니다.
+	 * 현시간 기준, 특정 계정의 차단 종료일이 남아 있을 경우, 그 차단 정보를 조회합니다.
 	 * @param memNo
 	 * @return
 	 */
 	@RequestMapping(value="/block-member/{memNo}", method=RequestMethod.GET)
-	public @ResponseBody Map<String, Object> getBlockMemberByMemNo(@PathVariable(required=true) Integer memNo){
-		return blockMemberService.getBlockMemberByMemNo(memNo);
+	public @ResponseBody Map<String, Object> getBlockMemberByMemNoAndExpireDateIsAfterTheCurrentDate(@PathVariable(required=true) Integer memNo){
+		return blockMemberService.getBlockMemberByMemNoAndExpireDateIsAfterTheCurrentDate(memNo);
 	}
 	
 	/**
-	 * 모든 차단 계정 목록 조회
+	 * 현시간 기준, 차단 종료일이 남아있는 모든 차단 목록 조회
 	 * @return
 	 */
 	@RequestMapping(value="/block-member", method=RequestMethod.GET)
-	public @ResponseBody Map<String, Object> getBlockMember(){
-		return blockMemberService.getBlockMember();
+	public @ResponseBody Map<String, Object> getBlockMember(
+			@RequestParam(value="start", required=false)	String blockStartDate,
+			@RequestParam(value="expire", required=false)	String blockExpireDate,
+			@RequestParam(value="time[]", required=false)	String[] searchTime
+	){
+		//logger.debug("시작일:{}, 종료일:{}, 검색범위:{}", new Object[]{blockStartDate, blockExpireDate, searchTime});
+		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+		
+		Date startDate = null;
+		Date expireDate = null;
+		try{
+			startDate = format.parse(blockStartDate);
+			expireDate = format.parse(blockExpireDate);
+		}catch(ParseException e){	
+			e.printStackTrace();
+		}
+		
+		return blockMemberService.getBlockMember(startDate, expireDate, searchTime);
 	}
 	
 	/**
@@ -57,7 +76,7 @@ public class BlockMemberController{
 	 * @param blockMemberDTO
 	 * @return
 	 */
-	@RequestMapping(value="/block-member/{memNo}", method=RequestMethod.POST)
+	@RequestMapping(value="/block-member", method=RequestMethod.POST)
 	public @ResponseBody Map<String, Object> postBlockMember(@RequestBody BlockMemberDTO blockMemberDTO){
 		return blockMemberService.postBlockMember(blockMemberDTO);
 	}

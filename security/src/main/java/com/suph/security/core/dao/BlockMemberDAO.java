@@ -9,24 +9,24 @@ import com.suph.security.core.dto.BlockMemberDTO;
 @Repository
 public interface BlockMemberDAO{
 	/**
-	 * 특정 계정의 차단 이력을 조회합니다.
+	 * 특정 계정의 과거 포함 모든 차단 이력을 조회합니다.
 	 * @param memNo
 	 * @return
 	 */
 	public abstract List<BlockMemberDTO> selectBlockMemberByMemNo(Integer memNo);
 	
 	/**
-	 * 특정 계정이 현재 차단 상태인지 조회합니다.
+	 * 현시간 기준, 특정 계정의 차단 종료일이 남아 있을 경우, 그 차단 정보를 조회합니다.
 	 * @param memNo
 	 * @return
 	 */
-	public abstract BlockMemberDTO selectBlockMemberByMemNoAndAfterCurrentDate(Integer memNo);
+	public abstract BlockMemberDTO selectBlockMemberByMemNoAndExpireDateIsAfterTheCurrentDate(Integer memNo);
 	
 	/**
-	 * 모든 차단 계정 정보를 조회합니다.
+	 * 현시간 기준, 차단 종료일이 남아있는 모든 차단 목록을 조회합니다.
 	 * @return
 	 */
-	public abstract List<BlockMemberDTO> selectBlockMember();
+	public abstract List<BlockMemberDTO> selectBlockMemberExpireDateIsAfterTheCurrentDate();
 	
 	/**
 	 * 차단 계정을 추가합니다.

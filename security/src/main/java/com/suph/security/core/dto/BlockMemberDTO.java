@@ -4,6 +4,12 @@ package com.suph.security.core.dto;
  * TB_BLOCK_MEMBER 차단 계정 테이블의 정보를 옮기는 역할
  */
 public class BlockMemberDTO{
+	/**
+	 * 실제 존재하는 컬럼이 아닌, SQL문으로 concat함수를 이용해 생성한 가상 컬럼 입니다.
+	 * ex) tester/테스터/11 아이디/닉네임/계정일련번호
+	 * dataField는 memNo로, displayField는 memInfo로 출력하는데 쓰입니다.
+	 */
+	private String memInfo;
 	/** 계정 일련 번호 */
 	private Integer memNo;
 	/** 차단 시작 일자 */
@@ -12,6 +18,14 @@ public class BlockMemberDTO{
 	private java.util.Date blockExpireDate;
 	/** 차단 사유 */
 	private String blockCause;
+	
+	public String getMemInfo(){
+		return memInfo;
+	}
+	
+	public void setMemInfo(String memInfo){
+		this.memInfo = memInfo;
+	}
 	
 	public Integer getMemNo(){
 		return memNo;
@@ -47,7 +61,9 @@ public class BlockMemberDTO{
 
 	@Override
 	public String toString(){
-		return "BlockMemberDTO [memNo=" + memNo + ", blockStartDate=" + blockStartDate + ", blockExpireDate="
-				+ blockExpireDate + ", blockCause=" + blockCause + "]";
+		return "BlockMemberDTO [memInfo=" + memInfo + ", memNo=" + memNo + ", blockStartDate=" + blockStartDate
+				+ ", blockExpireDate=" + blockExpireDate + ", blockCause=" + blockCause + "]";
 	}
 }
+
+

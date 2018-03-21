@@ -16,6 +16,7 @@ public class MemberDTO{
 	private String memNicknm;
 	/** 계정 상태 (활성, 휴면, 차단, 탈퇴, ...) */
 	private String memState;
+	
 	/**
 	 * LAST_LOGIN_DATE 마지막 로그인 일자
 	 */
