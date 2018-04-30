@@ -3,12 +3,14 @@ package com.suph.security.core.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.suph.security.core.dto.BlockMemberDTO;
+import com.suph.security.core.dto.SearchBlockMemberDTO;
 import com.suph.security.core.service.BlockMemberService;
 
 @Controller
@@ -46,28 +49,48 @@ public class BlockMemberController{
 	}
 	
 	/**
-	 * 현시간 기준, 차단 종료일이 남아있는 모든 차단 목록 조회
+	 * 현시간 기준, 검색 조건에 따른 차단 이력 조회
 	 * @return
 	 */
 	@RequestMapping(value="/block-member", method=RequestMethod.GET)
 	public @ResponseBody Map<String, Object> getBlockMember(
-			@RequestParam(value="start", required=false)	String blockStartDate,
-			@RequestParam(value="expire", required=false)	String blockExpireDate,
-			@RequestParam(value="time[]", required=false)	String[] searchTime
+			@RequestParam(value="searchType",		required=false)	String searchType,
+			@RequestParam(value="searchKeyword",	required=false)	String searchKeyword,
+			@RequestParam(value="searchStartDate",	required=false)	String blockStartDate,
+			@RequestParam(value="searchExpireDate",	required=false)	String blockExpireDate,
+			@RequestParam(value="searchTime[]",		required=false)	List<String> searchTime
 	){
-		//logger.debug("시작일:{}, 종료일:{}, 검색범위:{}", new Object[]{blockStartDate, blockExpireDate, searchTime});
+		//logger.debug("searchTime[]: {}", searchTime);
+		if(searchKeyword != null){
+			logger.debug("검색 키워드 자료형: {}", searchKeyword.getClass().getName());	
+		}
+		
+		SearchBlockMemberDTO searchBlockMemberDTO = new SearchBlockMemberDTO();
+		
+		searchBlockMemberDTO.setSearchType(searchType);
+		searchBlockMemberDTO.setSearchKeyword(searchKeyword);
+		searchBlockMemberDTO.setSearchTime(searchTime);
+		
 		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
 		
 		Date startDate = null;
 		Date expireDate = null;
-		try{
-			startDate = format.parse(blockStartDate);
-			expireDate = format.parse(blockExpireDate);
-		}catch(ParseException e){	
-			e.printStackTrace();
+		
+		if(StringUtils.hasText(blockStartDate)){
+			try{
+				startDate = format.parse(blockStartDate);				
+				searchBlockMemberDTO.setBlockStartDate(startDate);
+			}catch(ParseException e){ e.printStackTrace(); }
 		}
 		
-		return blockMemberService.getBlockMember(startDate, expireDate, searchTime);
+		if(StringUtils.hasText(blockExpireDate)){
+			try{
+				expireDate = format.parse(blockExpireDate);
+				searchBlockMemberDTO.setBlockExpireDate(expireDate);
+			}catch(ParseException e){ e.printStackTrace(); }
+		}
+						
+		return blockMemberService.getBlockMember(searchBlockMemberDTO);
 	}
 	
 	/**
@@ -87,9 +110,9 @@ public class BlockMemberController{
 	 * @param blockMemberDTO
 	 * @return
 	 */
-	@RequestMapping(value="/block-member/{memNo}", method=RequestMethod.PATCH)
-	public @ResponseBody Map<String, Object> patchBlockMember(@PathVariable(required=true) Integer memNo, @RequestBody BlockMemberDTO blockMemberDTO){
-		return blockMemberService.patchBlockMember(memNo, blockMemberDTO);
+	@RequestMapping(value="/block-member/{blockNo}", method=RequestMethod.PATCH)
+	public @ResponseBody Map<String, Object> patchBlockMember(@PathVariable(required=true) Integer blockNo, @RequestBody BlockMemberDTO blockMemberDTO){
+		return blockMemberService.patchBlockMember(blockNo, blockMemberDTO);
 	}
 	
 	/**
@@ -97,9 +120,9 @@ public class BlockMemberController{
 	 * @param memNo
 	 * @return
 	 */
-	@RequestMapping(value="/block-member/{memNo}", method=RequestMethod.DELETE)
-	public @ResponseBody Map<String, Object> deleteBlockMember(@PathVariable(required=true) Integer memNo){
-		return blockMemberService.deleteBlockMember(memNo);
+	@RequestMapping(value="/block-member/{blockNo}", method=RequestMethod.DELETE)
+	public @ResponseBody Map<String, Object> deleteBlockMember(@PathVariable(required=true) Integer blockNo){
+		return blockMemberService.deleteBlockMember(blockNo);
 	}
 }
 

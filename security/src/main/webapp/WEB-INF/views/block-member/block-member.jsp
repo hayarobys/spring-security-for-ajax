@@ -30,9 +30,18 @@
 		<hr />
 		<div class="search_box">
 			<form method="GET" id="searchForm">
-				<div id="search_block_start_date" name="blockStartDate" class="datetime"><!-- javascript로 jqxdatimeinput 생성 영역 --></div>
+				<div id="search_member">
+					<select id="searchType" name="searchType">
+						<option value="ID" label="아이디" />
+						<option value="NICKNM" label="닉네임" />
+						<option value="NO" label="계정 일련 번호" />
+					</select>(으)로 검색: 
+					<input type="text" id="searchKeyword" name="searchKeyword" value="" />
+				</div>
+				
+				<div id="search_block_start_date" name="searchStartDate" class="datetime"><!-- javascript로 jqxdatimeinput 생성 영역 --></div>
 				<div class="datetime">&nbsp;&nbsp;~&nbsp;&nbsp;</div>
-				<div id="search_block_expire_date" name="blockExpireDate" class="datetime"><!-- javascript로 jqxdatimeinput 생성 영역 --></div>
+				<div id="search_block_expire_date" name="searchExpireDate" class="datetime"><!-- javascript로 jqxdatimeinput 생성 영역 --></div>
 				
 				<input type="checkbox" id="checkbox_search_past" name="search_time" value="PAST" />
 				<label for="checkbox_search_past">과거</label>&nbsp;&nbsp;|

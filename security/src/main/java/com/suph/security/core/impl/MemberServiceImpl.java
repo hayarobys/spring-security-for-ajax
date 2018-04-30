@@ -91,6 +91,7 @@ public class MemberServiceImpl implements MemberService{
 		// 이 계정의 권한들을 Set -> List로 변환하여 계정 객체에 저장.
 		List<GrantedAuthority> dbAuths = new ArrayList<GrantedAuthority>(dbAuthsSet);
 		
+		// 이 계정의 차단 정보 조회하여 계정 객체에 저장.
 		BlockMemberDTO blockInfo = blockMemberDAO.selectBlockMemberByMemNoAndExpireDateIsAfterTheCurrentDate(user.getMemNo());
 		
 		MemberInfo result = new MemberInfo(

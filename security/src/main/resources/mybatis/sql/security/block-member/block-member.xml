@@ -5,6 +5,7 @@
 <mapper namespace="com.suph.security.core.dao.BlockMemberDAO">
 
 	<resultMap type="com.suph.security.core.dto.BlockMemberDTO" id="BlockMemberDTO">
+		<result column="BLOCK_NO" property="blockNo"/>
 		<result column="MEM_NO" property="memNo"/>
 		<result column="BLOCK_START_DATE" property="blockStartDate" jdbcType="TIMESTAMP"/>
 		<result column="BLOCK_EXPIRE_DATE" property="blockExpireDate" jdbcType="TIMESTAMP"/>
@@ -54,6 +55,86 @@
 			BM.BLOCK_EXPIRE_DATE > CURRENT_TIMESTAMP()
 	</select>
 	
+	<!-- 현시간 기준, 과거/현재/미래의 차단 목록을 반환합니다. 이때 검색 조건으로 아이디/닉네임/계정 일련 번호/검색기간을 지정할 수 있습니다. -->
+	<select id="selectBlockMemberBySearchValue" parameterType="SearchBlockMemberDTO"  resultMap="BlockMemberDTO">
+		
+		SELECT
+			BM.BLOCK_NO,
+			BM.MEM_NO,
+			BM.BLOCK_START_DATE,
+			BM.BLOCK_EXPIRE_DATE,
+			BM.BLOCK_CAUSE,
+			
+			CONCAT(M.MEM_ID, ' / ', M.MEM_NICKNM, ' / ', M.MEM_NO) AS memInfo
+		FROM
+			TB_BLOCK_MEMBER AS BM
+			INNER JOIN TB_MEMBER AS M ON(BM.MEM_NO = M.MEM_NO)
+		WHERE
+			1=1
+			<choose>
+				<when test="@com.suph.security.core.util.EmptyCheck@notEmpty(searchTime)">
+					AND
+					<foreach item="item" collection="searchTime" index="index" open="(" separator="OR" close=")">
+						<if test="item eq 'PAST'">
+						<![CDATA[/* PAST 과거 */
+							(BM.BLOCK_EXPIRE_DATE < CURRENT_TIMESTAMP())
+						]]>
+						</if> 
+						<if test="item eq 'PRESENT'">
+						<![CDATA[/* PRESENT 현재 */
+							(
+								BM.BLOCK_START_DATE < CURRENT_TIMESTAMP()
+							AND
+								CURRENT_TIMESTAMP() < BM.BLOCK_EXPIRE_DATE
+							)
+						]]>
+						</if>
+						<if test="item eq 'FUTURE'">
+						<![CDATA[/* FUTURE 미래 */
+							(CURRENT_TIMESTAMP() < BM.BLOCK_START_DATE)
+						]]>
+						</if>
+					</foreach>
+				</when>
+				<otherwise>
+					AND false
+				</otherwise>
+			</choose>
+				
+			<if test="@com.suph.security.core.util.EmptyCheck@notEmpty(blockStartDate)">
+			<![CDATA[/* 검색 시작일자 */
+				AND #{blockStartDate} < BM.BLOCK_START_DATE
+			]]>
+			</if>
+			
+			<if test="@com.suph.security.core.util.EmptyCheck@notEmpty(blockExpireDate)">
+			<![CDATA[/* 검색 종료일자 */
+				AND BM.BLOCK_START_DATE < #{blockExpireDate}
+			]]>
+			</if>
+			
+			<if test="	@com.suph.security.core.util.EmptyCheck@notEmpty(searchKeyword)
+				and	@com.suph.security.core.util.EmptyCheck@notEmpty(searchType)	">
+				<choose>
+					<when test="searchType eq 'ID'">
+						/* 아이디 검색 */
+						AND M.MEM_ID LIKE CONCAT('%', #{searchKeyword}, '%')
+					</when>
+					<when test="searchType eq 'NICKNM'">
+						/* 닉네임 검색 */
+						AND M.MEM_NICKNM LIKE CONCAT('%', #{searchKeyword}, '%')
+					</when>
+					<when test="searchType eq 'NO'">
+						/* 회원 번호 검색 */
+						AND M.MEM_NO LIKE  #{searchKeyword}
+					</when>
+					<otherwise>
+						
+					</otherwise>
+				</choose>
+			</if>
+	</select>
+	
 	<insert id="insertBlockMember" parameterType="BlockMemberDTO">
 		INSERT INTO
 			TB_BLOCK_MEMBER(
@@ -84,13 +165,13 @@
 			</if>
 		</set>
 		WHERE
-			MEM_NO = #{memNo}
+			BLOCK_NO = #{blockNo}
 	</update>
 	
 	<delete id="deleteBlockMember" parameterType="Integer">
 		DELETE FROM
 			TB_BLOCK_MEMBER
 		WHERE
-			MEM_NO = #{memNo}
+			BLOCK_NO = #{blockNo}
 	</delete>
 </mapper>

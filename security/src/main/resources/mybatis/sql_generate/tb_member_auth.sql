@@ -1,4 +1,4 @@
-Select MEM_NO, AUTH_NO from security.tb_member_auth
+
 USE security;
 
 CREATE TABLE `tb_member_auth` (

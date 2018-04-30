@@ -1,4 +1,4 @@
-Select AUTH_NO, AUTH_NM, AUTH_EXPLANATION from security.tb_auth
+
 USE security;
 
 CREATE TABLE `tb_auth` (

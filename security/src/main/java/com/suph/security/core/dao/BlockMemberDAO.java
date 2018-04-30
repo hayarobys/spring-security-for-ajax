@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.suph.security.core.dto.BlockMemberDTO;
+import com.suph.security.core.dto.SearchBlockMemberDTO;
 
 @Repository
 public interface BlockMemberDAO{
@@ -29,6 +30,13 @@ public interface BlockMemberDAO{
 	public abstract List<BlockMemberDTO> selectBlockMemberExpireDateIsAfterTheCurrentDate();
 	
 	/**
+	 * 현시간 기준, 검색조건에 따른 과거/현재/미래의 차단 목록을 반환합니다.
+	 * @param searchBlockMemberDTO
+	 * @return
+	 */
+	public abstract List<BlockMemberDTO> selectBlockMemberBySearchValue(SearchBlockMemberDTO searchBlockMemberDTO);
+	
+	/**
 	 * 차단 계정을 추가합니다.
 	 * @param blockMemberDTO
 	 */
@@ -42,7 +50,7 @@ public interface BlockMemberDAO{
 	
 	/**
 	 * 차단 계정 정보를 삭제 합니다.
-	 * @param memNo
+	 * @param blockNo
 	 */
-	public abstract void deleteBlockMember(Integer memNo);
+	public abstract void deleteBlockMember(Integer blockNo);
 }

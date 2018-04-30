@@ -7,9 +7,12 @@ public class BlockMemberDTO{
 	/**
 	 * 실제 존재하는 컬럼이 아닌, SQL문으로 concat함수를 이용해 생성한 가상 컬럼 입니다.
 	 * ex) tester/테스터/11 아이디/닉네임/계정일련번호
-	 * dataField는 memNo로, displayField는 memInfo로 출력하는데 쓰입니다.
+	 * dataField는 blockNo로, displayField는 memInfo로 출력하는데 쓰입니다.
 	 */
 	private String memInfo;
+	
+	/** 차단 일련 번호 */
+	private Integer blockNo;
 	/** 계정 일련 번호 */
 	private Integer memNo;
 	/** 차단 시작 일자 */
@@ -25,6 +28,14 @@ public class BlockMemberDTO{
 	
 	public void setMemInfo(String memInfo){
 		this.memInfo = memInfo;
+	}
+	
+	public Integer getBlockNo(){
+		return blockNo;
+	}
+
+	public void setBlockNo(Integer blockNo){
+		this.blockNo = blockNo;
 	}
 	
 	public Integer getMemNo(){
@@ -61,8 +72,8 @@ public class BlockMemberDTO{
 
 	@Override
 	public String toString(){
-		return "BlockMemberDTO [memInfo=" + memInfo + ", memNo=" + memNo + ", blockStartDate=" + blockStartDate
-				+ ", blockExpireDate=" + blockExpireDate + ", blockCause=" + blockCause + "]";
+		return "BlockMemberDTO [memInfo=" + memInfo + ", blockNo=" + blockNo + ", memNo=" + memNo + ", blockStartDate="
+				+ blockStartDate + ", blockExpireDate=" + blockExpireDate + ", blockCause=" + blockCause + "]";
 	}
 }
 

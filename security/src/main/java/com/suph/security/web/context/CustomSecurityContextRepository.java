@@ -88,6 +88,10 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	@Value("#{security['jwt.claim.authorities']}")
 	private String SECURITY_JWT_AUTHORITIES;
 	
+	/** JWT 인증토큰의 payload에 저장할 차단 목록의 Claim명 입니다. */
+	@Value("#{security['jwt.claim.block_info']}")
+	private String SECURITY_JWT_BLOCK_INFO;
+	
 	/** JWT 인증토큰의 payload에 저장할 차단 시작 일자 Claim명 입니다. */
 	@Value("#{security['jwt.claim.block_start_date']}")
 	private String SECURITY_JWT_BLOCK_START_DATE;
@@ -289,7 +293,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 		
 		// JWT 생성일 (이 계정의 마지막 로그인 날짜. 정상적인 로그인 화면을 통과하면서 만들어진 토큰의 생성 일 을 의미)
 		Date issuedAt = claims.getIssuedAt();
-				
+		
 		MemberInfo memberInfo = new MemberInfo(Integer.parseInt(no), id, "[PROTECTED]", name, roleList, blockInfo, issuedAt);
 		
 		// MemberInfo -> (Authentication)UsernamePasswordAuthenticationToken

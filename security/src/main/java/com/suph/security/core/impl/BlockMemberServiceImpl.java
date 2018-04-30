@@ -1,6 +1,5 @@
 package com.suph.security.core.impl;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.suph.security.core.dao.BlockMemberDAO;
 import com.suph.security.core.dto.BlockMemberDTO;
+import com.suph.security.core.dto.SearchBlockMemberDTO;
 import com.suph.security.core.service.BlockMemberService;
 
 @Service
@@ -41,12 +41,15 @@ public class BlockMemberServiceImpl implements BlockMemberService{
 	}
 	
 	@Override
-	public Map<String, Object> getBlockMember(Date blockStartDate, Date blockExpireDate, String[] searchTime){
+	public Map<String, Object> getBlockMember(SearchBlockMemberDTO searchBlockMemberDTO){
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		List<BlockMemberDTO> list = null;
 		
+		LOGGER.debug("searchBlockMemberDTO: {}", searchBlockMemberDTO);
+		
 		try{
-			list = blockMemberDAO.selectBlockMemberExpireDateIsAfterTheCurrentDate();			
+			list = blockMemberDAO.selectBlockMemberBySearchValue(searchBlockMemberDTO);
+			
 			returnMap.put("list", list);
 			returnMap.put("result", "success");
 		}catch(DataAccessException dae){
@@ -77,9 +80,9 @@ public class BlockMemberServiceImpl implements BlockMemberService{
 	}
 
 	@Override
-	public Map<String, Object> patchBlockMember(Integer memNo, BlockMemberDTO blockMemberDTO){
+	public Map<String, Object> patchBlockMember(Integer blockNo, BlockMemberDTO blockMemberDTO){
 		Map<String, Object> returnMap = new HashMap<String, Object>();		
-		blockMemberDTO.setMemNo(memNo);
+		blockMemberDTO.setBlockNo(blockNo);
 		LOGGER.debug("이  값으로 수행: {}", blockMemberDTO);
 		try{
 			blockMemberDAO.updateBlockMember(blockMemberDTO);
@@ -93,11 +96,11 @@ public class BlockMemberServiceImpl implements BlockMemberService{
 	}
 
 	@Override
-	public Map<String, Object> deleteBlockMember(Integer memNo){
+	public Map<String, Object> deleteBlockMember(Integer blockNo){
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
 		try{
-			blockMemberDAO.deleteBlockMember(memNo);
+			blockMemberDAO.deleteBlockMember(blockNo);
 			returnMap.put("result", "success");
 		}catch(DataAccessException dae){
 			returnMap.put("result", "fail");

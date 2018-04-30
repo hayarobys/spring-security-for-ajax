@@ -5,6 +5,9 @@
 <configuration>
 	<typeAliases>
 		<!-- MyBatis Mapper의 parameterType에서 사용할 별명. parameterMap이 아님에 주의 -->
+		<!-- 차단 된 계정을 검색하는데 사용됩니다. -->
+		<typeAlias type="com.suph.security.core.dto.SearchBlockMemberDTO" alias="SearchBlockMemberDTO"/>
+		
 		<!-- 차단 된 계정 정보를 옮기는데 사용됩니다. -->
 		<typeAlias type="com.suph.security.core.dto.BlockMemberDTO" alias="BlockMemberDTO"/>
 		

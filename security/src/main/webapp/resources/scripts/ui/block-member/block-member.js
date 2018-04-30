@@ -71,7 +71,16 @@ function initBlockMemberGrid(){
 		editmode: 'dblclick',
 		columns: [
 			{
-				text: '아이디/닉네임/일련 번호',
+				text: '일련 번호',
+				dataField: 'blockNo',
+				displayField: 'blockNo',
+				cellsalign: 'center',
+				align: 'center',
+				editable: false,
+				width: '8%'
+			},
+			{
+				text: '아이디/닉네임/계정 번호',
 				dataField: 'memNo',
 				displayField: 'memInfo',
 				cellsalign: 'center',
@@ -137,7 +146,15 @@ function initBlockMemberGrid(){
 					return editor.jqxDateTimeInput('getDate');
 				}
 			},
-			{text: '차단 사유', dataField: 'blockCause', cellsalign: 'left', align: 'center', editable: true, cellvaluechanging: cellValueChanging, width: '36%'}
+			{
+				text: '차단 사유',
+				dataField: 'blockCause',
+				cellsalign: 'left',
+				align: 'center',
+				editable: true,
+				cellvaluechanging: cellValueChanging,
+				width: '28%'
+			}
 		]
 	});
 	
@@ -155,7 +172,7 @@ function initBlockMemberGrid(){
 		/** 편집한 행 번호 */
 		var rowIndex = event.args.rowindex;
 		/** 편집한 권한 일련 번호 */
-		var memNo = event.args.row.memNo;
+		var blockNo = event.args.row.blockNo;
 		/** 편집한 컬럼명 */
 		var dataField = event.args.datafield;
 		
@@ -205,7 +222,7 @@ function initBlockMemberGrid(){
 		var jsonData = JSON.stringify(data);
 		
 		// 출력
-		console.log("전송할 json 데이터", memNo, jsonData);
+		console.log("전송할 json 데이터", blockNo, jsonData);
 				
 		// 수정 요청 전송
 		var token = $("meta[name='_csrf']").attr("content");
@@ -213,7 +230,7 @@ function initBlockMemberGrid(){
 		
 		$.ajax({
 			type: "PATCH",
-			url: "/security/block-member/" + Number(memNo),
+			url: "/security/block-member/" + Number(blockNo),
 			data: jsonData,
 			contentType: 'application/json',
 			dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
@@ -246,7 +263,8 @@ function initBlockMemberGrid(){
 * 서버로부터 block-member목록을 조회해 jqxGrid를 갱신 합니다.
 */
 function reloadBlockMemberGrid(){
-	var token = $("meta[name='_csrf']").attr("content");
+	search_block_member();
+	/*var token = $("meta[name='_csrf']").attr("content");
 	var header = $("meta[name='_csrf_header']").attr("content");
 	
 	$.ajax({
@@ -269,7 +287,7 @@ function reloadBlockMemberGrid(){
 		error: function(xhr){
 			console.log("error", xhr);
 		}
-	});
+	});*/
 }
 
 /**
@@ -284,6 +302,7 @@ function changeBlockMemberGrid(listData){
 		datatype: "array",
 		datafields: [
 			{name: 'memInfo', type: 'string'},
+			{name: 'blockNo', type: 'int'},
 			{name: 'memNo', type: 'int'},
 			{name: 'blockStartDate', type: 'date'},
 			{name: 'blockExpireDate', type: 'date'},
@@ -386,7 +405,7 @@ function objectifyForm(formArray){
  */
 function deleteSelectedBlockMember(){
 	// 현재 선택한 권한의 일련 번호 구하기
-	var selectedBlockMemberNoArray = String(getSelectedNoArray(blockMemberGridId, 'memNo'));
+	var selectedBlockMemberNoArray = String(getSelectedNoArray(blockMemberGridId, 'blockNo'));
 	
 	// 선택한 행이 없으면 이벤트 취소
 	if(selectedBlockMemberNoArray.length <= 0){
@@ -437,12 +456,14 @@ function popupSearchMemNo(){
 function search_block_member(){
 	// 전송할 json 데이터 생성
 	var searchData = {};
-	searchData.start = $("#search_block_start_date").val();
-	searchData.expire = $("#search_block_expire_date").val();
-	searchData.time = $("input[name='search_time']:checked").map(function(){
+	searchData.searchType = $("#searchType").val();
+	searchData.searchKeyword = $("#searchKeyword").val();
+	searchData.searchStartDate = $("#search_block_start_date").val();
+	searchData.searchExpireDate = $("#search_block_expire_date").val();
+	searchData.searchTime = $("input[name='search_time']:checked").map(function(){
 		return $(this).val();
 	}).get();
-		
+	
 	// 출력
 	console.log('검색조건', searchData);
 	console.log('전송할 데이터', decodeURIComponent($.param(searchData)));

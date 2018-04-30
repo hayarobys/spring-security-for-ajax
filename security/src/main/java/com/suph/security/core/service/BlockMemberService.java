@@ -1,9 +1,9 @@
 package com.suph.security.core.service;
 
-import java.util.Date;
 import java.util.Map;
 
 import com.suph.security.core.dto.BlockMemberDTO;
+import com.suph.security.core.dto.SearchBlockMemberDTO;
 
 public interface BlockMemberService{
 	/**
@@ -15,9 +15,10 @@ public interface BlockMemberService{
 	
 	/**
 	 * 현시간 기준, 차단 종료일이 남아있는 모든 차단 목록 조회
+	 * @param searchBlockMemberDTO
 	 * @return
 	 */
-	public abstract Map<String, Object> getBlockMember(Date blockStartDate, Date blockExpireDate, String[] searchTime);
+	public abstract Map<String, Object> getBlockMember(SearchBlockMemberDTO searchBlockMemberDTO);
 	
 	/**
 	 * 차단 계정을 추가 합니다.
@@ -29,16 +30,16 @@ public interface BlockMemberService{
 	
 	/**
 	 * 차단 계정 정보를 수정 합니다.
-	 * @param memNo
+	 * @param blockNo
 	 * @param blockMemberDTO
 	 * @return
 	 */
-	public abstract Map<String, Object> patchBlockMember(Integer memNo, BlockMemberDTO blockMemberDTO);
+	public abstract Map<String, Object> patchBlockMember(Integer blockNo, BlockMemberDTO blockMemberDTO);
 	
 	/**
 	 * 차단 계정 정보를 삭제 합니다.
-	 * @param memNo
+	 * @param blockNo
 	 * @return
 	 */
-	public abstract Map<String, Object> deleteBlockMember(Integer memNo);
+	public abstract Map<String, Object> deleteBlockMember(Integer blockNo);
 }
