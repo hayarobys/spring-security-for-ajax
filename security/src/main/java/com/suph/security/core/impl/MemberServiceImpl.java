@@ -24,7 +24,7 @@ import org.springframework.util.StringUtils;
 
 import com.suph.security.core.dao.BlockMemberDAO;
 import com.suph.security.core.dao.MemberDAO;
-import com.suph.security.core.dto.BlockMemberDTO;
+import com.suph.security.core.dto.BlockInfoDTO;
 import com.suph.security.core.dto.MemberDTO;
 import com.suph.security.core.enums.MemberState;
 import com.suph.security.core.service.MemberAuthService;
@@ -47,11 +47,7 @@ public class MemberServiceImpl implements MemberService{
 		
 	protected final MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
 	protected Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
-	/*
-	public void setMemberAuthService(MemberAuthService memberAuthService){
-		this.memberAuthService = memberAuthService;
-	}
-	*/
+	
 	@Override
 	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException{
 		// DB로부터 해당 ID의 계정 정보 조회
@@ -91,8 +87,8 @@ public class MemberServiceImpl implements MemberService{
 		// 이 계정의 권한들을 Set -> List로 변환하여 계정 객체에 저장.
 		List<GrantedAuthority> dbAuths = new ArrayList<GrantedAuthority>(dbAuthsSet);
 		
-		// 이 계정의 차단 정보 조회하여 계정 객체에 저장.
-		BlockMemberDTO blockInfo = blockMemberDAO.selectBlockMemberByMemNoAndExpireDateIsAfterTheCurrentDate(user.getMemNo());
+		// 이 계정의 현재 차단 정보를 조회하여 계정 객체에 저장.
+		List<BlockInfoDTO> blockInfo = blockMemberDAO.selectCurrentBlockMemberInfoByMemNo(user.getMemNo());
 		
 		MemberInfo result = new MemberInfo(
 				user.getMemNo(),

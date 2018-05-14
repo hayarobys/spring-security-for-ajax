@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page isErrorPage="true"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ page import="org.springframework.security.core.context.SecurityContextHolder"%>
 <%@ page import="org.springframework.security.core.Authentication"%>
 <%@ page import="org.springframework.security.core.userdetails.UserDetails"%>
@@ -45,11 +46,28 @@
 				</c:if>
 				<c:if test="${not empty id}">
 					계정 아이디: ${id}<br />
-				</c:if>
+				</c:if> 
 				<c:if test="${not empty name}">
 					계정 닉네임: ${name}<br />
 				</c:if>
-				<c:if test="${not empty blockinfo.blockCause}">
+				<c:if test="${not empty blockinfo}">
+					<br/>[차단 정보]<br />
+					<c:forEach items="${blockinfo}" var="vo" varStatus="status">
+						<jsp:useBean id="blockStartDate" class="java.util.Date" />
+						<c:set target="${blockStartDate}" property="time" value="${vo.blockStartDate}" />
+						
+						<jsp:useBean id="blockExpireDate" class="java.util.Date" />
+						<c:set target="${blockExpireDate}" property="time" value="${vo.blockExpireDate}" />
+						
+						<p>
+							<b>${status.count}</b><br />
+							차단 사유: ${vo.blockCause}<br />
+							차단 기간: [<fmt:formatDate value="${blockStartDate}" pattern="yyyy/MM/dd HH:mm"/> ~ <fmt:formatDate value="${blockExpireDate}" pattern="yyyy/MM/dd HH:mm"/>]<br />
+						</p>
+					</c:forEach>						
+				</c:if>
+				
+				<%-- <c:if test="${not empty blockinfo.blockCause}">
 					차단 사유: ${blockinfo.blockCause}<br />
 				</c:if>
 				<c:if test="${not empty blockinfo.blockStartDate}">
@@ -57,7 +75,7 @@
 				</c:if>
 				<c:if test="${not empty blockinfo.blockExpireDate}">
 					차단 만료 일자: ${blockinfo.blockExpireDate}<br />
-				</c:if>
+				</c:if> --%>
 			</p>
 			
 			

@@ -31,7 +31,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
-import com.suph.security.core.dto.BlockMemberDTO;
+import com.suph.security.core.dto.BlockInfoDTO;
 import com.suph.security.core.userdetails.MemberInfo;
 import com.suph.security.crypto.jwt.JWTUtility;
 
@@ -92,18 +92,6 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	@Value("#{security['jwt.claim.block_info']}")
 	private String SECURITY_JWT_BLOCK_INFO;
 	
-	/** JWT 인증토큰의 payload에 저장할 차단 시작 일자 Claim명 입니다. */
-	@Value("#{security['jwt.claim.block_start_date']}")
-	private String SECURITY_JWT_BLOCK_START_DATE;
-	
-	/** JWT 인증토큰의 payload에 저장할 차단 만료 일자 Claim명 입니다. */
-	@Value("#{security['jwt.claim.block_expire_date']}")
-	private String SECURITY_JWT_BLOCK_EXPIRE_DATE;
-	
-	/** JWT 인증토큰의 payload에 저장할 차단 사유 Claim명 입니다. */
-	@Value("#{security['jwt.claim.block_cause']}")
-	private String SECURITY_JWT_BLOCK_CAUSE;
-	
 	/** JWT 닉네임 토큰의 payload에 저장할 닉네임 Claim명 입니다. */
 	@Value("#{security['client.jwt.claim.name']}")
 	private String CLIENT_JWT_NAME;
@@ -114,9 +102,6 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	
 	/**	(미인증된)기본 내용과 동일한지를 확인하는 데 사용되는 SecurityContext 객체 */
 	private final Object contextObject = SecurityContextHolder.createEmptyContext();
-	
-	/** SecurityContext 생성을 위한 JWT가 저장될 쿠키의 key명 입니다. */
-	private String springSecurityContextKey = SPRING_SECURITY_CONTEXT_KEY;
 	
 	private boolean disableUrlRewriting = false;
 	
@@ -180,7 +165,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	 */
 	@Override
 	public boolean containsContext(HttpServletRequest request){
-		Cookie cookie = getCookieFromRequest(request, springSecurityContextKey);
+		Cookie cookie = getCookieFromRequest(request, SPRING_SECURITY_CONTEXT_KEY);
 		
 		if(cookie == null){
 			return false;
@@ -211,7 +196,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 		
 		// We now have the security context object from the session.
 		if(!(contextFromJWT instanceof SecurityContext)){
-			logger.warn(springSecurityContextKey + " did not contain a SecurityContext but contained: '"
+			logger.warn(SPRING_SECURITY_CONTEXT_KEY + " did not contain a SecurityContext but contained: '"
 					+ contextFromJWT + "'; are you improperly modifying the HttpServletRequest or Cookie directly?"
 					+ "(you should always use SecurityContextHolder)"
 			);
@@ -278,17 +263,13 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			roleList.add(grantedAuthority);
 		}
 		
-		// 차단 계정 정보
-		Long blockStartDate = (Long)JWTUtility.getClaim(claims, SECURITY_JWT_BLOCK_START_DATE);
-		Long blockExpireDate = (Long)JWTUtility.getClaim(claims, SECURITY_JWT_BLOCK_EXPIRE_DATE);
-		String blockCause = (String)JWTUtility.getClaim(claims, SECURITY_JWT_BLOCK_CAUSE);
-		//logger.debug("차단 시작 일: {}, 차단 만료 일: {}, 차단 사유: {}", new Object[]{blockStartDate, blockExpireDate, blockCause});
-		BlockMemberDTO blockInfo = null;
-		if(	blockExpireDate != null ){
-			blockInfo = new BlockMemberDTO();
-			blockInfo.setBlockStartDate( new Date(blockStartDate) );
-			blockInfo.setBlockExpireDate( new Date(blockExpireDate) );
-			blockInfo.setBlockCause( blockCause );
+		// 계정 차단 정보
+		List<BlockInfoDTO> blockInfo = null;
+		try{
+			blockInfo = (List<BlockInfoDTO>)JWTUtility.getClaim(claims, SECURITY_JWT_BLOCK_INFO);
+		}catch(ClassCastException cce){
+			cce.printStackTrace();
+			logger.debug("요청 쿠키로부터 {}를 List<BlockInfoDTO>로 타입캐스팅 도중 문제가 발생했습니다. 차단 정보를 null값으로 세팅합니다.", SECURITY_JWT_BLOCK_INFO);
 		}
 		
 		// JWT 생성일 (이 계정의 마지막 로그인 날짜. 정상적인 로그인 화면을 통과하면서 만들어진 토큰의 생성 일 을 의미)
@@ -355,7 +336,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 	}
 		
 	/**
-	 * 인증 토큰 생성
+	 * 인증 토큰 생성.
 	 * 스프링 시큐리티에서 최종적으로 생성한 SecurityContext를 JWT Cookie로 변환하는데 사용됩니다.
 	 * 단 JWT생성일은 요청당시 JWT의 내용을 그대로 유지합니다. 요청당시 토큰이나 생성일이 없었다면 현재시간으로 생성 합니다.
 	 * 이는 로그인 유효 시간을 검사하는데 사용됩니다.
@@ -375,7 +356,11 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			String id = memberInfo.getId();
 			String name = memberInfo.getName();
 			issuedAt = memberInfo.getIssuedAt();
-			BlockMemberDTO blockInfo = memberInfo.getBlockInfo();
+			
+			List<BlockInfoDTO> blockInfo = memberInfo.getBlockInfo();
+						
+			contextClaims.put(SECURITY_JWT_BLOCK_INFO, blockInfo);
+			
 			
 			Collection<? extends GrantedAuthority> authorityList = memberInfo.getAuthorities();
 			StringBuilder authBuilder = new StringBuilder();
@@ -392,11 +377,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 			contextClaims.put(SECURITY_JWT_NAME, name);
 			contextClaims.put(SECURITY_JWT_AUTHORITIES, authorities);
 			
-			if( blockInfo != null ){
-				contextClaims.put(SECURITY_JWT_BLOCK_START_DATE, blockInfo.getBlockStartDate());
-				contextClaims.put(SECURITY_JWT_BLOCK_EXPIRE_DATE, blockInfo.getBlockExpireDate());
-				contextClaims.put(SECURITY_JWT_BLOCK_CAUSE, blockInfo.getBlockCause());
-			}
+			
 		}else if(principal instanceof String){
 			contextClaims.put(SECURITY_JWT_NAME, (String)principal);
 		}
@@ -512,7 +493,7 @@ public class CustomSecurityContextRepository implements SecurityContextRepositor
 
         /**
          * 전달받은 SecurityContext를 응답 쿠키에 저장합니다.
-         * 보안 필터 체인을 돌고난 후에 최종적으로 수행되며, 수행 전 SecurityContext에서 변동시 생긴 경우에만 저장합니다.
+         * 보안 필터 체인을 돌고난 후에 최종적으로 수행되며, 수행 전 SecurityContext에서 변동이 생긴 경우에만 저장합니다.
          * 만약 인증상태로 요청이 왔으나, 보안 필터 체인을 돌고난 후 미인증 상태로 변경되었다면 응답 객체에 기존 쿠키를 제거하도록 설정합니다.
          */
 		@Override

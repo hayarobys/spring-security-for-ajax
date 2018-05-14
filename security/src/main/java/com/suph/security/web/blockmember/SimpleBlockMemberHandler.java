@@ -1,6 +1,7 @@
 package com.suph.security.web.blockmember;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.suph.security.core.dto.BlockMemberDTO;
+import com.suph.security.core.dto.BlockInfoDTO;
 import com.suph.security.core.userdetails.MemberInfo;
 
 public class SimpleBlockMemberHandler implements BlockMemberHandler{
@@ -37,10 +38,15 @@ public class SimpleBlockMemberHandler implements BlockMemberHandler{
 	) throws IOException, ServletException{
 		SecurityContextHolder.clearContext();
 		MemberInfo memberInfo = exception.getMemberInfo();
-		BlockMemberDTO blockInfo = memberInfo.getBlockInfo();
-		
+		List<BlockInfoDTO> blockInfo = memberInfo.getBlockInfo();
+		/*
 		LOGGER.info("이 요청자(계정번호: {})는 '{} ~ {}'의 기간 동안 차단된 계정 입니다.", new Object[]{
 			memberInfo.getUsername(), blockInfo.getBlockStartDate(), blockInfo.getBlockExpireDate()	
+		});
+		*/
+		
+		LOGGER.info("이 요청자({})는 차단된 계정 입니다: {}", new Object[]{
+				memberInfo.getUsername(), blockInfo	
 		});
 		
 		// 현재 접근 요청자의 ID를 request 영역에 저장해두어 로그인 페이지에서 이를 꺼내쓰도록 한다.
@@ -52,7 +58,7 @@ public class SimpleBlockMemberHandler implements BlockMemberHandler{
 		request.setAttribute(loginidname, loginid);	// 계정 아이디
 		request.setAttribute("name", name);			// 계정 닉네임
 		request.setAttribute(exceptionmsgname, exception.getMessage());
-		request.setAttribute(blockinfoname, memberInfo.getBlockInfo());
+		request.setAttribute(blockinfoname, blockInfo);
 		request.getRequestDispatcher(defaultFailureUrl).forward(request, response);
 	}
 	

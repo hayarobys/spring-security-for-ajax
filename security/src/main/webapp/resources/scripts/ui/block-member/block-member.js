@@ -2,6 +2,8 @@
 var blockMemberGridId = "#data_block_member";
 /** 등록할 BLOCK_MEMBER 정보가 있는 form id */
 var blockMemberFormId = "#blockMemberForm";
+/** 차단 계정 닉네임(아이디/일련번호) 입력 폼의 id */
+var memInfoInputFormId = "#memInfo";
 /** 차단 계정 일련 번호 입력 폼의 id */
 var memNoInputFormId = "#memNo";
 /** 차단 계정 검색 버튼의 id */
@@ -16,6 +18,7 @@ $(document).ready(function(){
 	
 	// BLOCK_MEMBER 그리드 갱신
 	reloadBlockMemberGrid();
+	
 });
 
 /**
@@ -348,8 +351,8 @@ function insertBlockMember(){
 	// 전송할 json 데이터 생성
 	var formData = {};
 	formData.memNo = $(memNoInputFormId).val();
-	formData.blockStartDate = $("#jqxdatetimeinputStart").jqxDateTimeInput('value');
-	formData.blockExpireDate = $("#jqxdatetimeinputExpire").jqxDateTimeInput('value');
+	formData.setStartDate = $("#jqxdatetimeinputStart").val();
+	formData.setExpireDate = $("#jqxdatetimeinputExpire").val();
 	formData.blockCause = $("#blockCause").val();
 	
 	var jsonForm = JSON.stringify(formData);
@@ -444,15 +447,6 @@ function deleteSelectedBlockMember(){
 	});
 }
 
-/**
- * 계정 검색 팝업 창을 띄웁니다.
- * @returns
- */
-function popupSearchMemNo(){
-	console.log('계정 검색');
-	
-}
-
 function search_block_member(){
 	// 전송할 json 데이터 생성
 	var searchData = {};
@@ -503,10 +497,30 @@ function search_block_member(){
 }
 
 
+/**
+ * 계정 검색 팝업창의 특정 변수(var chooseMemberInfo) 속 데이터를 꺼냈을때 호출되는 함수
+ * @param target
+ * @param prop
+ * @returns
+ */
+function getCallback(target, prop){
+	//console.log({type: 'get', target, prop});
+	return Reflect.get(target, prop);
+}
 
-
-
-
+/**
+ * 계정 검색 팝업창의 특정 변수(var chooseMemberInfo)에 데이터가 저장될때 호출되는 함수
+ * @param target
+ * @param prop
+ * @param value
+ * @returns
+ */
+function setCallback(target, prop, value){
+	//console.log({type: 'set', target, prop, value});
+	$(memInfoInputFormId).val(value);
+	$(memNoInputFormId).val(value);
+	return Reflect.set(target, prop, value);
+}
 
 
 

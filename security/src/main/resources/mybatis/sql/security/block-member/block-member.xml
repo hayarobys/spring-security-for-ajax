@@ -12,6 +12,12 @@
 		<result column="BLOCK_CAUSE" property="blockCause"/>
 	</resultMap>
 	
+	<resultMap type="com.suph.security.core.dto.BlockInfoDTO" id="BlockInfoDTO">
+		<result column="BLOCK_START_DATE" property="blockStartDate" jdbcType="TIMESTAMP"/>
+		<result column="BLOCK_EXPIRE_DATE" property="blockExpireDate" jdbcType="TIMESTAMP"/>
+		<result column="BLOCK_CAUSE" property="blockCause"/>
+	</resultMap>
+	
 	<select id="selectBlockMemberByMemNo" parameterType="Integer" resultMap="BlockMemberDTO">
 		SELECT
 			BLOCK_START_DATE,
@@ -23,7 +29,8 @@
 			MEM_NO = #{memNo}
 	</select>
 	
-	<select id="selectBlockMemberByMemNoAndExpireDateIsAfterTheCurrentDate" parameterType="Integer" resultMap="BlockMemberDTO">
+	<!-- MemberServiceImpl의 loadUserByUsername()에서 차단 정보를 조회하는데 사용됩니다. -->
+	<select id="selectBlockMemberByMemNoAndExpireDateIsAfterTheCurrentDate" parameterType="Integer" resultMap="BlockInfoDTO">
 		<![CDATA[
 		SELECT
 			BLOCK_START_DATE,
@@ -40,19 +47,38 @@
 		]]>
 	</select>
 	
-	<select id="selectBlockMemberExpireDateIsAfterTheCurrentDate" resultMap="BlockMemberDTO">
+	<!-- 특정 계정의 현재와 미래의 차단 목록을 조회합니다. -->
+	<select id="selectBlockMemberExpireDateIsAfterTheCurrentDate" parameterType="Integer" resultMap="BlockInfoDTO">
+		<![CDATA[
 		SELECT
-			BM.MEM_NO,
-			BM.BLOCK_START_DATE,
-			BM.BLOCK_EXPIRE_DATE,
-			BM.BLOCK_CAUSE,
-			/* tester/테스터/11 */
-			CONCAT(M.MEM_ID, ' / ', M.MEM_NICKNM, ' / ', M.MEM_NO) AS memInfo
+			BLOCK_START_DATE,
+			BLOCK_EXPIRE_DATE,
+			BLOCK_CAUSE
 		FROM
-			TB_BLOCK_MEMBER AS BM
-			INNER JOIN TB_MEMBER AS M ON(BM.MEM_NO = M.MEM_NO)
+			TB_BLOCK_MEMBER
 		WHERE
-			BM.BLOCK_EXPIRE_DATE > CURRENT_TIMESTAMP()
+				MEM_NO = #{memNo}
+			AND
+				CURRENT_TIMESTAMP() < BLOCK_EXPIRE_DATE
+		]]>
+	</select>
+	
+	<!-- 특정 계정의 현재 차단 정보 목록을 조회합니다. -->
+	<select id="selectCurrentBlockMemberInfoByMemNo" parameterType="Integer" resultMap="BlockInfoDTO">
+		<![CDATA[
+		SELECT
+			BLOCK_START_DATE,
+			BLOCK_EXPIRE_DATE,
+			BLOCK_CAUSE
+		FROM
+			TB_BLOCK_MEMBER
+		WHERE
+				MEM_NO = #{memNo}
+			AND
+				BLOCK_START_DATE < CURRENT_TIMESTAMP()
+			AND
+				CURRENT_TIMESTAMP() < BLOCK_EXPIRE_DATE
+		]]>
 	</select>
 	
 	<!-- 현시간 기준, 과거/현재/미래의 차단 목록을 반환합니다. 이때 검색 조건으로 아이디/닉네임/계정 일련 번호/검색기간을 지정할 수 있습니다. -->

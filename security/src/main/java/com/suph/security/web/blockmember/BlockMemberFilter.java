@@ -2,6 +2,8 @@ package com.suph.security.web.blockmember;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -18,7 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.Assert;
 
-import com.suph.security.core.dto.BlockMemberDTO;
+import com.suph.security.core.dto.BlockInfoDTO;
 import com.suph.security.core.userdetails.MemberInfo;
 import com.suph.security.web.toolonglogin.TooLongLoginBlockFilter;
 
@@ -63,16 +65,46 @@ public class BlockMemberFilter implements Filter{
 		Object principal = authentication.getPrincipal();
 		if(principal instanceof MemberInfo){
 			MemberInfo memberInfo = (MemberInfo)principal;
-			BlockMemberDTO blockInfo = memberInfo.getBlockInfo();
-			//LOGGER.debug("필터에서 읽은 차단 정보: {}", blockInfo);
+			
+			// class LinkedHashMap<K, V> extedns HashMap<K, V> implements Map<K, V>
+			List<BlockInfoDTO> blockInfo = memberInfo.getBlockInfo();
+			LOGGER.debug("필터에서 읽은 차단 정보: {}", blockInfo);
+			
+			// 이 계정에 현재 또는 미래에 대한 차단 정보가 있다면, 그중 현재 차단 기간이라는 정보가 있는지 조회합니다.
 			if(		blockInfo != null
-				&&	blockInfo.getBlockExpireDate().after( new Date() )
+				&&	blockInfo.size() > 0
+				//&&	blockInfo.getBlockExpireDate().after( new Date() )
 			){
-				// 차단된 계정이라면 로그아웃 처리
-				blockMemberHandler.onBlockMember(
-						request, response,
-						new BlockMemberException("차단된 계정입니다.", memberInfo)
-				);
+				Date currentTime = new Date();
+				LinkedHashMap<String, Object> blockInfoObj = null;
+				Long blockStartDateLong = null;
+				Date blockStartDate = null;
+				Long blockExpireDateLong = null;
+				Date blockExpireDate = null;
+				
+				for(Object obj : blockInfo){
+					blockInfoObj		= (LinkedHashMap<String, Object>)obj;
+					
+					blockStartDateLong	= (Long)blockInfoObj.get("blockStartDate");
+					blockStartDate		= new Date(blockStartDateLong);
+					
+					blockExpireDateLong	= (Long)blockInfoObj.get("blockExpireDate");
+					blockExpireDate		= new Date(blockExpireDateLong);
+					
+					String blockCause	= (String)blockInfoObj.get("blockCause");
+					
+					if(		blockStartDate.before(currentTime)
+						&&	blockExpireDate.after(currentTime)
+					){
+						// 현재 차단 기간에 있는 계정 이라면 로그아웃 처리
+						blockMemberHandler.onBlockMember(
+								request, response,
+								new BlockMemberException("차단된 계정입니다.", memberInfo)
+						);
+						
+						break;
+					}
+				} // end of for(){}
 			}
 		}
 		

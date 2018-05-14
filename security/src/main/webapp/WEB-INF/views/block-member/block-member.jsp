@@ -10,7 +10,8 @@
 	<link rel="stylesheet" href="<c:url value='/resources/css/ui/block-member/block-member.css'/>" />
 	
 	<script src="<c:url value='/resources/scripts/jqwidgets/jqx-all.js'/>"></script>
-	<script src="<c:url value='/resources/scripts/ui/block-member/block-member.js'/>"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>	<!-- 레이어 팝업에 드래그 기능을 부여하기 위한 참조 -->
+	<script charset="utf-8" src="<c:url value='/resources/scripts/ui/block-member/block-member.js'/>"></script>
 </head>
 <body>
 	
@@ -63,11 +64,13 @@
 				<table id="blockMemberFormTable">
 					<tr>
 						<th>
-							<label for="memNo">계정</label>
+							<label for="popupSearchMemNoButton">닉네임<br />(아이디/일련번호)</label>
 						</th>
 						<td>
-							<input id="memNo" name="memNo" type="text" />
-							<!-- <span>tester(테스터)</span> -->
+							<label for="popupSearchMemNoButton">
+								<input type="text" id="memInfo" name="memInfo" readonly="readonly" />
+								<input type="hidden" id="memNo" name="memNo" />
+							</label>
 							<button id="popupSearchMemNoButton" type="button" onclick="javascript:popupSearchMemNo();" >계정 검색</button>
 						</td>
 					</tr>
@@ -100,6 +103,8 @@
 			</form>
 		</div>
 	</section>
+	
+	<%@ include file="../member-search-popup/member-search-popup.jsp" %>
 	
 </body>
 </html>

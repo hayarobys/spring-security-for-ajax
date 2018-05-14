@@ -43,6 +43,28 @@ public class MemberController{
 	}
 	
 	/**
+	 * 특정 계정을 수정합니다
+	 * @param memNo 수정할 계정의 일련 번호
+	 * @param memberDTO 수정할 정보
+	 * @return
+	 */
+	@RequestMapping(value="/member/{memNo}", method=RequestMethod.PATCH)
+	public @ResponseBody Map<String, Object> patchMember(
+			@PathVariable(required=true) Integer memNo,
+			@RequestBody MemberDTO memberDTO
+	){
+		return memberService.patchMember(memNo, memberDTO);
+	}
+	
+	/**
+	 * 특정 계정 삭제(관리자 전용)
+	 */
+	@RequestMapping(value="/member/{memNo}", method=RequestMethod.DELETE)
+	public @ResponseBody Map<String, Object> deleteMember(@PathVariable(required=true) Integer memNo){
+		return memberService.deleteMember(memNo);
+	}
+	
+	/**
 	 * 회원가입 페이지로 이동합니다.
 	 * @return
 	 */
@@ -70,24 +92,10 @@ public class MemberController{
 	}
 	
 	/**
-	 * 특정 계정을 수정합니다
-	 * @param memNo 수정할 계정의 일련 번호
-	 * @param memberDTO 수정할 정보
-	 * @return
+	 * 나의 계정 삭제 / 회원 탈퇴(로그인 당사자 전용)
 	 */
-	@RequestMapping(value="/member/{memNo}", method=RequestMethod.PATCH)
-	public @ResponseBody Map<String, Object> patchMember(
-			@PathVariable(required=true) Integer memNo,
-			@RequestBody MemberDTO memberDTO
-	){
-		return memberService.patchMember(memNo, memberDTO);
-	}
-	
-	/**
-	 * 특정 계정 삭제 / 회원 탈퇴
-	 */
-	@RequestMapping(value="/member/{memNo}", method=RequestMethod.DELETE)
-	public @ResponseBody Map<String, Object> deleteMember(@PathVariable(required=true) Integer memNo){
-		return memberService.deleteMember(memNo);
+	@RequestMapping(value="/member/me", method=RequestMethod.DELETE)
+	public @ResponseBody Map<String, Object> deleteMyAccount(){
+		return null;
 	}
 }

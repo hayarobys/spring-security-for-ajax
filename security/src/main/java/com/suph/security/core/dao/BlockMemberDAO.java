@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.suph.security.core.dto.BlockInfoDTO;
 import com.suph.security.core.dto.BlockMemberDTO;
 import com.suph.security.core.dto.SearchBlockMemberDTO;
 
@@ -21,13 +22,15 @@ public interface BlockMemberDAO{
 	 * @param memNo
 	 * @return
 	 */
-	public abstract BlockMemberDTO selectBlockMemberByMemNoAndExpireDateIsAfterTheCurrentDate(Integer memNo);
+	public abstract List<BlockInfoDTO> selectBlockMemberByMemNoAndExpireDateIsAfterTheCurrentDate(Integer memNo);
 	
 	/**
-	 * 현시간 기준, 차단 종료일이 남아있는 모든 차단 목록을 조회합니다.
+	 * 특정 계정의 현재와 미래의 차단 목록을 조회합니다.
 	 * @return
 	 */
-	public abstract List<BlockMemberDTO> selectBlockMemberExpireDateIsAfterTheCurrentDate();
+	public abstract List<BlockInfoDTO> selectBlockMemberExpireDateIsAfterTheCurrentDate(Integer memNo);
+	
+	public abstract List<BlockInfoDTO> selectCurrentBlockMemberInfoByMemNo(Integer memNo);
 	
 	/**
 	 * 현시간 기준, 검색조건에 따른 과거/현재/미래의 차단 목록을 반환합니다.

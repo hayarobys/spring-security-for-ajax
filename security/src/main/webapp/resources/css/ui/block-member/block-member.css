@@ -6,7 +6,7 @@
 	height: 900px;
 }
 
-.title{
+#box .title{
 	background-color: #04BCD4;
 	text-align: center;
 	border-radius: 8px;
@@ -14,29 +14,34 @@
 	margin-bottom: 10px;
 }
 
-.title_font{
+#box .title .title_font{
 	color: white;
 	font-size: 1.4em;
 	font-weight: bold;
 }
 
-.search_box{
+#box .search_box{
 	
 }
 
-.search_box .datetime{
+#box .search_box .datetime{
 	float: left;
 }
 
-.search_box #search_button_box{
+#box .search_box #search_button_box{
 	float: right;
 }
 
-#data_block_member{
+#box #data_block_member{
 	box-sizing: border-box;
 }
 
 #blockMemberFormTable{
+	width: 100%;
+	border: 1px dashed #0be1dc;
+}
+
+#blockMemberFormTable table{
 	width: 100%;
 	border: 1px dashed #0be1dc;
 }
@@ -62,11 +67,15 @@
 	box-sizing: border-box;
 }
 
-#blockMemberFormTable tr td #memNo{
+#blockMemberFormTable tr td #memInfo{
 	width: 70%;
 	float: left;
 }
-
+/* 
+#blockMemberFormTable tr td #memNo{
+	
+}
+ */
 #blockMemberFormTable tr td #popupSearchMemNoButton{
 	width: 30%;
 	height: 100%;

@@ -212,7 +212,7 @@ function reloadMemberGrid(){
 }
 
 /**
-* json배열 형식의 권한 목록을 gridId에 추가 합니다.
+* json배열 형식의 MEMBER 목록을 gridId에 추가 합니다.
 */
 function changeMemberGrid(listData){
 	$(memberGridId).jqxGrid("clearselection"); // MEMBER 그리드의 선택 효과 제거

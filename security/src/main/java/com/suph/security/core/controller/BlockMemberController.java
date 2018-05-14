@@ -72,6 +72,7 @@ public class BlockMemberController{
 		searchBlockMemberDTO.setSearchTime(searchTime);
 		
 		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+		//SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
 		
 		Date startDate = null;
 		Date expireDate = null;
@@ -100,7 +101,42 @@ public class BlockMemberController{
 	 * @return
 	 */
 	@RequestMapping(value="/block-member", method=RequestMethod.POST)
-	public @ResponseBody Map<String, Object> postBlockMember(@RequestBody BlockMemberDTO blockMemberDTO){
+	public @ResponseBody Map<String, Object> postBlockMember(
+			@RequestBody Map<String, String> blockData
+	){
+		BlockMemberDTO blockMemberDTO = new BlockMemberDTO();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+		//SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+		
+		String memNo = blockData.get("memNo");
+		String blockCause = blockData.get("blockCause");
+		String blockStartDate = blockData.get("setStartDate");
+		String blockExpireDate = blockData.get("setExpireDate");
+		
+		if(StringUtils.hasText(memNo)){
+			try{
+				blockMemberDTO.setMemNo( Integer.parseInt(memNo) );
+			}catch(NumberFormatException nfe){ nfe.printStackTrace(); }
+		}
+		
+		if(StringUtils.hasText(blockCause)){
+			blockMemberDTO.setBlockCause(blockCause);
+		}
+		
+		if(StringUtils.hasText(blockStartDate)){
+			try{
+				Date startDate = format.parse(blockStartDate);				
+				blockMemberDTO.setBlockStartDate(startDate);
+			}catch(ParseException e){ e.printStackTrace(); }
+		}
+		
+		if(StringUtils.hasText(blockExpireDate)){
+			try{
+				Date expireDate = format.parse(blockExpireDate);
+				blockMemberDTO.setBlockExpireDate(expireDate);
+			}catch(ParseException e){ e.printStackTrace(); }
+		}
+		
 		return blockMemberService.postBlockMember(blockMemberDTO);
 	}
 	

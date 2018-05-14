@@ -15,6 +15,7 @@ public interface MemberService extends UserDetailsService{
 	 * ㄱ. id에 해당하는 데이터가 존재하면 UserDetails 타입의 객체를 리턴한다. (아이디, 비밀번호, 보유권한 목록을 지니고 있어야 한다)
 	 * ㄴ. id에 해당하는 데이터가 존재하지만, 해당 사용자가 어떤 권한(GrantedAuthority)도 갖고 있지 않을 경우 UserNotFoundException을 발생시킨다.
 	 * ㄷ. id에 해당하는 데이터가 존재하지 않으면, UserNotFoundException을 발생시킨다.
+	 * ㄹ. id에 해당하는 데이터가 존재할 경우, 이 계정의 현재 차단 정보를 조회하여 계정 객체에 함께 저장.
 	 * 
 	 * @param id 조회할 계정 ID 
 	 */

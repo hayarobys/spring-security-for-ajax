@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -20,6 +21,7 @@ import org.springframework.security.core.SpringSecurityCoreVersion;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
+import com.suph.security.core.dto.BlockInfoDTO;
 import com.suph.security.core.dto.BlockMemberDTO;
 
 public class MemberInfo implements UserDetails{
@@ -41,7 +43,7 @@ public class MemberInfo implements UserDetails{
 	/** 계정이 가지고 있는 권한 목록 */
 	private Set<GrantedAuthority> authorities;
 	/** 계정 차단 정보. null이라면 미차단 계정. */
-	private BlockMemberDTO blockInfo;
+	private List<BlockInfoDTO> blockInfo;
 	/** 로그인 토큰(JWT) 생성일 */
 	private Date issuedAt;
 	
@@ -56,7 +58,7 @@ public class MemberInfo implements UserDetails{
 			String password,
 			String name,
 			Collection<? extends GrantedAuthority> authorities,
-			BlockMemberDTO blockInfo,
+			List<BlockInfoDTO> blockInfo,
 			Date issuedAt
 	){
 		this(no, id, password, name, true, authorities, blockInfo, issuedAt);
@@ -69,7 +71,7 @@ public class MemberInfo implements UserDetails{
 			String name,
 			boolean enable,
 			Collection<? extends GrantedAuthority> authorities,
-			BlockMemberDTO blockInfo
+			List<BlockInfoDTO> blockInfo
 	){
 		this(no, id, password, name, enable, authorities, blockInfo, null);
 	}
@@ -81,7 +83,7 @@ public class MemberInfo implements UserDetails{
 			String name,
 			boolean enable,
 			Collection<? extends GrantedAuthority> authorities,
-			BlockMemberDTO blockInfo,
+			List<BlockInfoDTO> blockInfo,
 			Date issuedAt
 	){
 		this.no = no;
@@ -150,7 +152,7 @@ public class MemberInfo implements UserDetails{
 	 * 계정의 차단 정보를 반환 합니다.
 	 * @return
 	 */
-	public BlockMemberDTO getBlockInfo(){
+	public List<BlockInfoDTO> getBlockInfo(){
 		return blockInfo;
 	}
 	
