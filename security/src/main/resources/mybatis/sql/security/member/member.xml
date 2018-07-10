@@ -48,7 +48,7 @@
 				MEM_STATE = 'ACTIVE'
 	</select>
 	
-	<select id="selectActiveMember" resultMap="MemberDTO">
+	<select id="selectActiveMember" parameterType="MemberDTO" resultMap="MemberDTO">
 		SELECT
 			MEM_NO,
 			MEM_ID,
@@ -59,6 +59,12 @@
 			TB_MEMBER
 		WHERE
 			MEM_STATE = 'ACTIVE'
+			<if test='memId != null and memId != ""'>
+				AND MEM_ID LIKE CONCAT('%', #{memId}, '%')
+			</if>
+			<if test='memNicknm != null and memNicknm != ""'>
+				AND MEM_NICKNM LIKE CONCAT('%', #{memNicknm}, '%')
+			</if>
 		ORDER BY
 			MEM_NO ASC
 	</select>

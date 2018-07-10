@@ -11,12 +11,22 @@
 				<span class="title_font">계정 조회</span>
 			</header>
 			
-			<section id="data_member" class="data_body">
+			<section>
+				<article>
+					<label for="">· 아이디</label><input type="text" id="memId" class="" name="memId" value="" />
+					<label for="">· 닉네임</label><input type="text" id="memNicknm" class="" name="memNicknm" value="" />
+					<button id="memberSearchButton">검색</button>
+				</article>
+				<article id="data_member" class="data_body">
 				
+				</article>
+				<article>
+					<p>
+						<span>원하는 계정을 더블 클릭 하세요.</span>
+					</p>
+					<button class="btn-layer-close">닫기</button>
+				</article>
 			</section>
-			
-			<button id="memberSearchButton">검색</button>
-			<button class="btn-layer-close">닫기</button>
 		</div>
 	</div>
 </div>

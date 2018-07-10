@@ -496,7 +496,6 @@ function search_block_member(){
 	
 }
 
-
 /**
  * 계정 검색 팝업창의 특정 변수(var chooseMemberInfo) 속 데이터를 꺼냈을때 호출되는 함수
  * @param target

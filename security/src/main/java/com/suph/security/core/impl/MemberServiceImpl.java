@@ -104,12 +104,12 @@ public class MemberServiceImpl implements MemberService{
 	}
 	
 	@Override
-	public Map<String, Object> getMember(){
+	public Map<String, Object> getMember(MemberDTO memberDTO){
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
 		List<MemberDTO> list = null;
 		try{
-			list = memberDAO.selectActiveMember();
+			list = memberDAO.selectActiveMember(memberDTO);
 			returnMap.put("list", list);
 			returnMap.put("result", "success");
 		}catch(DataAccessException de){
@@ -118,6 +118,10 @@ public class MemberServiceImpl implements MemberService{
 		}
 		
 		return returnMap;
+	}
+	
+	public Map<String, Object> getMember(){
+		return getMember(null);
 	}
 
 	@Override

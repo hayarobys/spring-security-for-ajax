@@ -21,16 +21,22 @@ $(document).ready(function(){
 	
 	// 계정 검색 용 레이어 팝업에 마우스 드래그 기능 부여
 	$("#layer-mem-search").draggable();
+	
+	// 검색 버튼에 이벤트 바인딩
+	$('#memberSearchButton').on('click', function(){
+		
+		console.log("검색 클릭");
+	});
 });
 
 /*
  * 모든 DOM 로딩 완료 후, 검색 버튼에 이벤트 바인딩
  */
-window.onload = function(){
+/*window.onload = function(){
 	var searchDom = document.getElementById("memberSearchButton")
 	searchDom.onclick = selectMember;
 }
-
+*/
 /**
  * 계정 검색 팝업 창을 띄웁니다.
  * @returns
@@ -54,7 +60,6 @@ function popupSearchMemNo(){
 	} else {
 		$layer.css({top: 0, left: 0});
 	}
-	
 	
 	$(layerMemSearchId).find(".btn-layer-close").click(function(){
 		popupClose();
@@ -91,7 +96,12 @@ function initMemberGrid(){
 			{text: '일련 번호', dataField: 'memNo', cellsalign: 'center', align: 'center', width: '24%'},
 			{text: '아이디', dataField: 'memId', cellsalign: 'center', align: 'center', width: '38%'},
 			{text: '닉네임', dataField: 'memNicknm', cellsalign: 'center', align: 'center', width: '38%'}
-		]
+		],
+	});
+	
+	// 행 더블 클릭 시 동작 정의
+	$(memberGridId).on('rowdoubleclick', function(event){
+		selectMember();
 	});
 }
 
@@ -102,10 +112,15 @@ function reloadMemberGrid(){
 	var token = $("meta[name='_csrf']").attr("content");
 	var header = $("meta[name='_csrf_header']").attr("content");
 	
+	var formData = {};
+	formData.memId = $("#memId").val();
+	formData.memNicknm = $("#memNicknm").val();
+	
 	$.ajax({
 		type: "GET",
 		url: "/security/member",
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
+		data: JSON.stringify(formData),
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
 			xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송

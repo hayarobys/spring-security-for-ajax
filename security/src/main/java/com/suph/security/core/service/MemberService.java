@@ -24,9 +24,10 @@ public interface MemberService extends UserDetailsService{
 	
 	/**
 	 * 모든 계정의 패스워드를 제외한 정보들을 조회합니다.
+	 * @param memberDTO 검색조건
 	 * @return
 	 */
-	public abstract Map<String, Object> getMember();
+	public abstract Map<String, Object> getMember(MemberDTO memberDTO);
 	
 	/**
 	 * 이 아이디가 다른 계정과 중복없이 사용 가능한지 검사합니다.

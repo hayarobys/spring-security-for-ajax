@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.suph.security.core.dto.MemberDTO;
@@ -28,10 +29,19 @@ public class MemberController{
 	
 	/**
 	 * 모든 계정 목록 반환
+	 * @param memId
+	 * @param memNicknm
 	 */
 	@RequestMapping(value="/member", method=RequestMethod.GET)
-	public @ResponseBody Map<String, Object> getMember(){
-		return memberService.getMember();
+	public @ResponseBody Map<String, Object> getMember(
+			@RequestParam(name="memId", required=false) String memId,
+			@RequestParam(name="memNicknm", required=false) String memNicknm
+	){
+		MemberDTO memberDTO = new MemberDTO();
+		memberDTO.setMemId(memId);
+		memberDTO.setMemNicknm(memNicknm);
+		
+		return memberService.getMember(memberDTO);
 	}
 	
 	/**
