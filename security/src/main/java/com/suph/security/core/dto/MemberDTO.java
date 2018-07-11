@@ -2,8 +2,9 @@ package com.suph.security.core.dto;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
-public class MemberDTO{
+public class MemberDTO extends PaginationRequest{
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
 	/** MEM_NO 계정 일련 번호 PK */
@@ -51,7 +52,7 @@ public class MemberDTO{
 	 * @param id
 	 */
 	public void setMemId(String memId){
-		this.memId = memId.trim();
+		this.memId = StringUtils.hasText(memId) ? memId.trim() : memId;
 	}
 	
 	/**
@@ -83,7 +84,7 @@ public class MemberDTO{
 	 * @param memNicknm
 	 */
 	public void setMemNicknm(String memNicknm){
-		this.memNicknm = memNicknm.trim();
+		this.memNicknm = StringUtils.hasText(memNicknm) ? memNicknm.trim() : memNicknm;
 	}
 	
 	public String getMemState(){

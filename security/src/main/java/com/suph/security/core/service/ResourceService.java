@@ -3,14 +3,16 @@ package com.suph.security.core.service;
 import java.util.List;
 import java.util.Map;
 
+import com.suph.security.core.dto.PaginationRequest;
 import com.suph.security.core.dto.ResourceDTO;
 
 public interface ResourceService{
 	/**
 	 * 리소스 목록을 조회합니다.
+	 * @param paginationRequest 페이지 정보
 	 * @return
 	 */
-	public abstract Map<String, Object> getResourceList();
+	public abstract Map<String, Object> getResourceList(PaginationRequest paginationRequest);
 	
 	/**
 	 * 특정 URL접근에 필요한 권한 목록을 조회합니다.

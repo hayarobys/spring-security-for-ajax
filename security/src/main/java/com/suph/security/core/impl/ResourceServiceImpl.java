@@ -1,6 +1,5 @@
 package com.suph.security.core.impl;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,6 +16,8 @@ import org.springframework.stereotype.Service;
 import com.suph.security.core.dao.ResourceAuthDAO;
 import com.suph.security.core.dao.ResourceDAO;
 import com.suph.security.core.dto.AuthDTO;
+import com.suph.security.core.dto.PaginationRequest;
+import com.suph.security.core.dto.PaginationResponse;
 import com.suph.security.core.dto.ResourceDTO;
 import com.suph.security.core.enums.HttpMethod;
 import com.suph.security.core.service.ResourceService;
@@ -32,14 +33,17 @@ public class ResourceServiceImpl implements ResourceService{
 	private ResourceAuthDAO securedObjectDAO;
 	
 	@Override
-	public Map<String, Object> getResourceList(){
+	public Map<String, Object> getResourceList(PaginationRequest paginationRequest){
 		Map<String, Object> result = new HashMap<String, Object>();
-		
-		List<ResourceDTO> list = null;
+	
 		try{
-			 list = resourceDAO.getResourceList();
-			 result.put("result", "success");
-			 result.put("list", list);
+			List<ResourceDTO> list = resourceDAO.getResourceList(paginationRequest);
+			int totalRows = resourceDAO.getResourceListTotalRows();
+			
+			PaginationResponse<ResourceDTO> data = new PaginationResponse<ResourceDTO>(list, totalRows);
+			
+			result.put("result", "success");
+			result.put("list", data);
 		}catch(DataAccessException dae){
 			result.put("result", "fail");
 			dae.printStackTrace();			

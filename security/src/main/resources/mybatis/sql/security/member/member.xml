@@ -48,6 +48,22 @@
 				MEM_STATE = 'ACTIVE'
 	</select>
 	
+	<!--  -->
+	<select id="selectActiveMemberTotalRows" parameterType="MemberDTO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			TB_MEMBER
+		WHERE
+			MEM_STATE = 'ACTIVE'
+			<if test='memId != null and memId != ""'>
+				AND MEM_ID LIKE CONCAT('%', #{memId}, '%')
+			</if>
+			<if test='memNicknm != null and memNicknm != ""'>
+				AND MEM_NICKNM LIKE CONCAT('%', #{memNicknm}, '%')
+			</if>
+	</select>
+	
 	<select id="selectActiveMember" parameterType="MemberDTO" resultMap="MemberDTO">
 		SELECT
 			MEM_NO,
@@ -67,6 +83,7 @@
 			</if>
 		ORDER BY
 			MEM_NO ASC
+		LIMIT ${start}, ${pagesize}
 	</select>
 	
 	<select id="selectMemId" parameterType="String" resultType="String">

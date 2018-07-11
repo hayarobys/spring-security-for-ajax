@@ -4,15 +4,23 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.suph.security.core.dto.PaginationRequest;
 import com.suph.security.core.dto.ResourceDTO;
 
 @Repository
 public interface ResourceDAO{
 	/**
-	 * 리소스 목록을 조회합니다.
+	 * 리소스의 전체 항목 개수를 조회합니다.
 	 * @return
 	 */
-	public abstract List<ResourceDTO> getResourceList();
+	public abstract int getResourceListTotalRows();
+	
+	/**
+	 * 리소스 목록을 조회합니다.
+	 * @param paginationRequest 페이지 정보
+	 * @return
+	 */
+	public abstract List<ResourceDTO> getResourceList(PaginationRequest paginationRequest);
 	
 	/**
 	 * 리소스를 등록합니다.

@@ -12,8 +12,13 @@
 		<result column="RESOURCE_NM" property="resourceNm" />
 	</resultMap>
 	
+	<!-- 리소스의 전체 항목 수를 조회합니다. -->
+	<select id="getResourceListTotalRows" resultType="int">
+		SELECT COUNT(*) FROM TB_RESOURCE
+	</select>
+	
 	<!-- 리소스 목록을 조회합니다 -->
-	<select id="getResourceList" resultMap="ResourceDTO">
+	<select id="getResourceList" parameterType="PaginationRequest" resultMap="ResourceDTO">
 		SELECT
 			RESOURCE_NO,
 			SORT_ORDER,
@@ -27,6 +32,7 @@
 			SORT_ORDER DESC,
 			RESOURCE_NO DESC,
 			HTTP_METHOD ASC
+		LIMIT ${start}, ${pagesize}
 	</select>
 	
 	<!-- 리소스를 등록합니다. 리소스 일련 번호(RESOURCE_NO)는 자동 증가 -->

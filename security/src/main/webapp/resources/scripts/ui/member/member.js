@@ -27,7 +27,7 @@ $(document).ready(function(){
 	initMemberGrid();
 	
 	// MEMBER 그리드 갱신
-	reloadMemberGrid();
+	//reloadMemberGrid();
 });
 
 /**
@@ -44,10 +44,36 @@ function initMemberGrid(){
 		}
 	}
 	
+	var source = {
+		datatype: "json",
+		datafields: [
+			{name: 'memNo', type: 'int'},
+			{name: 'memId', type: 'string'},
+			{name: 'memNicknm', type: 'string'},
+			{name: 'lastLoginDate', type: 'date'}
+		],
+		url: '/security/member',
+		root: 'rows',
+		cache: false,
+		beforeprocessing: function(data){
+			//console.log("데이타:",data);
+			source.totalrecords = data.list.totalRows;
+		}
+	};
+	
+	var dataAdapter = new $.jqx.dataAdapter(source);
+	
 	$(memberGridId).jqxGrid({
 		width: '100%',
 		height: '400px',              
+		source: dataAdapter,
 		pageable: true,
+		virtualmode: true,
+		rendergridrows: function(obj)
+		{
+			  return obj.data;     
+		},
+
 		autoheight: false,
 		sortable: false,
 		altrows: true,
@@ -186,59 +212,10 @@ function initMemberGrid(){
 * 서버로부터 member목록을 조회해 jqxGrid를 갱신 합니다.
 */
 function reloadMemberGrid(){
-	var token = $("meta[name='_csrf']").attr("content");
-	var header = $("meta[name='_csrf_header']").attr("content");
-	
-	$.ajax({
-		type: "GET",
-		url: "/security/member",
-		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
-		beforeSend: function(xhr){
-			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
-			xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
-		},
-		success: function(data, statusText, xhr){
-			if(data.result == "success"){console.log("멤버: ", data.list);
-				changeMemberGrid(data.list)
-			}else{
-				console.log("MEMBER 목록 조회를 실패했습니다.");
-				console.log("message", data.message);
-			}
-		},
-		error: function(xhr){
-			console.log("error", xhr);
-		}
-	});
-}
-
-/**
-* json배열 형식의 MEMBER 목록을 gridId에 추가 합니다.
-*/
-function changeMemberGrid(listData){
 	$(memberGridId).jqxGrid("clearselection"); // MEMBER 그리드의 선택 효과 제거
-	$(memberGridId).jqxGrid("clear"); // MEMBER 그리드의 데이터 제거
+	//$(memberGridId).jqxGrid("clear"); // MEMBER 그리드의 데이터 제거
 	
-	var source = {
-		localdata: listData,
-		datatype: "array",
-		datafields: [
-			{name: 'memNo', type: 'int'},
-			{name: 'memId', type: 'string'},
-			{name: 'memNicknm', type: 'string'},
-			{name: 'lastLoginDate', type: 'date'}
-		]
-	};
-	
-	var dataAdapter = new $.jqx.dataAdapter(source, {
-		downloadComplete: function (data, status, xhr) { },
-		loadComplete: function (data) { },
-		loadError: function (xhr, status, error) { }
-	});
-	
-	// MEMBER 그리드에 새로운 데이터 삽입
-	$(memberGridId).jqxGrid({
-		source: dataAdapter
-	});
+	$(memberGridId).jqxGrid("updatebounddata");
 }
 
 /**

@@ -26,6 +26,8 @@ import com.suph.security.core.dao.BlockMemberDAO;
 import com.suph.security.core.dao.MemberDAO;
 import com.suph.security.core.dto.BlockInfoDTO;
 import com.suph.security.core.dto.MemberDTO;
+import com.suph.security.core.dto.PaginationResponse;
+import com.suph.security.core.dto.ResourceDTO;
 import com.suph.security.core.enums.MemberState;
 import com.suph.security.core.service.MemberAuthService;
 import com.suph.security.core.service.MemberService;
@@ -107,10 +109,13 @@ public class MemberServiceImpl implements MemberService{
 	public Map<String, Object> getMember(MemberDTO memberDTO){
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
-		List<MemberDTO> list = null;
 		try{
-			list = memberDAO.selectActiveMember(memberDTO);
-			returnMap.put("list", list);
+			List<MemberDTO> list = memberDAO.selectActiveMember(memberDTO);
+			int totalRows = memberDAO.selectActiveMemberTotalRows(memberDTO);
+			
+			PaginationResponse<MemberDTO> data = new PaginationResponse<MemberDTO>(list, totalRows);
+			
+			returnMap.put("list", data);
 			returnMap.put("result", "success");
 		}catch(DataAccessException de){
 			returnMap.put("result", "fail");

@@ -12,8 +12,6 @@ $(document).ready(function(){
 	
 	// 변수 everyAuthList 갱신
 	getEveryAuthList();
-	// RESOURCE 그리드 갱신
-	reloadResourceGrid();
 });
 
 /**
@@ -21,10 +19,38 @@ $(document).ready(function(){
 * (리소스 그리드를 생성 & 클릭 이벤트 부여)
 */
 function initResourceGrid(){
+	var source = {
+		datatype: "json",
+		datafields: [
+			{name: 'resourceNo', type: 'int'},
+			{name: 'httpMethod', type: 'string'},
+			{name: 'sortOrder', type: 'int'},
+			{name: 'resourceType', type: 'string'},
+			{name: 'resourcePattern', type: 'string'},
+			{name: 'resourceNm', type: 'string'}
+		],
+		url: '/security/resource',
+		root: 'rows',
+		cache: false,
+		beforeprocessing: function(data){
+			//console.log("데이타:", data);
+			source.totalrecords = data.list.totalRows;
+		}
+	};
+	
+	var dataAdapter = new $.jqx.dataAdapter(source);
+	
 	$("#data_resource").jqxGrid({
 		width: '100%',
-		height: '400px',              
-		pageable: false,
+		height: '400px',
+		source: dataAdapter,
+		pageable: true,
+		virtualmode: true,
+		rendergridrows: function(obj)
+		{
+			  return obj.data;     
+		},
+		
 		autoheight: false,
 		sortable: false,
 		altrows: true,
@@ -111,31 +137,12 @@ function getEveryAuthList(){
 * 서버로부터 resource목록을 조회해 jqxGrid를 갱신 합니다.
 */
 function reloadResourceGrid(){
-	var token = $("meta[name='_csrf']").attr("content");
-	var header = $("meta[name='_csrf_header']").attr("content");
+	$(resourceGridId).jqxGrid("clearselection"); // RESOURCE 그리드의 선택 효과 제거
+	$(authGridId).jqxGrid("clearselection"); // AUTH 그리드의 선택 효과 제거
+	$(resourceGridId).jqxGrid("clear"); // RESOURCE 그리드의 데이터 제거
+	$(authGridId).jqxGrid("clear"); // AUTH 그리드의 데이터 제거
 	
-	$.ajax({
-		type: "GET",
-		url: "/security/resource",
-		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
-		beforeSend: function(xhr){
-			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
-			xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
-		},
-		success: function(data, statusText, xhr){
-			//console.log('data', data);	// response body
-			//console.log('statusText', statusText);	// "success" or ?
-			//console.log('xhr', xhr);	// header
-			if(data.result == "success"){
-				changeResourceGrid(data.list)
-			}else{
-				console.log("RESOURCE 목록 조회를 실패했습니다.");
-			}
-		},
-		error: function(xhr){
-			console.log("error", xhr);
-		}
-	});
+	$(resourceGridId).jqxGrid("updatebounddata");
 }
 
 /**
@@ -163,40 +170,6 @@ function reloadAuthGridByNo(resourceNo){
 		error: function(xhr){
 			console.log("error", xhr);
 		}
-	});
-}
-
-/**
-* json배열 형식의 리소스 목록을 gridId에 추가 합니다.
-*/
-function changeResourceGrid(listData){
-	$(resourceGridId).jqxGrid("clearselection"); // RESOURCE 그리드의 선택 효과 제거
-	$(authGridId).jqxGrid("clearselection"); // AUTH 그리드의 선택 효과 제거
-	$(resourceGridId).jqxGrid("clear"); // RESOURCE 그리드의 데이터 제거
-	$(authGridId).jqxGrid("clear"); // AUTH 그리드의 데이터 제거
-	
-	var source = {
-		localdata: listData,
-		datatype: "array",
-		datafields: [
-			{name: 'resourceNo', type: 'int'},
-			{name: 'httpMethod', type: 'string'},
-			{name: 'sortOrder', type: 'int'},
-			{name: 'resourceType', type: 'string'},
-			{name: 'resourcePattern', type: 'string'},
-			{name: 'resourceNm', type: 'string'}
-		]
-	};
-	
-	var dataAdapter = new $.jqx.dataAdapter(source, {
-		downloadComplete: function (data, status, xhr) { },
-		loadComplete: function (data) { },
-		loadError: function (xhr, status, error) { }
-	});
-	
-	// RESOURCE 그리드에 새로운 데이터 삽입
-	$(resourceGridId).jqxGrid({
-		source: dataAdapter
 	});
 }
 

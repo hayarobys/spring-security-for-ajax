@@ -13,9 +13,11 @@
 			
 			<section>
 				<article>
-					<label for="">· 아이디</label><input type="text" id="memId" class="" name="memId" value="" />
-					<label for="">· 닉네임</label><input type="text" id="memNicknm" class="" name="memNicknm" value="" />
-					<button id="memberSearchButton">검색</button>
+					<form id="memberSearchForm">
+						<label for="">· 아이디</label><input type="text" id="memId" class="" name="memId" value="" />
+						<label for="">· 닉네임</label><input type="text" id="memNicknm" class="" name="memNicknm" value="" />
+						<button id="memberSearchButton">검색</button>
+					</form>
 				</article>
 				<article id="data_member" class="data_body">
 				

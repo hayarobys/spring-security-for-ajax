@@ -25,6 +25,13 @@ public interface MemberDAO{
 	public abstract MemberDTO getMemberInfoById(String id);
 	
 	/**
+	 * DB로부터 모든 활성 계정 정보의 개수를 조회합니다.
+	 * @param memberDTO 검색 조건
+	 * @return
+	 */
+	public abstract int selectActiveMemberTotalRows(MemberDTO memberDTO);
+	
+	/**
 	 * DB로부터 모든 활성 계정 정보를 조회합니다.
 	 * 단, 패스워드는 조회하지 않습니다.
 	 * @param memberDTO 검색 조건

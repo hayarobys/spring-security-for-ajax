@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.suph.security.core.dto.PaginationRequest;
 import com.suph.security.core.dto.ResourceDTO;
 import com.suph.security.core.service.ResourceService;
 
@@ -34,8 +36,14 @@ public class ResourceController{
 	 * @return
 	 */
 	@RequestMapping(value="/resource", method=RequestMethod.GET)
-	public @ResponseBody Map<String, Object> getResource(){
-		return resourceService.getResourceList();
+	public @ResponseBody Map<String, Object> getResource(
+			@RequestParam(name="pagenum", required=false, defaultValue="1") int pagenum,
+			@RequestParam(name="pagesize", required=false, defaultValue="20") int pagesize
+	){
+		PaginationRequest paginationRequest = new PaginationRequest();
+		paginationRequest.setPagenum(pagenum);
+		paginationRequest.setPagesize(pagesize);
+		return resourceService.getResourceList(paginationRequest);
 	}
 	
 	/**

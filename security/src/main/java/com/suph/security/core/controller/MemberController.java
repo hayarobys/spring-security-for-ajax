@@ -34,10 +34,14 @@ public class MemberController{
 	 */
 	@RequestMapping(value="/member", method=RequestMethod.GET)
 	public @ResponseBody Map<String, Object> getMember(
+			@RequestParam(name="pagenum", required=false, defaultValue="1") int pagenum,
+			@RequestParam(name="pagesize", required=false, defaultValue="20") int pagesize,
 			@RequestParam(name="memId", required=false) String memId,
 			@RequestParam(name="memNicknm", required=false) String memNicknm
 	){
 		MemberDTO memberDTO = new MemberDTO();
+		memberDTO.setPagenum(pagenum);
+		memberDTO.setPagesize(pagesize);
 		memberDTO.setMemId(memId);
 		memberDTO.setMemNicknm(memNicknm);
 		

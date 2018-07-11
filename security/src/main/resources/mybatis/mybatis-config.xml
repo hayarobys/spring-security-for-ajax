@@ -5,6 +5,9 @@
 <configuration>
 	<typeAliases>
 		<!-- MyBatis Mapper의 parameterType에서 사용할 별명. parameterMap이 아님에 주의 -->
+		<!-- 페이징 처리하는데 사용됩니다. -->
+		<typeAlias type="com.suph.security.core.dto.PaginationRequest" alias="PaginationRequest"/>
+		
 		<!-- 차단 된 계정을 검색하는데 사용됩니다. -->
 		<typeAlias type="com.suph.security.core.dto.SearchBlockMemberDTO" alias="SearchBlockMemberDTO"/>
 		
