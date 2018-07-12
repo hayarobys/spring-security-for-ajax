@@ -34,7 +34,7 @@ public class AuthController{
 	 */
 	@RequestMapping(value="/auth", method=RequestMethod.GET)
 	public @ResponseBody Map<String, Object> getAuth(
-			@RequestParam(name="pagenum", required=false, defaultValue="1") int pagenum,
+			@RequestParam(name="pagenum", required=false, defaultValue="0") int pagenum,
 			@RequestParam(name="pagesize", required=false, defaultValue="20") int pagesize
 	){
 		PaginationRequest paginationRequest = new PaginationRequest();

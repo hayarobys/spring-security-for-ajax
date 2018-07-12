@@ -64,11 +64,15 @@ function popupClose(){
 }
 
 /**
-* 계정(MEMBER) 그리드를 초기화 합니다.
-* (계정 그리드를 생성)
-*/
-function initMemberGrid(){
+ * 전송할 파라미터와 받았을때의 컬럼을 정의하고 dataAdapter로 변환해 반환합니다.
+ * @returns
+ */
+function getDataAdapter(){
 	var source = {
+		data: {
+			memId: $("#memId").val(),
+			memNicknm: $("#memNicknm").val()
+		},
 		datatype: "json",
 		datafields: [
 			{name: 'memNo', type: 'int'},
@@ -85,13 +89,19 @@ function initMemberGrid(){
 		}
 	};
 	
-	var dataAdapter = new $.jqx.dataAdapter(source);
-	
+	return new $.jqx.dataAdapter(source);
+}
+
+/**
+* 계정(MEMBER) 그리드를 초기화 합니다.
+* (계정 그리드를 생성)
+*/
+function initMemberGrid(){
 	$(memberGridId).jqxGrid({
 		width: '100%',
 		height: '380px',  
 		
-		source: dataAdapter,
+		source: getDataAdapter(),
 		pageable: true,
 		virtualmode: true,
 		rendergridrows: function(obj)
@@ -124,7 +134,8 @@ function initMemberGrid(){
 */
 function reloadMemberGrid(){
 	$(memberGridId).jqxGrid("clearselection"); // MEMBER 그리드의 선택 효과 제거
-	$(memberGridId).jqxGrid("updatebounddata");
+	$(memberGridId).jqxGrid({source: getDataAdapter()});
+	//$(memberGridId).jqxGrid("updatebounddata");
 }
 
 /**

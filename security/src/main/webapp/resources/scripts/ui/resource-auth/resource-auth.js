@@ -113,7 +113,7 @@ function getEveryAuthList(){
 	
 	$.ajax({
 		type: "GET",
-		url: "/security/auth",
+		url: "/security/auth?pagesize=99999",
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
@@ -121,7 +121,7 @@ function getEveryAuthList(){
 		},
 		success: function(data, statusText, xhr){
 			if(data.result == "success"){
-				everyAuthList = data.list;
+				everyAuthList = data.list.rows;
 				console.log("모든 권한 목록", everyAuthList);
 			}else{
 				console.log("AUTH 목록 조회를 실패했습니다.");

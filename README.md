@@ -1,4 +1,4 @@
-# security_practice
+# spring-security-for-ajax
 1. 소개
 	>URL별 접근 권한을 DB와 브라우저를 통해 관리 하도록 커스텀 한 Spring Security 프로젝트 입니다.
 	>홈페이지 제작 초기, 권한과 계정에 관련된 손쉬운 관리자 페이지 구성을 목적으로 하고 있습니다.
