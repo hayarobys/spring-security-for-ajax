@@ -1,6 +1,7 @@
 # security_practice
 1. 소개
 	>URL별 접근 권한을 DB와 브라우저를 통해 관리 하도록 커스텀 한 Spring Security 프로젝트 입니다.
+	>홈페이지 제작 초기, 권한과 계정에 관련된 손쉬운 관리자 페이지 구성을 목적으로 하고 있습니다.
 	
 2. 특징
 	* DB를 통한 URL별 권한 관리<br />
@@ -13,6 +14,7 @@
 	* [스키마 제공](http://aquerytool.com:80/aquerymain/index/?rurl=2683372d-5247-46dc-88fa-aa75874269e1) ( 비밀번호: 071t1w )
 	* [REST API](https://docs.google.com/spreadsheets/d/14MDwNU1ajrObKSupSIGp9-trq5ls0ULwseZJEQuq-r8/edit?usp=sharing)
 	* XML기반 Bean 관리
+	
 3. 세부기능
 	* 마지막 로그인 후 오래 경과한 요청에 대해 재로그인 유도 (기본값: 240분)
 	* 마지막 요청으로부터 오래 경과한 요청에 대해 재로그인 유도 (기본값: 10분)
@@ -30,6 +32,7 @@
 	* MyBatis
 	* jackson
 	* [JJWT](https://github.com/jwtk/jjwt)
+	* [jqxGrid(jQuery UI Widgets)](https://www.jqwidgets.com/jquery-widgets-demo/demos/jqxgrid/index.htm)
 	* etc...
 
 5. 개발환경
