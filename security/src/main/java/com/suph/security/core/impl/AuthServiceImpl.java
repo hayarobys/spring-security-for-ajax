@@ -14,6 +14,8 @@ import org.springframework.util.StringUtils;
 
 import com.suph.security.core.dao.AuthDAO;
 import com.suph.security.core.dto.AuthDTO;
+import com.suph.security.core.dto.PaginationRequest;
+import com.suph.security.core.dto.PaginationResponse;
 import com.suph.security.core.service.AuthService;
 
 @Service("authService")
@@ -25,14 +27,16 @@ public class AuthServiceImpl implements AuthService{
 	private AuthDAO authDAO;
 	
 	@Override
-	public Map<String, Object> getAuthList(){
+	public Map<String, Object> getAuthList(PaginationRequest paginationRequest){
 		Map<String, Object> result = new HashMap<String, Object>();
-		List<AuthDTO> list = null;
 		
 		try{
-			list = authDAO.getAuthList();
+			List<AuthDTO> list = authDAO.getAuthList(paginationRequest);
+			int totalRows = authDAO.getAuthListTotalRows();
 			
-			result.put("list", list);
+			PaginationResponse<AuthDTO> data = new PaginationResponse<AuthDTO>(list, totalRows);
+			
+			result.put("list", data);
 			result.put("result", "success");
 		}catch(DataAccessException sqle){
 			sqle.printStackTrace();

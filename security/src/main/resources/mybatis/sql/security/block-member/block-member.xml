@@ -98,7 +98,7 @@
 		WHERE
 			1=1
 			<choose>
-				<when test="@com.suph.security.core.util.EmptyCheck@notEmpty(searchTime)">
+				<when test="@com.suph.security.core.util.EmptyCheck@isNotEmpty(searchTime)">
 					AND
 					<foreach item="item" collection="searchTime" index="index" open="(" separator="OR" close=")">
 						<if test="item eq 'PAST'">
@@ -127,20 +127,20 @@
 				</otherwise>
 			</choose>
 				
-			<if test="@com.suph.security.core.util.EmptyCheck@notEmpty(blockStartDate)">
+			<if test="@com.suph.security.core.util.EmptyCheck@isNotEmpty(blockStartDate)">
 			<![CDATA[/* 검색 시작일자 */
 				AND #{blockStartDate} < BM.BLOCK_START_DATE
 			]]>
 			</if>
 			
-			<if test="@com.suph.security.core.util.EmptyCheck@notEmpty(blockExpireDate)">
+			<if test="@com.suph.security.core.util.EmptyCheck@isNotEmpty(blockExpireDate)">
 			<![CDATA[/* 검색 종료일자 */
 				AND BM.BLOCK_START_DATE < #{blockExpireDate}
 			]]>
 			</if>
 			
-			<if test="	@com.suph.security.core.util.EmptyCheck@notEmpty(searchKeyword)
-				and	@com.suph.security.core.util.EmptyCheck@notEmpty(searchType)	">
+			<if test="	@com.suph.security.core.util.EmptyCheck@isNotEmpty(searchKeyword)
+				and	@com.suph.security.core.util.EmptyCheck@isNotEmpty(searchType)	">
 				<choose>
 					<when test="searchType eq 'ID'">
 						/* 아이디 검색 */

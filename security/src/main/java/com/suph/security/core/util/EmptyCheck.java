@@ -24,7 +24,7 @@ public class EmptyCheck{
 	 * @param obj
 	 * @return
 	 */
-	public static Boolean notEmpty(Object obj){
+	public static Boolean isNotEmpty(Object obj){
 		return !empty(obj);
 	}
 }

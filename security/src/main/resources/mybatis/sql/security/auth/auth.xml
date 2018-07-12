@@ -9,9 +9,15 @@
 		<result column="AUTH_EXPLANATION" property="authExplanation"/>	<!-- 권한 설명 -->
 	</resultMap>
 	
-	<!-- 모든 권한 목록 조회 -->
-	<select id="getAuthList" resultMap="AuthDTO">
+	<!-- 모든 권한 목록을 페이징 처리하여 조회 -->
+	<select id="getAuthList" parameterType="PaginationRequest" resultMap="AuthDTO">
 		SELECT * FROM TB_AUTH
+		LIMIT ${start}, ${pagesize}
+	</select>
+	
+	<!-- 모든 권한 목록의 개수 조회 -->
+	<select id="getAuthListTotalRows" resultType="int">
+		SELECT COUNT(*) FROM TB_AUTH
 	</select>
 	
 	<!-- 권한 등록 -->

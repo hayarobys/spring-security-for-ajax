@@ -3,13 +3,15 @@ package com.suph.security.core.service;
 import java.util.Map;
 
 import com.suph.security.core.dto.AuthDTO;
+import com.suph.security.core.dto.PaginationRequest;
 
 public interface AuthService{
 	/**
 	 * 모든 권한 목록을 조회합니다.
+	 * @param paginationRequest 페이징 검색 조건
 	 * @return
 	 */
-	public abstract Map<String, Object> getAuthList();
+	public abstract Map<String, Object> getAuthList(PaginationRequest paginationRequest);
 	
 	/**
 	 * 권한을 등록합니다.

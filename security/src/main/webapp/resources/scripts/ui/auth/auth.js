@@ -6,9 +6,6 @@ var authFormId = "#authForm";
 $(document).ready(function(){	
 	// 그리드 생성
 	initAuthGrid();
-	
-	// AUTH 그리드 갱신
-	reloadAuthGrid();
 });
 
 /**
@@ -25,10 +22,36 @@ function initAuthGrid(){
 		}
 	}
 	
+	var source = {
+		datatype: "json",
+		datafields: [
+			{name: 'authNo', type: 'int'},
+			{name: 'authNm', type: 'string'},
+			{name: 'authExplanation', type: 'string'}
+		],
+		url: '/security/auth',
+		root: 'rows',
+		cache: false,
+		beforeprocessing: function(data){
+			console.log("데이타:",data);
+			source.totalrecords = data.list.totalRows;
+		}
+	};
+	
+	var dataAdapter = new $.jqx.dataAdapter(source);
+	
 	$(authGridId).jqxGrid({
 		width: '100%',
-		height: '400px',              
+		height: '400px',  
+		
+		source: dataAdapter,
 		pageable: true,
+		virtualmode: true,
+		rendergridrows: function(obj)
+		{
+			  return obj.data;     
+		},
+		
 		autoheight: false,
 		sortable: false,
 		altrows: true,
@@ -137,58 +160,8 @@ function initAuthGrid(){
 * 서버로부터 auth목록을 조회해 jqxGrid를 갱신 합니다.
 */
 function reloadAuthGrid(){
-	var token = $("meta[name='_csrf']").attr("content");
-	var header = $("meta[name='_csrf_header']").attr("content");
-	
-	$.ajax({
-		type: "GET",
-		url: "/security/auth",
-		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
-		beforeSend: function(xhr){
-			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
-			xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
-		},
-		success: function(data, statusText, xhr){
-			if(data.result == "success"){
-				changeAuthGrid(data.list)
-			}else{
-				console.log("AUTH 목록 조회를 실패했습니다.");
-				console.log("message", data.message);
-			}
-		},
-		error: function(xhr){
-			console.log("error", xhr);
-		}
-	});
-}
-
-/**
-* json배열 형식의 권한 목록을 gridId에 추가 합니다.
-*/
-function changeAuthGrid(listData){
 	$(authGridId).jqxGrid("clearselection"); // AUTH 그리드의 선택 효과 제거
-	$(authGridId).jqxGrid("clear"); // AUTH 그리드의 데이터 제거
-	
-	var source = {
-		localdata: listData,
-		datatype: "array",
-		datafields: [
-			{name: 'authNo', type: 'int'},
-			{name: 'authNm', type: 'string'},
-			{name: 'authExplanation', type: 'string'}
-		]
-	};
-	
-	var dataAdapter = new $.jqx.dataAdapter(source, {
-		downloadComplete: function (data, status, xhr) { },
-		loadComplete: function (data) { },
-		loadError: function (xhr, status, error) { }
-	});
-	
-	// AUTH 그리드에 새로운 데이터 삽입
-	$(authGridId).jqxGrid({
-		source: dataAdapter
-	});
+	$(authGridId).jqxGrid("updatebounddata");
 }
 
 /**
