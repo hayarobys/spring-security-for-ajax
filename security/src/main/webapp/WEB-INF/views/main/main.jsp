@@ -123,7 +123,11 @@
 						<li>비회원 게시판</li>
 					</sec:authorize>
 					<sec:authorize access="isAuthenticated()">
-						<li>준회원 게시판</li>
+						<li>준회원 게시판
+							<ul>
+								<li><a href="./my-info/edit">나의 정보</a></li>
+							</ul>
+						</li>
 					</sec:authorize>
 					<sec:authorize access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER')">
 						<li>정회원 게시판</li>

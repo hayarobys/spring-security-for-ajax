@@ -1,3 +1,25 @@
+$(function(){
+	//$(".side-menu a").on('click', menuEventHandler);
+});
+
+function menuEventHandler(event){
+	event.preventDefault();
+	//console.log('이벤트:',event);
+	var link = event.target.pathname;
+	console.log('주소:', link);
+	//location.href = link;
+	
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function(){
+		if(this.readyState == 4 && this.status == 200){
+			var elmnt = this.responseText;
+			console.log('엘리먼트:', elmnt);
+			//$("#contents").html(elmnt);
+		}
+	};
+	xhttp.open("GET", link, true);
+	xhttp.send();
+}
 
 /**
 * jwt의 payload를 파싱 합니다.
