@@ -12,3 +12,4 @@
 	
 	<link rel="shorcut icon" href="<c:url value='/resources/favicon.ico'/>" type="image/x-icon" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script charset="utf-8" src="<c:url value='/resources/scripts/ui/common/common.js'/>"></script>

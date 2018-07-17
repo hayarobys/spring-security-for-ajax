@@ -5,7 +5,7 @@
 	
 2. 특징
 	* DB를 통한 URL별 권한 관리<br />
-	![제어 페이지](./image/예시.png)
+	![제어 페이지](./image/web-page.png)
 	* 계정 차단 기능
     * 브라우저 제어 페이지 제공
 	* JWT 쿠키 기반 인증 관리
@@ -43,6 +43,17 @@
 	* Windows 10
 
 6. 사용법
+	1. 최신 릴리즈의 압축파일을 다운로드 받아, 원하는 폴더에 압축해제 하십시오.
+	2. 프로젝트 구성에 필요한 파일은 src폴더와 pom.xml 뿐입니다.<br />
+	![릴리즈 다운로드](./image/release-download.png)
+	3. STS 혹은 이클립스 등의 즐겨사용하는 에디터에서 사진의 순서대로 프로젝트 임포트를 진행하십시오.<br />
+	![프로젝트 임포트](./image/project-import.png)
+	4. 임포트한 프로젝트 기반으로 원하는 웹사이트를 만들어 가십시오.<br />
+	![프로젝트 구조](./image/project-structure.png)
+	5. 최초 접속 주소는 https://localhost:8080/security 입니다.
+	6. CONTEXT PATH 변경 시엔 /src/main/webapp/resources/scripts/ui/common/common.js 파일의 CONTEXT_PATH 값을 함께 변경하십시오.
+	
+7. 그 외 설정 관련 정보
 	1. 톰캣을 사용할 경우 server.xml에 다음의 코드를 추가하십시오. (인터넷을 참고해 HTTPS 인증서를 미리 생성해 두어야 합니다)
 		<pre>&lt;Connector connectionTimeout="20000" port="8080" protocol="HTTP/1.1" redirectPort="8443"/&gt;
 		&lt;Connector

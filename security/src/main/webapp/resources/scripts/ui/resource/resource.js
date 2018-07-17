@@ -22,7 +22,7 @@ function initHttpMethodSelectBox(){
 	
 	$.ajax({
 		type: "GET",
-		url: "/security/http-method",
+		url: CONTEXT_PATH + "/http-method",
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
@@ -98,7 +98,7 @@ function initResourceGrid(){
 			{name: 'resourceType', type: 'string'},
 			{name: 'sortOrder', type: 'int'}
 		],
-		url: '/security/resource',
+		url: CONTEXT_PATH + '/resource',
 		root: 'rows',
 		cache: false,
 		beforeprocessing: function(data){
@@ -219,7 +219,7 @@ function initResourceGrid(){
 		
 		$.ajax({
 			type: "PATCH",
-			url: "/security/resource/" + Number(resourceNo),
+			url: CONTEXT_PATH + "/resource/" + Number(resourceNo),
 			data: jsonData,
 			contentType: 'application/json',
 			dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
@@ -294,7 +294,7 @@ function insertResource(){
 	
 	$.ajax({
 		type: "POST",
-		url: "/security/resource/",
+		url: CONTEXT_PATH + "/resource/",
 		data: jsonForm,
 		contentType: 'application/json',
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
@@ -352,7 +352,7 @@ function deleteSelectedResources(){
 	
 	$.ajax({
 		type: "DELETE",
-		url: "/security/resource/" + selectedResourceNoArray,
+		url: CONTEXT_PATH + "/resource/" + selectedResourceNoArray,
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값

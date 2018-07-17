@@ -1,47 +1,12 @@
 @CHARSET "UTF-8";
 
-header{
-	border: 1px solid black;
-	height: 100px;
-	line-height: 100px;
-	min-width: 1010px;
-}
-
-header h3{
-	margin: 0px;
-}
-
 #contents{
 	margin: 0 auto;
-	width: 1010px;
+	width: 1280px;
 }
 
-#contents > aside{
-	width: 260px;
-	border: 2px dotted black;
-	float: left;
-}
-
-.mini-login-form{
-	border: 1px solid orange;
-}
-
-.side-menu{
-	border: 1px solid blue;
-}
-
-#contents > section{
-	width: 740px;
+#contents #mainContents{
+	width: 900px;
 	border: 2px dashed black;
-	float: right;
-}
-
-footer{
-	clear: both;
-	border: 1px solid black;
-	min-width: 1010px;
-}
-
-.middle{
-	text-align: center;
+	float: left;
 }

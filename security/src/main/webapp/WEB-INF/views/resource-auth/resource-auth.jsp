@@ -13,37 +13,44 @@
 	<script src="<c:url value='/resources/scripts/ui/resource-auth/resource-auth.js'/>"></script>
 </head>
 <body>
-	<section id="box" class="box">
-		<div class="data_box">
-			<header class="title">
-				<span class="title_font">RESOURCE</span>
-			</header>
-			
-			<section id="data_resource" class="data_body">
-				
-			</section>
-			
-			<input type="button" value="reload" onclick="javascript:reloadResourceGrid();" />
-			<input type="button" id="real_time_reflection" value="realtime reflection" onclick="javascript:realTimeReflection();" />
-		</div>
-		
-		<div class="data_box">
-			<header class="title">
-				<span class="title_font">AUTH</span>
-			</header>
-			
-			<section id="data_auth" class="data_body">
-				
-			</section>
-			
-			<input type="button" value="save" onclick="javascipt:save();">
-			<br/>
-			<span>
-				※ 권한 미 선택시, 해당 URL은 패턴 "/**"의 권한 설정을 참조합니다.
-			</span>
-		</div>
-	</section>
+	<jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 	
+	<div id="contents">
+		<jsp:include page="/WEB-INF/views/common/nav.jsp"></jsp:include>
+		
+		<section id="box" class="box">
+			<div class="data_box">
+				<header class="title">
+					<span class="title_font">RESOURCE</span>
+				</header>
+				
+				<section id="data_resource" class="data_body">
+					
+				</section>
+				
+				<input type="button" value="reload" onclick="javascript:reloadResourceGrid();" />
+				<input type="button" id="real_time_reflection" value="realtime reflection" onclick="javascript:realTimeReflection();" />
+			</div>
+			
+			<div class="data_box">
+				<header class="title">
+					<span class="title_font">AUTH</span>
+				</header>
+				
+				<section id="data_auth" class="data_body">
+					
+				</section>
+				
+				<input type="button" value="save" onclick="javascipt:save();">
+				<br/>
+				<span>
+					※ 권한 미 선택시, 해당 URL은 패턴 "/**"의 권한 설정을 참조합니다.
+				</span>
+			</div>
+		</section>
+	</div>
+	
+	<jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
 </body>
 </html>
 

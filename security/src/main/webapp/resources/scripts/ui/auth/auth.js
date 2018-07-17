@@ -29,7 +29,7 @@ function initAuthGrid(){
 			{name: 'authNm', type: 'string'},
 			{name: 'authExplanation', type: 'string'}
 		],
-		url: '/security/auth',
+		url: CONTEXT_PATH + '/auth',
 		root: 'rows',
 		cache: false,
 		beforeprocessing: function(data){
@@ -127,7 +127,7 @@ function initAuthGrid(){
 		
 		$.ajax({
 			type: "PATCH",
-			url: "/security/auth/" + Number(authNo),
+			url: CONTEXT_PATH + "/auth/" + Number(authNo),
 			data: jsonData,
 			contentType: 'application/json',
 			dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
@@ -201,7 +201,7 @@ function insertAuth(){
 	
 	$.ajax({
 		type: "POST",
-		url: "/security/auth",
+		url: CONTEXT_PATH + "/auth",
 		data: jsonForm,
 		contentType: 'application/json',
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
@@ -260,7 +260,7 @@ function deleteSelectedAuth(){
 	
 	$.ajax({
 		type: "DELETE",
-		url: "/security/auth/" + selectedAuthNoArray,
+		url: CONTEXT_PATH + "/auth/" + selectedAuthNoArray,
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값

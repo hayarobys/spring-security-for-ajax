@@ -1,0 +1,16 @@
+@CHARSET "UTF-8";
+
+.nav{
+	width: 260px;
+	border: 2px dotted black;
+	float: left;
+}
+
+.nav .mini-login-form{
+	border: 1px solid orange;
+}
+
+.nav .side-menu{
+	border: 1px solid blue;
+}
+

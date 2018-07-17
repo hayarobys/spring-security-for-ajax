@@ -233,7 +233,7 @@ function initBlockMemberGrid(){
 		
 		$.ajax({
 			type: "PATCH",
-			url: "/security/block-member/" + Number(blockNo),
+			url: CONTEXT_PATH + "/block-member/" + Number(blockNo),
 			data: jsonData,
 			contentType: 'application/json',
 			dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
@@ -267,30 +267,6 @@ function initBlockMemberGrid(){
 */
 function reloadBlockMemberGrid(){
 	search_block_member();
-	/*var token = $("meta[name='_csrf']").attr("content");
-	var header = $("meta[name='_csrf_header']").attr("content");
-	
-	$.ajax({
-		type: "GET",
-		url: "/security/block-member",
-		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
-		beforeSend: function(xhr){
-			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
-			xhr.setRequestHeader(header, token);	// 헤더의 csrf meta태그를 읽어 CSRF 토큰 함께 전송
-		},
-		success: function(data, statusText, xhr){
-			if(data.result == "success"){
-				console.log("멤버: ", data.list);
-				changeBlockMemberGrid(data.list)
-			}else{
-				console.log("BLOCK_MEMBER 목록 조회를 실패했습니다.");
-				console.log("message", data.message);
-			}
-		},
-		error: function(xhr){
-			console.log("error", xhr);
-		}
-	});*/
 }
 
 /**
@@ -366,7 +342,7 @@ function insertBlockMember(){
 	
 	$.ajax({
 		type: "POST",
-		url: "/security/block-member",
+		url: CONTEXT_PATH + "/block-member",
 		data: jsonForm,
 		contentType: 'application/json',
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
@@ -425,7 +401,7 @@ function deleteSelectedBlockMember(){
 	
 	$.ajax({
 		type: "DELETE",
-		url: "/security/block-member/" + selectedBlockMemberNoArray,
+		url: CONTEXT_PATH + "/block-member/" + selectedBlockMemberNoArray,
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
@@ -472,7 +448,7 @@ function search_block_member(){
 	
 	$.ajax({
 		type: "GET",
-		url: "/security/block-member?" + $.param(searchData),
+		url: CONTEXT_PATH + "/block-member?" + $.param(searchData),
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값

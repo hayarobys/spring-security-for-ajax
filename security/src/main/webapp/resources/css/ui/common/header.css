@@ -1,0 +1,16 @@
+@CHARSET "UTF-8";
+
+.header{
+	border: 1px solid black;
+	height: 100px;
+	line-height: 100px;
+	min-width: 1280px;
+}
+
+.header h3{
+	margin: 0px;
+}
+
+.header.middle{
+	text-align: center;
+}

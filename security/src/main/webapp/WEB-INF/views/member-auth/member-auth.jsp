@@ -13,36 +13,43 @@
 	<script src="<c:url value='/resources/scripts/ui/member-auth/member-auth.js'/>"></script>
 </head>
 <body>
-	<section id="box" class="box">
-		<div class="data_box">
-			<header class="title">
-				<span class="title_font">MEMBER</span>
-			</header>
-			
-			<section id="data_member" class="data_body">
-				
-			</section>
-			
-			<input type="button" value="reload" onclick="javascript:reloadMemberGrid();" />
-		</div>
-		
-		<div class="data_box">
-			<header class="title">
-				<span class="title_font">AUTH</span>
-			</header>
-			
-			<section id="data_auth" class="data_body">
-				
-			</section>
-			
-			<input type="button" value="save" onclick="javascipt:save();">
-			<br/>
-			<span>
-				※ 권한 미 선택시, 해당 계정은 로그인 조차 할 수 없습니다.
-			</span>
-		</div>
-	</section>
+	<jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 	
+	<div id="contents">
+		<jsp:include page="/WEB-INF/views/common/nav.jsp"></jsp:include>
+		
+		<section id="box" class="box">
+			<div class="data_box">
+				<header class="title">
+					<span class="title_font">MEMBER</span>
+				</header>
+				
+				<section id="data_member" class="data_body">
+					
+				</section>
+				
+				<input type="button" value="reload" onclick="javascript:reloadMemberGrid();" />
+			</div>
+			
+			<div class="data_box">
+				<header class="title">
+					<span class="title_font">AUTH</span>
+				</header>
+				
+				<section id="data_auth" class="data_body">
+					
+				</section>
+				
+				<input type="button" value="save" onclick="javascipt:save();">
+				<br/>
+				<span>
+					※ 권한 미 선택시, 해당 계정은 로그인 조차 할 수 없습니다.
+				</span>
+			</div>
+		</section>
+	</div>
+	
+	<jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
 </body>
 </html>
 

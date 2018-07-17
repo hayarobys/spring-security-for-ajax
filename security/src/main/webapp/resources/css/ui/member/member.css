@@ -1,9 +1,13 @@
 @CHARSET "UTF-8";
 
+#contents{
+	margin: 0 auto;
+	width: 1280px;
+}
+
 #box{
-	margin: auto;
+	float: left;
 	width: 900px;
-	height: 900px;
 }
 
 .data_box{

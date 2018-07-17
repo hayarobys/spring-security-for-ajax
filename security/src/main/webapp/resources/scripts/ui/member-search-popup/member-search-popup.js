@@ -80,7 +80,7 @@ function getDataAdapter(){
 			{name: 'memNicknm', type: 'string'},
 			{name: 'lastLoginDate', type: 'date'}
 		],
-		url: '/security/member',
+		url: CONTEXT_PATH + '/member',
 		root: 'rows',
 		cache: false,
 		beforeprocessing: function(data){

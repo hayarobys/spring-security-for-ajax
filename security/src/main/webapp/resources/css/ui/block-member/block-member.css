@@ -1,10 +1,15 @@
 @CHARSET "UTF-8";
 
-#box{
-	margin: auto;
-	width: 900px;
-	height: 900px;
+#contents{
+	margin: 0 auto;
+	width: 1280px;
 }
+
+#box{
+	float: left;
+	width: 900px;
+}
+
 
 #box .title{
 	background-color: #04BCD4;

@@ -52,7 +52,7 @@ function initMemberGrid(){
 			{name: 'memNicknm', type: 'string'},
 			{name: 'lastLoginDate', type: 'date'}
 		],
-		url: '/security/member',
+		url: CONTEXT_PATH + '/member',
 		root: 'rows',
 		cache: false,
 		beforeprocessing: function(data){
@@ -179,7 +179,7 @@ function initMemberGrid(){
 		
 		$.ajax({
 			type: "PATCH",
-			url: "/security/member/" + Number(memNo),
+			url: CONTEXT_PATH + "/member/" + Number(memNo),
 			data: jsonData,
 			contentType: 'application/json',
 			dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
@@ -260,7 +260,7 @@ function insertMember(){
 	
 	$.ajax({
 		type: "POST",
-		url: "/security/member",
+		url: CONTEXT_PATH + "/member",
 		data: jsonForm,
 		contentType: 'application/json',
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
@@ -319,7 +319,7 @@ function deleteSelectedMember(){
 	
 	$.ajax({
 		type: "DELETE",
-		url: "/security/member/" + selectedMemberNoArray,
+		url: CONTEXT_PATH + "/member/" + selectedMemberNoArray,
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
@@ -354,7 +354,7 @@ function memIdDuplicateCheck(){
 	
 	$.ajax({
 		type: "POST",
-		url: "/security/check/member/id",
+		url: CONTEXT_PATH + "/check/member/id",
 		data: JSON.stringify(requestId),
 		contentType: 'application/json',
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식

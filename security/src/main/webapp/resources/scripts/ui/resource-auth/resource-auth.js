@@ -29,7 +29,7 @@ function initResourceGrid(){
 			{name: 'resourcePattern', type: 'string'},
 			{name: 'resourceNm', type: 'string'}
 		],
-		url: '/security/resource',
+		url: CONTEXT_PATH + '/resource',
 		root: 'rows',
 		cache: false,
 		beforeprocessing: function(data){
@@ -113,7 +113,7 @@ function getEveryAuthList(){
 	
 	$.ajax({
 		type: "GET",
-		url: "/security/auth?pagesize=99999",
+		url: CONTEXT_PATH + "/auth?pagesize=99999",
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
@@ -154,7 +154,7 @@ function reloadAuthGridByNo(resourceNo){
 	
 	$.ajax({
 		type: "GET",
-		url: "/security/resource/" + resourceNo + "/auth",
+		url: CONTEXT_PATH + "/resource/" + resourceNo + "/auth",
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("X-Ajax-call", "true");	// CustomAccessDeniedHandler에서 Ajax요청을 구분하기 위해 약속한 값
@@ -249,7 +249,7 @@ function save(){
 	
 	$.ajax({
 		type: "PATCH",
-		url: "/security/resource/" + Number(selectedResourceNoArray[0]) + "/auth",
+		url: CONTEXT_PATH + "/resource/" + Number(selectedResourceNoArray[0]) + "/auth",
 		data: data,
 		contentType: 'application/json',
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
@@ -295,7 +295,7 @@ function realTimeReflection(){
 	
 	$.ajax({
 		type: "PATCH",
-		url: "/security/resource-auth",
+		url: CONTEXT_PATH + "/resource-auth",
 		dataType: "json",	// 서버에서 응답한 데이터를 클라이언트에서 읽는 방식
 		beforeSend: function(xhr){
 			$("#real_time_reflection").attr("disabled", "disabled").text("적용중...");
