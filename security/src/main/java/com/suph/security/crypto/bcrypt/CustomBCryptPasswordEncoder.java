@@ -1,11 +1,9 @@
 package com.suph.security.crypto.bcrypt;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class CustomBCryptPasswordEncoder extends BCryptPasswordEncoder{
-	private static final Logger logger = LoggerFactory.getLogger(CustomBCryptPasswordEncoder.class);
+	//private static final Logger logger = LoggerFactory.getLogger(CustomBCryptPasswordEncoder.class);
 	
 	/**
 	 * 비밀번호를 BCrypt방식으로 암호화 합니다.

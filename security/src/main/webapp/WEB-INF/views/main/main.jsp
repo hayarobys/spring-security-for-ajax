@@ -27,13 +27,11 @@
 		
 		<section id="mainContents">
 			<article>
-				<p>
-					메인 컨텐츠<br />
-					<input type="button" value="현재 닉네임 읽기" onclick="javascript:getNickname()"/>
-					<article id="nickname">
-					
-					</article>
-				</p>
+				메인 컨텐츠<br />
+				<input type="button" value="현재 닉네임 읽기" onclick="javascript:getNickname()"/>
+				<div id="nickname">
+				
+				</div>
 			</article>
 		</section>
 	</div>

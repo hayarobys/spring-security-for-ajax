@@ -91,7 +91,7 @@ public class BlockMemberFilter implements Filter{
 					blockExpireDateLong	= (Long)blockInfoObj.get("blockExpireDate");
 					blockExpireDate		= new Date(blockExpireDateLong);
 					
-					String blockCause	= (String)blockInfoObj.get("blockCause");
+					//String blockCause	= (String)blockInfoObj.get("blockCause");
 					
 					if(		blockStartDate.before(currentTime)
 						&&	blockExpireDate.after(currentTime)

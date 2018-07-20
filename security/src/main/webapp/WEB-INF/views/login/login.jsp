@@ -44,11 +44,13 @@
 		<c:if test="${not empty securityexceptionmsg}">
 			<tr>
 				<td colspan="2">
-					<font color="red">
-						<p>Your login atttemt was not successful, try again.</p>
-						<!-- 더 이상 세션을 이용하지 않고, request영역에서 예외 메시지를 가져오는 부분 -->
-						<p>${securityexceptionmsg}</p>
-					</font>
+					<p>
+						<font color="red">Your login atttemt was not successful, try again.</font>
+					</p>
+					<!-- 더 이상 세션을 이용하지 않고, request영역에서 예외 메시지를 가져오는 부분 -->
+					<p>
+						<font color="red">${securityexceptionmsg}</font>
+					</p>
 				</td>
 			</tr>
 		</c:if>

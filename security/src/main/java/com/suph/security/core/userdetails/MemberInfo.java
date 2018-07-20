@@ -22,7 +22,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 import com.suph.security.core.dto.BlockInfoDTO;
-import com.suph.security.core.dto.BlockMemberDTO;
 
 public class MemberInfo implements UserDetails{
 	
@@ -225,8 +224,8 @@ public class MemberInfo implements UserDetails{
 	 * 둘 다 권한을 가진 정상 객체일 경우 두 GrantedAuthority객체의  권한에 대한 정렬 실시
 	 */
 	private static class AuthorityComparator implements Comparator<GrantedAuthority>, Serializable{
-		private static final long serailVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
-		
+		private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
+
 		@Override
 		public int compare(GrantedAuthority g1, GrantedAuthority g2){
 			if(g2.getAuthority() == null) {

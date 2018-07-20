@@ -21,6 +21,10 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler{
 	@Value("#{security['spring_security_context_key']}")
 	private String SPRING_SECURITY_CONTEXT_KEY;
 	
+	/** 시큐리티 쿠키의 PATH 정보입니다. 이 값을 '/'로 놔둘 경우, 다른 웹사이트에서도 사용 가능하니 반드시 특별한 콘텍스트 명을 넣어두십시오. */
+	@Value("#{security['security_cookie.path']}")
+	private String SECURITY_COOKIE_PATH;
+	
 	/** 클라이언트에서 사용할 수 있게 닉네임 정보를 담아둘 JWT닉네임 쿠키의 key명 입니다. */
 	@Value("#{security['jwt_nickname_cookie_key']}")
 	private String JWT_NICKNAME_COOKIE_KEY;
@@ -67,7 +71,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler{
 		
 		for (String cookieName : cookiesToClearList) {
 	        Cookie cookie = new Cookie(cookieName, null);
-	        cookie.setPath("/");
+	        cookie.setPath(SECURITY_COOKIE_PATH);
 	        cookie.setMaxAge(0);
 	        response.addCookie(cookie);
 		}
