@@ -51,9 +51,14 @@
 	4. /src/main/resources/mybatis/sql-generate/sql-generate.sql 파일을 한 구문씩 실행해 필요한 DB를 구축하십시오.
 	5. 임포트한 프로젝트 기반으로 원하는 웹사이트를 만들어 가십시오.<br />
 	![프로젝트 구조](./image/project-structure.png)
-	6. 최초 접속 주소는 https://localhost:8080/security 입니다.
-	7. CONTEXT PATH 변경 시엔 /src/main/webapp/resources/scripts/ui/common/common.js 파일의 CONTEXT_PATH 값을 함께 변경하십시오.
-	8. 최초 제공되는 계정의 인증 정보는 admin/admin, manager/manager, user/user, tester/tester 입니다.
+	6. 최초 접속 주소는 https://localhost:8443/security 입니다.
+	7. CONTEXT PATH 변경 시엔 아래 파일의 항목을 함께 변경하십시오.
+		- /src/main/webapp/resources/scripts/ui/common/common.js 파일의 CONTEXT_PATH 값
+		- /src/main/resources/properties/security.properties 파일의 security_cookie.path 값
+		- /src/main/resources/properties/security.properties 파일의 jwt.claim.issuer 값 ( 이 항목은 수정하지 않아도 동작에 문제 없습니다 )
+	8. 신규 패키지 생성시 /src/main/webapp/WEB-INF/spring/root-context.xml 의 <context:component-scan base-package="com.suph.security"> 부분에 스캔할 신규 패키지명을 추가하십시오.
+		- 예시) <context:component-scan base-package="com.suph.security, com.my.package, com.another.package">
+	9. 최초 제공되는 계정의 인증 정보는 admin/admin, manager/manager, user/user, tester/tester 입니다.
 	
 7. 그 외 설정 관련 정보
 	1. 인터넷을 참고해 SSL 인증서를 미리 생성해 두십시오. 아래는 CMD에서 실행하는 로컬 테스트 용도의 SSL인증서 생성 예제 코드로써 JDK의 keytool 프로그램을 이용해 사용자 폴더에 .keystore라는 SSL 인증서를 생성합니다. (암호 changeit)
