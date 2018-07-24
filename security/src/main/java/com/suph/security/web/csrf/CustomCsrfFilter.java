@@ -20,7 +20,10 @@ import org.springframework.security.web.csrf.MissingCsrfTokenException;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 public final class CustomCsrfFilter extends OncePerRequestFilter{
 	public static final RequestMatcher DEFAULT_CSRF_MATCHER = new DefaultRequiresCsrfMatcher();
@@ -38,9 +41,7 @@ public final class CustomCsrfFilter extends OncePerRequestFilter{
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException{
-		
 		// 요청에 대한 응답 객체를 바꿔치기 합니다.
-		LOGGER.debug("응답객체를 이 이름으로 요청객체에 저장합니다: {}", HttpServletResponse.class.getName());
 		request.setAttribute(HttpServletResponse.class.getName(), response);
 		
 		// 요청으로부터 CSRF 토큰을 추출합니다. 이 경우 CookieCsrfTokenRepository를 사용하므로 쿠키로부터 구합니다.
@@ -67,19 +68,34 @@ public final class CustomCsrfFilter extends OncePerRequestFilter{
 		}
 		
 		// 요청 헤더로부터 csrf토큰을 추출합니다.
+		LOGGER.debug("헤더에서 다음의 이름으로 CSRF 토큰을 검색합니다: {}", csrfToken.getHeaderName());
 		String actualToken = request.getHeader(csrfToken.getHeaderName());
 		if(actualToken == null){
 			// 헤더에 csrf토큰이 없다면, 다른 이름으로 찾아봅니다.
-			LOGGER.debug("지정된 헤더명에서 CSRF 토큰을 찾지못했기에 다른 파라미터 명으로 추출을 시도합니다.");
-			actualToken = request.getParameter(csrfToken.getParameterName());
+			LOGGER.debug("헤더에서 CSRF 토큰을 찾지못했기에 다음의 파라미터 명으로 재검색 합니다: {}", csrfToken.getParameterName());
+			LOGGER.debug("ContentType: {}", request.getContentType());
+			
+			// 멀티파트 폼 데이타 타입일 경우 request.getParameter()는 null값을 배출하므로, MultipartHttpServletRequest로 변환하여 수행합니다.
+			String contentType = request.getContentType();
+			if( StringUtils.hasText(contentType) && contentType.toLowerCase().contains("multipart/form-data") ){
+				CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
+				MultipartHttpServletRequest multipartRequest = commonsMultipartResolver.resolveMultipart(request);
+				if( multipartRequest.getParameterMap().containsKey(csrfToken.getParameterName()) ){
+					actualToken = multipartRequest.getParameter(csrfToken.getParameterName());
+				}
+			}else{
+				actualToken = request.getParameter( csrfToken.getParameterName() );
+			}
 		}
 		
 		if(!csrfToken.getToken().equals(actualToken)){
 			// 쿠키속 토큰과 헤더속 토큰이 불일치한다면
 			// 에러 메시지를 띄우고
-			LOGGER.debug("다음의 요청으로부터 잘못된 CSRF 토큰이 발견되었습니다: "
-					+ UrlUtils.buildFullRequestUrl(request)
-			);
+			LOGGER.debug("다음의 요청으로부터 잘못된 CSRF 토큰이 발견되었습니다: {}, 쿠키CSRF: {}, 발견된 토큰: {}", new Object[]{
+					UrlUtils.buildFullRequestUrl(request),
+					csrfToken.getToken(),
+					actualToken
+			});
 			
 			if(missingToken){
 				// 쿠키에 CSRF 토큰이 없는거면 헤더속 토큰이 쿠키에 없다고 예외 발생
