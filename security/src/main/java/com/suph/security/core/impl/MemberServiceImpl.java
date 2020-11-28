@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.omg.PortableInterceptor.ORBInitInfoPackage.DuplicateName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -143,7 +143,7 @@ public class MemberServiceImpl implements MemberService{
 			
 			if(memId.equals(dbId) == true){
 				// 아이디 중복시 DupicateName 예외 발생
-				throw new DuplicateName();
+				throw new DuplicateKeyException(memId + "는 이미 사용 중 입니다.");
 			}
 			
 			returnMap.put("result", "success");
@@ -153,7 +153,7 @@ public class MemberServiceImpl implements MemberService{
 			returnMap.put("result", "empty");
 			returnMap.put("message", "아이디를 입력해 주세요.");
 			//npe.printStackTrace();
-		}catch(DuplicateName dn){
+		}catch(DuplicateKeyException dn){
 			returnMap.put("result", "duplicate");
 			returnMap.put("message", memId + "는 이미 사용 중 입니다.");
 			//dn.printStackTrace();
